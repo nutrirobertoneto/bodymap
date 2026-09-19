@@ -790,6 +790,11 @@ textarea.fc{resize:vertical;min-height:80px}
         <div class="fg"><label class="fl">Foto — Lado</label><input type="file" accept="image/*" id="fotoLadoInput" class="fc" onchange="handlePhotoUpload(this,'fotoLado')"><div id="fotoLadoPreview" style="margin-top:8px"></div></div>
         <div class="fg"><label class="fl">Foto — Costas</label><input type="file" accept="image/*" id="fotoCostasInput" class="fc" onchange="handlePhotoUpload(this,'fotoCostas')"><div id="fotoCostasPreview" style="margin-top:8px"></div></div>
       </div>
+      <div style="margin-top:14px">
+        <button type="button" class="btn bp" id="btnEstimarIA" onclick="estimarGorduraIA()">🤖 Estimar % de gordura por IA (Inteligência Artificial)</button>
+        <div style="font-size:10.5px;color:var(--mu);margin-top:6px">Usa a foto de frente. Estimativa visual aproximada, não substitui plicometria nem bioimpedância.</div>
+        <div id="iaResultado" style="margin-top:10px"></div>
+      </div>
       <div class="div"></div>
       <div class="fg">
         <label class="fl">Exame laboratorial (PDF ou imagem)</label>
@@ -983,6 +988,68 @@ function handlePhotoUpload(inputEl,field){
     autoSave();
   };
   reader.readAsDataURL(file);
+}
+function reduzirImagemIA(dataUrl,maxLado=1024,qualidade=0.85){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{
+      const esc=Math.min(1,maxLado/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*esc);c.height=Math.round(img.height*esc);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve(c.toDataURL('image/jpeg',qualidade).split(',')[1]);
+    };
+    img.onerror=()=>reject(new Error('Não foi possível ler a imagem'));
+    img.src=dataUrl;
+  });
+}
+async function estimarGorduraIA(){
+  const box=document.getElementById('iaResultado');
+  const btn=document.getElementById('btnEstimarIA');
+  const foto=photoData.fotoFrente;
+  if(!foto||!foto.type||!foto.type.startsWith('image/')){showToast('⚠️ Envie primeiro a foto de frente','#e67e22');return;}
+  const sx=document.querySelector('input[name="sexo"]:checked')?.value;
+  const sexo=(sx==='M'||sx==='F')?sx:'';
+  const idade=document.getElementById('idade').value||'';
+  btn.disabled=true;
+  box.textContent='⏳ Analisando a foto...';
+  try{
+    const imagemBase64=await reduzirImagemIA(foto.data);
+    const resp=await fetch('/.netlify/functions/estimar-gordura',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({imagemBase64,mediaType:'image/jpeg',sexo,idade})
+    });
+    const r=await resp.json();
+    if(!resp.ok||r.percentual==null)throw new Error(r.erro||'Não foi possível estimar');
+    box.innerHTML='';
+    const card=document.createElement('div');
+    card.style.cssText='padding:12px 14px;background:var(--gp);border:1px solid var(--br);border-radius:10px;font-size:13px';
+    const t=document.createElement('div');
+    t.style.cssText='font-size:20px;font-weight:700;color:var(--gd)';
+    t.textContent='≈ '+r.percentual+'% de gordura';
+    card.appendChild(t);
+    const det=document.createElement('div');
+    det.style.cssText='margin-top:4px;color:var(--mu);font-size:12px';
+    det.textContent=(r.faixaMin!=null?'Faixa: '+r.faixaMin+'–'+r.faixaMax+'%  ·  ':'')+(r.confianca?'Confiança: '+r.confianca:'');
+    card.appendChild(det);
+    if(r.observacao){
+      const o=document.createElement('div');
+      o.style.cssText='margin-top:6px;font-size:12px';
+      o.textContent=r.observacao;
+      card.appendChild(o);
+    }
+    const u=document.createElement('button');
+    u.type='button';u.className='btn bs';u.style.cssText='margin-top:10px;padding:8px 14px;font-size:12px';
+    u.textContent='Usar no campo % Gordura';
+    u.onclick=()=>{document.getElementById('gordura').value=r.percentual;if(typeof updateBodyFig==='function')updateBodyFig();autoSave();showToast('✅ Valor inserido no campo % Gordura');};
+    card.appendChild(u);
+    box.appendChild(card);
+  }catch(e){
+    box.textContent='❌ '+e.message;
+  }finally{
+    btn.disabled=false;
+  }
 }
 function renderPhotoPreview(field){
   const box=document.getElementById(field+'Preview');
