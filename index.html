@@ -1153,7 +1153,7 @@ function importPatientJSON(file){
     try{
       const d=JSON.parse(e.target.result);
       if(!d.nome){showToast('⚠️ Arquivo inválido — sem nome de paciente','#e67e22');return;}
-      localStorage.setItem(DK,JSON.stringify(d));
+      sessionStorage.setItem(DK,JSON.stringify(d));
       loadData();
       const pts=JSON.parse(localStorage.getItem(PK)||'[]');
       const idx=pts.findIndex(p=>p.nome===d.nome&&p.dataPreench===d.dataPreench);
@@ -1822,6 +1822,8 @@ function qfaChartRender(){
 
 // ── SAVE/LOAD ──
 const DK='pts_anamnese_cur',PK='pts_anamnese_pts';
+// Rascunho do formulário fica só na sessão: ao fechar o navegador/aba, a ficha volta zerada. Pacientes finalizados (PK) continuam salvos.
+try{localStorage.removeItem(DK);}catch(e){}
 
 function collectData(){
   const d={};
@@ -1840,13 +1842,13 @@ function collectData(){
   return d;
 }
 
-function autoSave(){clearTimeout(asTimer);asTimer=setTimeout(()=>localStorage.setItem(DK,JSON.stringify(collectData())),800);}
-function saveData(){localStorage.setItem(DK,JSON.stringify(collectData()));showToast('✅ Dados salvos!');}
+function autoSave(){clearTimeout(asTimer);asTimer=setTimeout(()=>sessionStorage.setItem(DK,JSON.stringify(collectData())),800);}
+function saveData(){sessionStorage.setItem(DK,JSON.stringify(collectData()));showToast('✅ Dados salvos!');}
 
 function finalizar(){
   const d=collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome antes de finalizar','#e67e22');goTab(0);return;}
-  localStorage.setItem(DK,JSON.stringify(d));
+  sessionStorage.setItem(DK,JSON.stringify(d));
   const pts=JSON.parse(localStorage.getItem(PK)||'[]');
   const idx=pts.findIndex(p=>p.nome===d.nome&&p.dataPreench===d.dataPreench);
   const entry={...d,id:Date.now()};
@@ -1856,7 +1858,7 @@ function finalizar(){
 }
 
 function loadData(){
-  const raw=localStorage.getItem(DK);if(!raw)return;
+  const raw=sessionStorage.getItem(DK);if(!raw)return;
   try{
     const d=JSON.parse(raw);
     ['nome','dataNasc','idade','telefone','email','dataPreench','objDescricao','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','objetivo','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
@@ -1893,7 +1895,7 @@ function loadData(){
   }catch(e){console.error(e);}
 }
 
-function clearForm(){if(!confirm('Limpar todos os dados do formulário atual?'))return;localStorage.removeItem(DK);mealSel={};MEALS.forEach(m=>mealSel[m.id]=Array.from({length:5},()=>({name:'',mode:'porcao',qty:1})));location.reload();}
+function clearForm(){if(!confirm('Limpar todos os dados do formulário atual?'))return;sessionStorage.removeItem(DK);mealSel={};MEALS.forEach(m=>mealSel[m.id]=Array.from({length:5},()=>({name:'',mode:'porcao',qty:1})));location.reload();}
 
 // ── REPORTS ──
 function refreshPtList(){
