@@ -4,11 +4,18 @@
 // estimativa aproximada de % de gordura corporal.
 
 exports.handler = async (event) => {
+  // Só aceita chamadas vindas do próprio BodyMap (reduz uso indevido da chave de API)
+  const PERMITIDAS = ['https://bodymapmetric.netlify.app'];
+  const origem = (event.headers && (event.headers.origin || event.headers.Origin)) || '';
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': PERMITIDAS.includes(origem) ? origem : PERMITIDAS[0],
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin'
   };
+  if (origem && !PERMITIDAS.includes(origem)) {
+    return { statusCode: 403, headers, body: JSON.stringify({ erro: 'Origem não autorizada' }) };
+  }
 
   // Pré-checagem do navegador (CORS) - responde OK sem fazer nada
   if (event.httpMethod === 'OPTIONS') {
@@ -72,7 +79,7 @@ OBSERVACAO: [uma frase curta sobre o que embasou a estimativa]`;
     // Parse simples do formato estruturado que pedimos no prompt
     const pctMatch = textoResposta.match(/PERCENTUAL:\s*([\d.,]+)/i);
     const faixaMatch = textoResposta.match(/FAIXA:\s*([\d.,]+)\s*-\s*([\d.,]+)/i);
-    const confMatch = textoResposta.match(/CONFIANCA:\s*(\w+)/i);
+    const confMatch = textoResposta.match(/CONFIANCA:\s*([^\n]+)/i);
     const obsMatch = textoResposta.match(/OBSERVACAO:\s*(.+)/i);
 
     return {
@@ -82,7 +89,7 @@ OBSERVACAO: [uma frase curta sobre o que embasou a estimativa]`;
         percentual: pctMatch ? parseFloat(pctMatch[1].replace(',', '.')) : null,
         faixaMin: faixaMatch ? parseFloat(faixaMatch[1].replace(',', '.')) : null,
         faixaMax: faixaMatch ? parseFloat(faixaMatch[2].replace(',', '.')) : null,
-        confianca: confMatch ? confMatch[1] : null,
+        confianca: confMatch ? confMatch[1].trim() : null,
         observacao: obsMatch ? obsMatch[1].trim() : null,
         textoOriginal: textoResposta
       })
