@@ -20,7 +20,7 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return resp(405, { erro: 'Método não permitido' });
 
   try {
-    const { arquivoBase64, mediaType, sexo, idade } = JSON.parse(event.body || '{}');
+    const { arquivoBase64, mediaType, sexo, idade, anterior, consideracoes } = JSON.parse(event.body || '{}');
     if (!arquivoBase64) return resp(400, { erro: 'Nenhum arquivo enviado' });
 
     const tiposOk = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -34,7 +34,18 @@ exports.handler = async (event) => {
       idade ? idade + ' anos' : null
     ].filter(Boolean).join(', ');
 
-    const prompt = `Você está ajudando um profissional de nutrição a organizar um exame laboratorial${contexto ? ' de um paciente (' + contexto + ')' : ''}.
+    // Reanálise: o profissional já viu uma primeira leitura e quer revisão considerando suas observações.
+    const blocoReanalise = (anterior && consideracoes) ? `
+
+ISTO É UMA REANÁLISE. Você já leu este mesmo exame antes e gerou:
+${JSON.stringify(anterior).slice(0, 4000)}
+
+O profissional (nutricionista) escreveu a seguinte consideração, que deve orientar a revisão:
+"${String(consideracoes).slice(0, 2000)}"
+
+A consideração do profissional é uma instrução de revisão, não um dado do exame — nunca invente ou altere um valor numérico do laudo só porque o profissional pediu; se a consideração discordar do que está escrito no documento, explique a divergência em "nota" daquele marcador em vez de mudar o valor. Releia o documento original (anexado) e gere uma versão revisada e completa, incorporando o que fizer sentido da consideração.` : '';
+
+    const prompt = `Você está ajudando um profissional de nutrição a organizar um exame laboratorial${contexto ? ' de um paciente (' + contexto + ')' : ''}.${blocoReanalise}
 
 REGRAS:
 - Use SOMENTE o que está escrito no documento. Nunca invente valores. Se algo estiver ilegível, use status "indeterminado" e explique em "nota".
