@@ -783,6 +783,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div class="fg"><label class="fl">Fibra mínima (g)</label><input class="aj-in" id="dwFibra" type="number" step="1" oninput="dietWizAtualizar()"></div>
       </div>
       <div id="dwGramas" style="font-size:13px;line-height:1.6;padding:10px 12px;background:var(--gp);border-radius:8px;border:1px solid var(--br)"></div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Refeição livre</label><select class="di" id="dwRefLivre" style="max-width:320px">
+        <option value="">Sem refeição livre</option>
+        <option value="1">1 refeição livre/semana</option>
+        <option value="2">2 refeições livres/semana</option>
+        <option value="3">3 ou mais refeições livres/semana</option>
+        <option value="dia">1 dia inteiro livre/semana</option>
+      </select></div>
       <div style="display:flex;justify-content:space-between;margin-top:16px">
         <button class="pw-cancel" onclick="dietWizPadrao()">↺ Usar sugestão do modelo</button>
         <div style="display:flex;gap:10px">
@@ -3734,6 +3741,9 @@ function dietWizPadrao(){
 function dietWizProximo(){
   dietWizAtualizar();
   if(!dietWizCtx.valido){showToast('⚠️ Ajuste as porcentagens: a soma não pode passar de 100%','#e67e22');return;}
+  const rl=document.getElementById('dwRefLivre');
+  dietWizCtx.regras=dietWizCtx.regras||{};
+  dietWizCtx.regras.refeicaoLivre=rl?rl.value:'';
   document.getElementById('dwStep1').style.display='none';
   document.getElementById('dwStep2').style.display='block';
 }
@@ -3901,7 +3911,7 @@ function renderDietMealRows(){
       <div class="diet-row-top">
         <input class="di" style="width:170px" value="${m.refeicao}" placeholder="Nome da refeição" oninput="dietPlanEdit[${i}].refeicao=this.value;dietEditado=true">
         <input class="di" style="width:110px" value="${m.horario}" placeholder="Horário" oninput="dietPlanEdit[${i}].horario=this.value;dietEditado=true">
-        ${isRefeicaoGrande(m.refeicao)?`<select class="di" style="width:150px" onchange="dietPlanEdit[${i}].sobremesa=this.value;toggleSobremesaOpcao(${i})"><option value="não"${m.sobremesa!=='sim'?' selected':''}>Sobremesa: Não</option><option value="sim"${m.sobremesa==='sim'?' selected':''}>Sobremesa: Sim</option></select>`:''}
+        ${isRefeicaoGrande(m.refeicao)?`<span style="font-size:11.5px;color:var(--gd);font-weight:700;padding:4px 8px;background:var(--gp);border-radius:6px;border:1px solid var(--br)">🍰 Sobremesa incluída</span>`:''}
         <button class="rf" onclick="removeMealRowDiet(${i})">✕ refeição</button>
       </div>
       ${ops}
@@ -4101,7 +4111,7 @@ function calcDietaBase(d,ov,cas){
   const hasDis=dn.includes('DISLIPI');
   const hasObe=imc(d)>=30;
   const regras=(ov&&ov.regras)||{};
-  const PLAN=buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,!!cas);
+  const PLAN=aplicarPipocaLanche(aplicarSobremesaFixa(buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,!!cas)));
   const SUP=incluirSup?buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj):[];
   const EAA=incluirEAA?buildEAATable(d):[];
   const FARM=incluirFarm?buildFarmTable(d):[];
@@ -4114,7 +4124,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
   if(!window.docx){showToast('⚠️ Biblioteca Word não carregada. Verifique a internet.','#e67e22');return;}
   showToast('⏳ Gerando plano alimentar...');
   try{
-    const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType}=window.docx;
+    const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType,TabStopType}=window.docx;
 
     const base=calcDietaBase(d,dietOv,dietCas);
     const{peso,altura,idade,sexo,dn,obj,kcal,cP,pP,gP,carbG,protG,fatG,fibG,hasDM,hasHAS,hasDis,hasObe}=base;
@@ -4134,26 +4144,46 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     function H2(txt){return new Paragraph({heading:HeadingLevel.HEADING_2,children:[new TextRun({text:txt,bold:true,color:'9A7B0A',size:24})],spacing:{before:200,after:100}});}
     function HR(){return new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:1}},spacing:{after:160}});}
 
-    function hCell(txt){return new TableCell({borders:hdrBdrAll,shading:{fill:'161616',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:2340,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]});}
+    function hCell(txt,w=2340){return new TableCell({borders:hdrBdrAll,shading:{fill:'161616',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]});}
     function dCell(txt,fill='FDFBF3',w=2340){return new TableCell({borders:bdrAll,shading:{fill,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:18})],spacing:{after:0}})]});}
 
-    function optDisplaySeg(r){
-      if(r.tipo==='texto')return capFirst(r.valor);
-      const base=(r.gramas||'0')+' g de '+capFirst(r.alimento||'');
-      return r.medida?base+' ('+r.medida+')':base;
-    }
     function optsCell(opts,w){
-      const list=(opts||[]).map(o=>parseOpcaoStr(o)
-        .filter(r=>r.tipo==='texto'?r.valor&&r.valor.trim():(r.alimento&&r.alimento.trim()))
-        .map(optDisplaySeg).join(' + ')
-      ).filter(o=>o&&o.trim());
-      const children=list.length?list.map((o,idx)=>new Paragraph({children:[new TextRun({text:'• '+o,size:18})],spacing:{after:idx===list.length-1?0:70}})):[new Paragraph({children:[new TextRun({text:'—',size:18})],spacing:{after:0}})];
+      const groups=(opts||[]).map(o=>parseOpcaoStr(o).filter(r=>r.tipo==='texto'?r.valor&&r.valor.trim():(r.alimento&&r.alimento.trim()))).filter(g=>g.length);
+      const divBdr={style:BorderStyle.SINGLE,size:6,color:'C9A227'};
+      const tabPos=Math.max(w-500,800);
+      const children=[];
+      if(!groups.length){
+        children.push(new Paragraph({children:[new TextRun({text:'—',size:18})],spacing:{after:0}}));
+      }else{
+        groups.forEach((rows,gi)=>{
+          const isLastGroup=gi===groups.length-1;
+          const label=groups.length>1?(gi===0?'Opção 1:':'Substituição '+gi+' — em vez da opção acima:'):'';
+          if(label)children.push(new Paragraph({children:[new TextRun({text:label,bold:true,size:18,color:'8A6D00'})],spacing:{after:40,before:gi===0?0:80}}));
+          rows.forEach((r,ri)=>{
+            const isLastRow=ri===rows.length-1;
+            const bdrBtm=(isLastRow&&!isLastGroup)?{bottom:divBdr}:undefined;
+            if(r.tipo==='texto'){
+              children.push(new Paragraph({children:[new TextRun({text:capFirst(r.valor),size:18})],spacing:{after:isLastRow?0:40},border:bdrBtm}));
+            }else{
+              const nomeOk=r.alimento&&r.alimento.trim();
+              const nome=nomeOk?capFirst(r.alimento):'⚠ alimento não definido — revisar';
+              const peso=(r.gramas||'0')+' g'+(r.medida?' ('+r.medida+')':'');
+              children.push(new Paragraph({
+                tabStops:[{type:TabStopType.RIGHT,position:tabPos}],
+                children:[new TextRun({text:nome,size:18}),new TextRun({text:'\t'+peso,size:18})],
+                spacing:{after:isLastRow?0:40},
+                border:bdrBtm
+              }));
+            }
+          });
+        });
+      }
       return new TableCell({borders:bdrAll,shading:{fill:'FFFFFF',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children});
     }
     const mealRows=PLAN.map(m=>new TableRow({children:[
-      dCell(m.refeicao,'FBF3DC',1560),
+      dCell(m.refeicao,'FBF3DC',1400),
       dCell(m.horario,'F7F3E8',1000),
-      optsCell(m.opcoes,6800),
+      optsCell(m.opcoes,6960),
     ]}));
 
     const oriRows=buildOris(hasDM,hasHAS,hasDis,hasObe,d,base.modelo,base.regras).map(o=>new TableRow({children:[
@@ -4318,8 +4348,8 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           HR(),
           H1('CARDÁPIO — EXEMPLO DE DISTRIBUIÇÃO DIÁRIA'),
           new Paragraph({children:[new TextRun({text:'Siga os horários sugeridos. Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C',italics:true})],spacing:{after:120}}),
-          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1560,1000,6800],rows:[
-            new TableRow({children:[hCell('Refeição'),hCell('Horário'),hCell('Opções — escolha uma por refeição')]}),
+          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1400,1000,6960],rows:[
+            new TableRow({children:[hCell('Refeição',1400),hCell('Horário',1000),hCell('Opções — escolha uma por refeição',6960)]}),
             ...mealRows,
           ]}),
           new Paragraph({spacing:{after:200}}),
@@ -4476,8 +4506,26 @@ const NOTA_FEIJAO='Sem bacon, linguiça, toucinho ou outros embutidos — temper
 const NOTA_CALDO='Preparo sem bacon, linguiça, toucinho ou outros embutidos — tempero natural, sal moderado, mínimo de gordura';
 const LEGUMES_LIVRE='Legumes cozidos no vapor, sem uso de gordura (vegetais que crescem acima da terra): '+LIVRE_PRATO;
 const LEGUMES_LIVRE_NAO_AMIL='Legumes não amiláceos cozidos no vapor, sem uso de gordura (vegetais que crescem acima da terra): '+LIVRE_PRATO;
-const SOBREMESA_TXT='Sobremesa (ocasional): gelatina zero, leite condensado (1 col. sopa) ou bombom (1 unidade) — conforme preferência';
+const SOBREMESA_TXT='Sobremesa (escolha 1, ~100 kcal): 1 bombom (Sonho de Valsa ou Ouro Branco) OU 1 Trento OU 1 fruta OU gelatina zero + 20 g de leite condensado OU 1 suspiro';
 function isRefeicaoGrande(nome){return /almo[çc]o|jantar/i.test(nome||'');}
+function aplicarSobremesaFixa(plan){
+  (plan||[]).forEach(m=>{
+    if(isRefeicaoGrande(m.refeicao)){
+      m.sobremesa='sim';
+      m.opcoes=(m.opcoes||[]).map(o=>/sobremesa/i.test(o)?o:o+' + '+SOBREMESA_TXT);
+    }
+  });
+  return plan;
+}
+const PIPOCA_OPCAO='Pipoca de milho, sem óleo (30 g de milho de pipoca cru, estourada em panela antiaderente ou de micro-ondas, sem óleo/manteiga)';
+function aplicarPipocaLanche(plan){
+  (plan||[]).forEach(m=>{
+    if(/lanche/i.test(m.refeicao)&&!(m.opcoes||[]).some(o=>/pipoca/i.test(o))){
+      m.opcoes=(m.opcoes||[]).concat([PIPOCA_OPCAO]);
+    }
+  });
+  return plan;
+}
 // ── MODELOS DE DIETA ──
 const MODELOS_DIETA={
   normal:{nome:'Normal / habitual',macro:{p:20,g:28},desc:'Alimentação equilibrada, sem restrição de grupo alimentar.'},
@@ -4615,7 +4663,7 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   const semFeijao=regras.lowFodmap;
   const paoBase=semTrigo?g(40,'pão sem glúten',40,'unidade'):g(50,'pão francês sem miolo',50,'unidade');
   const arrozAlmoco=cortarCarb?g(40,'arroz branco cozido',25,'col. sopa'):g(low?75:100,'arroz branco cozido',25,'col. sopa');
-  const feijaoAlmoco=semFeijao?g(0,'',0,''):' + '+g(60,'feijão cozido',40,'col. de servir')+' + '+NOTA_FEIJAO;
+  const feijaoAlmoco=semFeijao?'':' + '+g(60,'feijão cozido',40,'col. de servir')+' + '+NOTA_FEIJAO;
   const frutaLanche=regras.lowFodmap?g(100,fr(),100,'unidade/porção'):g(120,fr(),120,'unidade média');
   return[
     {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
@@ -4661,6 +4709,12 @@ function buildOris(dm,has,dis,obe,d,modelo,regras){
   if(regras.dash||modelo==='dash')os.push({cat:'DASH — sódio',txt:'Meta de sódio abaixo de 2.300 mg/dia. Priorize potássio, cálcio e magnésio (frutas, vegetais, laticínios magros).'});
   if(modelo==='lowfodmap')os.push({cat:'Low FODMAP',txt:'Reduzido em cebola, alho, trigo, leguminosas e alguns frutos, indicado para controle de sintomas de SII (Síndrome do Intestino Irritável). Reintroduza os grupos gradualmente conforme tolerância, sob orientação profissional.'});
   if(d.turno&&d.turno!=='Diurno'&&d.turno!=='Não trabalho')os.push({cat:'⚠️ Atenção ao sono — trabalho em turnos',txt:'Turno '+d.turno.toLowerCase()+' altera o relógio biológico e prejudica a qualidade do sono, o que dificulta o controle do apetite, a recuperação muscular e a resposta metabólica. Priorize dormir sempre no mesmo horário quando possível, escureça o ambiente e evite cafeína nas horas anteriores ao sono principal.'});
+  if(regras&&regras.refeicaoLivre){
+    const rl=regras.refeicaoLivre;
+    const txtRl=rl==='dia'?'Está liberado 1 dia inteiro livre por semana, sem restrição de escolhas — volte à rotina do plano no dia seguinte.':'Está liberada '+rl+' refeição'+(rl==='1'?'':'s')+' livre'+(rl==='1'?'':'s')+' por semana, na refeição de sua escolha, sem culpa — mantenha o restante do plano.';
+    os.push({cat:'Refeição livre',txt:txtRl});
+  }
+  os.push({cat:'Adoçantes',txt:'Padronize a sucralose como adoçante nas preparações e bebidas (café, chá, sucos, gelatina) que exigirem adoçar — evite açúcar refinado, mel e demais adoçantes.'});
   os.push({cat:'Hidratação',txt:`Beba ${d.peso?Math.max(3,Math.round(parseFloat(d.peso)*0.04*10)/10):3.0}L de água/dia. Pode beber normalmente durante as refeições — pode associar bebidas zero açúcar em geral (refrigerante, chá etc.).`});
   if(has)os.push({cat:'Hipertensão',txt:'Limite o sal a <5g/dia. Evite embutidos, enlatados, temperos prontos e frituras. Aumente alimentos ricos em potássio: banana, laranja, feijão, batata doce.'});
   if(dm)os.push({cat:'Diabetes',txt:'Controle as porções de arroz, pão e massas para manter a resposta glicêmica adequada. Fracione bem as refeições. Evite açúcar, mel, suco de fruta e refrigerante com açúcar — prefira as versões zero. Monitore a glicemia.'});
