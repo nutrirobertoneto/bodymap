@@ -649,6 +649,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div class="div"></div>
       <div class="fg2">
         <div class="fg"><label class="fl">Apetite geral</label><select id="apetite" class="fc" onchange="autoSave()"><option value="">Selecione...</option><option>Aumentado</option><option>Normal</option><option>Reduzido</option><option>Muito reduzido</option></select></div>
+        <div class="fg"><label class="fl">Horário de mais fome</label><select id="horaFome" class="fc" onchange="autoSave()"><option value="">Selecione...</option><option value="Manhã">Manhã</option><option value="Almoço">Almoço</option><option value="Tarde">Tarde</option><option value="Noite">Noite</option><option value="Varia">Varia / sem padrão</option></select></div>
       </div>
     </div>
   </div>
@@ -790,6 +791,47 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <option value="3">3 ou mais refeições livres/semana</option>
         <option value="dia">1 dia inteiro livre/semana</option>
       </select></div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Lanche Manhã (dentro do limite de caloria da dieta)</label><select class="di" id="dwLancheManha" style="max-width:400px">
+        <option value="">Automático (varia)</option>
+        <option value="grao_bico">Grão-de-bico torrado e temperado</option>
+        <option value="tapioca_queijo_ovo">Tapioca com queijo coalho/minas e ovo</option>
+        <option value="cuscuz_ovo_queijo">Cuscuz nordestino com ovo e queijo</option>
+        <option value="batata_doce_ovo">Batata doce cozida com ovo</option>
+        <option value="cottage_torrada">Queijo cottage (ou ricota temperada) com torrada</option>
+        <option value="sardinha_torrada">Sardinha em lata com torrada</option>
+        <option value="iogurte_aveia_canela">Iogurte natural com aveia e canela</option>
+        <option value="ovo_fruta">Ovo cozido com fruta</option>
+      </select></div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Lanche Tarde (dentro do limite de caloria da dieta)</label><select class="di" id="dwLancheTarde" style="max-width:400px">
+        <option value="">Automático (varia)</option>
+        <option value="grao_bico">Grão-de-bico torrado e temperado</option>
+        <option value="tapioca_queijo_ovo">Tapioca com queijo coalho/minas e ovo</option>
+        <option value="cuscuz_ovo_queijo">Cuscuz nordestino com ovo e queijo</option>
+        <option value="batata_doce_ovo">Batata doce cozida com ovo</option>
+        <option value="cottage_torrada">Queijo cottage (ou ricota temperada) com torrada</option>
+        <option value="sardinha_torrada">Sardinha em lata com torrada</option>
+        <option value="iogurte_aveia_canela">Iogurte natural com aveia e canela</option>
+        <option value="ovo_fruta">Ovo cozido com fruta</option>
+      </select></div>
+      <div id="dwFomeNota" style="display:none;font-size:12px;color:var(--gd);background:var(--gp);border:1px solid var(--br);border-radius:8px;padding:8px 10px;margin-top:12px"></div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Distribuição de calorias ao longo do dia</label>
+        <select class="di" id="dwDistCalPerfil" onchange="dietWizRenderDistInputs('cal')" style="max-width:280px">
+          <option value="padrao">Convencional (padrão)</option>
+          <option value="noite">Mais tarde e noite</option>
+          <option value="manha">Mais manhã e almoço</option>
+        </select>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px" id="dwDistCalInputs"></div>
+        <div id="dwDistCalSum" style="font-size:11.5px;margin-top:4px"></div>
+      </div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Distribuição de gordura ao longo do dia</label>
+        <select class="di" id="dwDistFatPerfil" onchange="dietWizRenderDistInputs('fat')" style="max-width:280px">
+          <option value="padrao">Convencional (padrão)</option>
+          <option value="noite">Mais tarde e noite</option>
+          <option value="manha">Mais manhã e almoço</option>
+        </select>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px" id="dwDistFatInputs"></div>
+        <div id="dwDistFatSum" style="font-size:11.5px;margin-top:4px"></div>
+      </div>
       <div style="display:flex;justify-content:space-between;margin-top:16px">
         <button class="pw-cancel" onclick="dietWizPadrao()">↺ Usar sugestão do modelo</button>
         <div style="display:flex;gap:10px">
@@ -834,6 +876,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <h2 style="font-size:19px;margin-bottom:2px">📄 4/4 — Fechamento do documento</h2>
       <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">O que aparece no fechamento do Word, com a composição corporal do paciente?</p>
       <div class="cons-grid" id="dwFechoGrid"></div>
+      <div class="fg" style="margin-top:18px">
+        <label class="fl">Observação importante para este PLANNER (opcional)</label>
+        <textarea id="dwObsImportante" class="fc" rows="3" placeholder="Ex.: paciente relatou algo novo, atenção especial a um alimento, ajuste pontual que não se encaixa nas outras perguntas..."></textarea>
+        <p style="font-size:11px;color:var(--mu);margin-top:4px">Se preenchido, isso entra em destaque logo no início do documento Word.</p>
+      </div>
       <div style="display:flex;justify-content:space-between;margin-top:20px">
         <button class="pw-cancel" onclick="dietWizVoltar2()">← Voltar</button>
         <div style="display:flex;gap:10px">
@@ -1901,7 +1948,7 @@ async function landingNovoPaciente(){
   await resetFormularioCompleto();
   goTab(0);
 }
-const CAMPOS_TEXTO_RESET=['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','horasSono','obsGerais','cigarrosN','turno','pa','consRespNome','consRespVinc','consNomeConf'];
+const CAMPOS_TEXTO_RESET=['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','horasSono','obsGerais','cigarrosN','turno','pa','consRespNome','consRespVinc','consNomeConf'];
 const RADIOS_RESET=['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'];
 const CHECKGRUPOS_RESET=['doencas','alergias','histFam','queixasGI'];
 // zera a ficha inteira na hora, sem depender de recarregar a página (o visualizador de teste do Claude não recarrega de verdade)
@@ -2461,7 +2508,7 @@ async function gerarBariatricaDoc(d,fase,obsExtra){
           ...(obsExtra?[H1('OBSERVAÇÕES DO PROFISSIONAL PARA ESTA FASE'),P(obsExtra)]:[]),
           new Paragraph({spacing:{after:240}}),
           HR(),
-          new Paragraph({children:[new TextRun({text:'Plano orientativo por fase pós-bariátrica. Prazos e progressão de textura devem ser ajustados pelo profissional conforme a evolução clínica de cada paciente.',size:16,color:'7F8C8D',italics:true})]})
+          new Paragraph({children:[new TextRun({text:'Plano orientativo por fase pós-bariátrica. Prazos e progressão de textura devem ser ajustados pelo profissional conforme a evolução clínica de cada paciente.',size:16,color:'7F8C8D'})]})
         ]
       }]
     });
@@ -3332,7 +3379,7 @@ try{localStorage.removeItem(DK);}catch(e){}
 
 function collectData(){
   const d={};
-  ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
+  ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
   ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'].forEach(n=>{const e=document.querySelector(`input[name="${n}"]:checked`);d[n]=e?e.value:'';});
   ['doencas','alergias','histFam','queixasGI'].forEach(g=>{d[g]=Array.from(document.querySelectorAll(`#cg_${g} input:checked`)).map(i=>i.value);});
   d.tipoAf=Array.from(document.querySelectorAll('#afDet input[type="checkbox"]:checked')).map(i=>i.value);
@@ -3385,7 +3432,7 @@ function loadData(dov){
   const raw=dov?null:sessionStorage.getItem(DK);if(!dov&&!raw)return;
   try{
     const d=dov||JSON.parse(raw);
-    ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
+    ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
     ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'].forEach(n=>{
       if(d[n]){
         document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{
@@ -3638,6 +3685,14 @@ function buildRecsPlain(d,imc,dn){
   return rs;
 }
 
+function buildExamePlanoAcao(d){
+  const e=d.exameIA;
+  if(!e||!e.aprovado)return null;
+  const itens=exameAlertas(e);
+  if(!e.resumo&&!itens.length)return null;
+  return{resumo:(e.resumo||'').trim(),itens};
+}
+
 // ── Calcula a lista de fatores de risco (mesma lógica do relatório em tela), em texto puro ──
 function buildRisksPlain(d){
   const imc=d.imcVal?parseFloat(d.imcVal):null;
@@ -3658,7 +3713,6 @@ function buildRisksPlain(d){
   if(parseFloat(d.agua||0)<2)risks.push('Baixa hidratação (<2L/dia)');
   if(preensao&&preensao.baixo)risks.push('Força de preensão reduzida (possível sarcopenia)');
   if(gordCl&&gordCl.color==='r')risks.push('% gordura corporal elevado');
-  exameAlertas(d.exameIA&&d.exameIA.aprovado?d.exameIA:null).slice(0,8).forEach(a=>risks.push('🧪 '+a.curto));
   if(!risks.length)risks.push('Sem fatores de risco identificados');
   return risks;
 }
@@ -3716,6 +3770,21 @@ function dietWizRenderStep1(){
   g('dwProt').value=Math.round(dietWizCtx.pP*100);
   g('dwFat').value=Math.round(dietWizCtx.gP*100);
   g('dwFibra').value=dietWizCtx.fibG;
+  const horaFome=(dietWizCtx.d&&dietWizCtx.d.horaFome)||'';
+  const perfilSugerido=(horaFome==='Tarde'||horaFome==='Noite')?'noite':(horaFome==='Manhã'||horaFome==='Almoço')?'manha':'';
+  const nota=g('dwFomeNota');
+  if(perfilSugerido){
+    g('dwDistCalPerfil').value=perfilSugerido;
+    g('dwDistFatPerfil').value=perfilSugerido;
+    nota.style.display='block';
+    nota.textContent='💡 Paciente relatou mais fome à(o) '+horaFome.toLowerCase()+' — perfil de distribuição sugerido automaticamente abaixo (pode ajustar).';
+  }else{
+    g('dwDistCalPerfil').value='padrao';
+    g('dwDistFatPerfil').value='padrao';
+    nota.style.display='none';
+  }
+  dietWizRenderDistInputs('cal');
+  dietWizRenderDistInputs('fat');
   dietWizAtualizar();
 }
 function dietWizAtualizar(){
@@ -3738,12 +3807,47 @@ function dietWizPadrao(){
   dietWizCtx.kcal=base.kcal;dietWizCtx.pP=base.pP;dietWizCtx.gP=base.gP;dietWizCtx.fibG=base.fibG;
   dietWizRenderStep1();
 }
+const DIST_LABELS={cafe:'Café',lancheM:'Lanche M.',almoco:'Almoço',lancheT:'Lanche T.',jantar:'Jantar',ceia:'Ceia'};
+function dietWizRenderDistInputs(kind){
+  const wrap=document.getElementById(kind==='cal'?'dwDistCalInputs':'dwDistFatInputs');
+  const perfil=document.getElementById(kind==='cal'?'dwDistCalPerfil':'dwDistFatPerfil').value;
+  const vals=DIST_PRESETS[perfil]||DIST_PRESETS.padrao;
+  wrap.innerHTML=Object.keys(DIST_LABELS).map(k=>`<div style="display:flex;flex-direction:column;align-items:center;width:64px"><input class="di" style="width:52px;text-align:center;padding:4px" type="number" min="0" max="100" value="${vals[k]}" data-key="${k}" oninput="dietWizAtualizarSomaDist('${kind}')"><span style="font-size:10px;color:var(--mu)">${DIST_LABELS[k]}</span></div>`).join('');
+  dietWizAtualizarSomaDist(kind);
+}
+function dietWizAtualizarSomaDist(kind){
+  const wrap=document.getElementById(kind==='cal'?'dwDistCalInputs':'dwDistFatInputs');
+  const sumEl=document.getElementById(kind==='cal'?'dwDistCalSum':'dwDistFatSum');
+  let soma=0;
+  wrap.querySelectorAll('input').forEach(i=>soma+=parseFloat(i.value)||0);
+  sumEl.textContent='Soma: '+soma+'%'+(soma!==100?' ⚠️ deve somar 100%':' ✓');
+  sumEl.style.color=soma!==100?'#e67e22':'#27ae60';
+}
+function dietWizColetarDist(kind){
+  const wrap=document.getElementById(kind==='cal'?'dwDistCalInputs':'dwDistFatInputs');
+  const obj={};
+  wrap.querySelectorAll('input').forEach(i=>obj[i.dataset.key]=parseFloat(i.value)||0);
+  return obj;
+}
 function dietWizProximo(){
   dietWizAtualizar();
   if(!dietWizCtx.valido){showToast('⚠️ Ajuste as porcentagens: a soma não pode passar de 100%','#e67e22');return;}
   const rl=document.getElementById('dwRefLivre');
+  const lm=document.getElementById('dwLancheManha');
+  const lt=document.getElementById('dwLancheTarde');
+  if(!document.getElementById('dwDistCalInputs').children.length)dietWizRenderDistInputs('cal');
+  if(!document.getElementById('dwDistFatInputs').children.length)dietWizRenderDistInputs('fat');
+  const distCal=dietWizColetarDist('cal');
+  const distFat=dietWizColetarDist('fat');
+  const somaCal=Object.values(distCal).reduce((a,b)=>a+b,0);
+  const somaFat=Object.values(distFat).reduce((a,b)=>a+b,0);
+  if(Math.abs(somaCal-100)>0.5||Math.abs(somaFat-100)>0.5){showToast('⚠️ A distribuição de calorias e de gordura por refeição deve somar 100% cada','#e67e22');return;}
   dietWizCtx.regras=dietWizCtx.regras||{};
   dietWizCtx.regras.refeicaoLivre=rl?rl.value:'';
+  dietWizCtx.regras.lancheManha=lm?lm.value:'';
+  dietWizCtx.regras.lancheTarde=lt?lt.value:'';
+  dietWizCtx.regras.distCal=distCal;
+  dietWizCtx.regras.distFat=distFat;
   document.getElementById('dwStep1').style.display='none';
   document.getElementById('dwStep2').style.display='block';
 }
@@ -3771,12 +3875,15 @@ function dietWizRenderStep3(){
   let html='<label class="cons-ck"><input type="radio" name="dwFecho" value="atual" checked><span>Só a composição corporal atual</span></label>';
   if(temAnterior)html+='<label class="cons-ck"><input type="radio" name="dwFecho" value="evolucao"><span>Com evolução (comparando com a avaliação anterior)</span></label><label class="cons-ck"><input type="radio" name="dwFecho" value="ambos"><span>Os dois — atual e evolução</span></label>';
   grid.innerHTML=html;
+  const obsEl=document.getElementById('dwObsImportante');
+  if(obsEl)obsEl.value='';
 }
 function fecharDietWizard(){document.getElementById('dietWizardOverlay').style.display='none';}
 function dietWizGerar(){
   const f=document.querySelector('input[name="dwFecho"]:checked');
+  const obsEl=document.getElementById('dwObsImportante');
   fecharDietWizard();
-  abrirEditorDieta(dietWizCtx.d,{kcal:dietWizCtx.kcal,pP:dietWizCtx.pP,gP:dietWizCtx.gP,fibG:dietWizCtx.fibG,modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,incluirSup:dietWizCtx.incluirSup,incluirEAA:dietWizCtx.incluirEAA,incluirFarm:dietWizCtx.incluirFarm,fecho:f?f.value:'atual'});
+  abrirEditorDieta(dietWizCtx.d,{kcal:dietWizCtx.kcal,pP:dietWizCtx.pP,gP:dietWizCtx.gP,fibG:dietWizCtx.fibG,modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,incluirSup:dietWizCtx.incluirSup,incluirEAA:dietWizCtx.incluirEAA,incluirFarm:dietWizCtx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():''});
 }
 
 // ── DIET WORD ──
@@ -4111,7 +4218,7 @@ function calcDietaBase(d,ov,cas){
   const hasDis=dn.includes('DISLIPI');
   const hasObe=imc(d)>=30;
   const regras=(ov&&ov.regras)||{};
-  const PLAN=aplicarPipocaLanche(aplicarSobremesaFixa(buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,!!cas)));
+  const PLAN=aplicarPipocaLanche(aplicarSobremesaFixa(buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,!!cas)),modelo,regras);
   const SUP=incluirSup?buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj):[];
   const EAA=incluirEAA?buildEAATable(d):[];
   const FARM=incluirFarm?buildFarmTable(d):[];
@@ -4232,6 +4339,12 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
     ]);
 
+    const receitasFitBlocks=buildReceitasFit().flatMap(r=>[
+      H2(r.titulo),
+      new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
+      new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
+    ]);
+
     // ── FECHAMENTO: composição atual e/ou evolução ──
     const dietKey=chavePaciente(d);
     const dietEnts=avaliacoesDe(dietKey);
@@ -4261,10 +4374,12 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
         new Paragraph({spacing:{after:200}}),HR());
     }
 
-    // ── RELATÓRIO NUTRICIONAL COMPLETO (riscos, alertas, orientações) — anexado a pedido do profissional ──
+    // ── RELATÓRIO NUTRICIONAL COMPLETO (antropometria, índices, composição corporal, riscos, orientações) — anexado a pedido do profissional ──
     const incluirRelatorioCompleto=true;
     if(incluirRelatorioCompleto){
       const repImc=d.imcVal?parseFloat(d.imcVal):(peso&&d.altura?peso/Math.pow(parseFloat(d.altura)/100,2):null);
+      const repIdadeN=parseFloat(d.idade)||null;
+      const repImcCl=repImc?classIMC(repImc,repIdadeN):null;
       const repDn=d.doencas||[];
       const repGordPct=gorduraPctFromData(d);
       const repGordCl=repGordPct!==null?classGordura(repGordPct,sexo||'M'):null;
@@ -4275,14 +4390,42 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       const repGet=Math.round(repTmb.bmr*repCaf);
       const repRisks=buildRisksPlain(d);
       const repRecs=buildRecsPlain(d,repImc,repDn);
+      const repRcq=d.cintura&&d.quadril?(parseFloat(d.cintura)/parseFloat(d.quadril)):null;
+      const repRcqCl=repRcq!==null?classRCQ(repRcq,sexo||'M',repIdadeN||30):null;
+      const repRce=d.cintura&&d.altura?(parseFloat(d.cintura)/parseFloat(d.altura)):null;
+      const repIac=d.quadril&&d.altura?((parseFloat(d.quadril)/((parseFloat(d.altura)/100)*Math.sqrt(parseFloat(d.altura)/100)))-18):null;
+      const repIc=d.cintura&&d.peso&&d.altura?((parseFloat(d.cintura)/100)/(0.109*Math.sqrt(parseFloat(d.peso)/(parseFloat(d.altura)/100)))):null;
+      const repCircRow=[['Pescoço',d.pescoco],['Ombro',d.ombro],['Tórax/Peito',d.torax],['Cintura',d.cintura],['Abdômen',d.abdomen],['Quadril',d.quadril],['Braço relaxado',d.biceps],['Braço contraído',d.bracoContraido],['Antebraço',d.antebraco],['Coxa',d.coxaMed],['Panturrilha',d.panturrilha]].filter(([,v])=>v);
+      const repDobrasRow=[['Tríceps',d.db_tri],['Subescapular',d.db_sub],['Axilar média',d.db_axi],['Peitoral',d.db_pei],['Suprailíaca',d.db_sup],['Abdominal',d.db_abd],['Coxa',d.db_cox]].filter(([,v])=>v);
+      const repSf=skinfoldFromData(d);
+      const repPreensao=preensaoFromData(d);
       fechoBlocks.push(H1('RELATÓRIO NUTRICIONAL COMPLETO'),
-        new Paragraph({children:[new TextRun({text:'Avaliação de triagem e apoio à prescrição — riscos, alertas e orientações identificados nesta avaliação.',size:18,color:'8A7F5C',italics:true})],spacing:{after:160}}),
+        new Paragraph({children:[new TextRun({text:'Avaliação de triagem e apoio à prescrição — riscos, alertas e orientações identificados nesta avaliação.',size:18,color:'8A7F5C'})],spacing:{after:160}}),
+        H2('📏 Avaliação Antropométrica'),
+        new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2340,2340,2340,2340],rows:[
+          new TableRow({children:[hCell('Peso (kg)'),hCell('Altura (cm)'),hCell('IMC (kg/m²)'),hCell('RCQ')]}),
+          new TableRow({children:[dCell(d.peso||'—','FDFBF3'),dCell(d.altura||'—','FDFBF3'),dCell((repImc?repImc.toFixed(1):'—')+(repImcCl?' — '+repImcCl.label:''),'FDFBF3'),dCell((repRcq!==null?repRcq.toFixed(2):'—')+(repRcqCl?' — '+repRcqCl.label:''),'FDFBF3')]}),
+        ]}),
+        ...(repCircRow.length?[new Paragraph({children:[new TextRun({text:'Circunferências (cm): ',bold:true,size:18,color:'161616'}),new TextRun({text:repCircRow.map(([k,v])=>k+': '+v).join(' · '),size:18})],spacing:{before:120,after:80}})]:[]),
+        ...(d.pa?[new Paragraph({children:[new TextRun({text:'Pressão arterial: ',bold:true,size:18,color:'161616'}),new TextRun({text:d.pa+' mmHg',size:18})],spacing:{after:120}})]:[new Paragraph({spacing:{after:120}})]),
+        H2('📊 Índices Antropométricos Complementares'),
+        new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2340,2340,2340,2340],rows:[
+          new TableRow({children:[hCell('RCE'),hCell('IAC (%)'),hCell('Índice Conicidade'),hCell('Circunf. Pescoço (cm)')]}),
+          new TableRow({children:[dCell(repRce!==null?repRce.toFixed(2)+(repRce>=0.50?' — risco elevado':' — normal'):'—','FDFBF3'),dCell(repIac!==null?repIac.toFixed(1):'—','FDFBF3'),dCell(repIc!==null?repIc.toFixed(2)+(repIc>=(sexo==='F'?1.18:1.25)?' — risco elevado':' — normal'):'—','FDFBF3'),dCell(d.pescoco?d.pescoco+(parseFloat(d.pescoco)>=(sexo==='F'?34.9:37.9)?' — risco aumentado':' — normal'):'—','FDFBF3')]}),
+        ]}),
+        new Paragraph({spacing:{after:200}}),
+        HR(),
+        H2('🩻 Composição Corporal & Força'),
+        ...(repGordPct!==null?[new Paragraph({children:[new TextRun({text:'% Gordura corporal: ',bold:true,size:18,color:'161616'}),new TextRun({text:repGordPct.toFixed(1)+'% ('+(repGordCl?repGordCl.label:'')+')'+(repMassaMagra?' · massa magra '+repMassaMagra.toFixed(1)+'kg':'')+(repMassaGorda?' · massa gorda '+repMassaGorda.toFixed(1)+'kg':''),size:18})],spacing:{after:100}})]:[]),
+        ...(repDobrasRow.length?[new Paragraph({children:[new TextRun({text:'Dobras cutâneas (mm)'+(repSf?' — soma: '+repSf.soma.toFixed(1)+'mm':'')+': ',bold:true,size:18,color:'161616'}),new TextRun({text:repDobrasRow.map(([k,v])=>k+': '+v).join(' · '),size:18})],spacing:{after:100}})]:[]),
+        ...(repPreensao?[new Paragraph({children:[new TextRun({text:'Força de preensão manual: ',bold:true,size:18,color:'161616'}),new TextRun({text:repPreensao.media.toFixed(1)+' kgf (corte: '+repPreensao.corte+'kg) — '+(repPreensao.baixo?'reduzida — possível dinapenia/sarcopenia':'preservada'),size:18})],spacing:{after:100}})]:[]),
+        new Paragraph({spacing:{after:120}}),
+        H2('🔥 Gasto Energético'),
         new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[3120,3120,3120],rows:[
           new TableRow({children:[hCell('TMB (kcal)'),hCell('CAF'),hCell('GET estimado (kcal)')]}),
           new TableRow({children:[dCell(String(Math.round(repTmb.bmr)),'FDFBF3'),dCell(repCaf.toFixed(2),'FDFBF3'),dCell(String(repGet),'FDFBF3')]}),
         ]}),
         new Paragraph({spacing:{after:160}}),
-        ...(repGordPct!==null?[new Paragraph({children:[new TextRun({text:'Composição corporal: ',bold:true,size:18,color:'161616'}),new TextRun({text:repGordPct.toFixed(1)+'% de gordura ('+(repGordCl?repGordCl.label:'')+')'+(repMassaMagra?' · massa magra '+repMassaMagra.toFixed(1)+'kg':'')+(repMassaGorda?' · massa gorda '+repMassaGorda.toFixed(1)+'kg':''),size:18})],spacing:{after:160}})]:[]),
         H2('⚠️ Fatores de risco identificados'),
         ...repRisks.map(r=>new Paragraph({children:[new TextRun({text:'• '+r,size:18})],spacing:{after:60}})),
         new Paragraph({spacing:{after:120}}),
@@ -4347,7 +4490,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new Paragraph({spacing:{after:200}}),
           HR(),
           H1('CARDÁPIO — EXEMPLO DE DISTRIBUIÇÃO DIÁRIA'),
-          new Paragraph({children:[new TextRun({text:'Siga os horários sugeridos. Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C',italics:true})],spacing:{after:120}}),
+          new Paragraph({children:[new TextRun({text:'Siga os horários sugeridos. Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1400,1000,6960],rows:[
             new TableRow({children:[hCell('Refeição',1400),hCell('Horário',1000),hCell('Opções — escolha uma por refeição',6960)]}),
             ...mealRows,
@@ -4367,10 +4510,31 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           P(buildEvitar(hasDM,hasHAS,hasDis).join(' · ')),
           H2('BEBIDAS PERMITIDAS'),
           P('Água, chás sem açúcar e, com moderação, refrigerantes e outras bebidas zero açúcar/diet — ajudam na adesão ao plano. Evite as versões com açúcar.'),
-          H2('DOCES E SOBREMESAS (uso ocasional, 2–3x por semana)'),
-          P(buildSobremesas().map(x=>x.item+': '+x.obs).join(' · ')),
           new Paragraph({spacing:{after:200}}),
           HR(),
+          ...((dietOv&&dietOv.obsImportante)?[
+            new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[9360],rows:[
+              new TableRow({children:[new TableCell({borders:bdrAll,shading:{fill:'FDF3D8',type:ShadingType.CLEAR},margins:{top:100,bottom:100,left:140,right:140},children:[
+                new Paragraph({children:[new TextRun({text:'⚠️ Observação importante: ',bold:true,size:19,color:'9A7B0A'}),new TextRun({text:dietOv.obsImportante,size:19,color:'161616'})],spacing:{after:0}})
+              ]})]}),
+            ]}),
+            new Paragraph({spacing:{after:200}}),
+            HR(),
+          ]:[]),
+          ...(()=>{
+            const ep=buildExamePlanoAcao(d);
+            if(!ep)return[];
+            return[
+              H1('PLANO DE AÇÃO — AVALIAÇÃO LABORATORIAL'),
+              ...(ep.resumo?[new Paragraph({children:[new TextRun({text:ep.resumo,size:19})],spacing:{after:(ep.itens.length?120:0)}})]:[]),
+              ...(ep.itens.length?[
+                new Paragraph({children:[new TextRun({text:'Itens de maior relevância para o plano:',bold:true,size:19,color:'161616'})],spacing:{after:60}}),
+                ...ep.itens.slice(0,6).map(it=>new Paragraph({children:[new TextRun({text:'• '+it.texto,size:19})],spacing:{after:40}}))
+              ]:[]),
+              new Paragraph({spacing:{after:200}}),
+              HR(),
+            ];
+          })(),
           ...(supRows.length?[H1('SUPLEMENTAÇÃO, VITAMINAS E MINERAIS'),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1960,1560,1980,1860],rows:[
             new TableRow({children:[hCell('Suplemento/Vitamina'),hCell('Classificação'),hCell('Dosagem'),hCell('Horário')]}),
@@ -4393,25 +4557,34 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new Paragraph({spacing:{after:200}}),
           HR()]:[]),
           H1('FRUTAS LIBERADAS — CONSUMO LIVRE'),
-          new Paragraph({children:[new TextRun({text:'Menor teor de amido/açúcar — pode repetir a fruta à vontade, respeitando a saciedade.',size:18,color:'8A7F5C',italics:true})],spacing:{after:100}}),
+          new Paragraph({children:[new TextRun({text:'Menor teor de amido/açúcar — pode repetir a fruta à vontade, respeitando a saciedade.',size:18,color:'8A7F5C'})],spacing:{after:100}}),
           P(buildFrutasLiberadas().join(' · ')),
           new Paragraph({spacing:{after:200}}),
           HR(),
           H1('LISTAS DE SUBSTITUIÇÃO'),
-          new Paragraph({children:[new TextRun({text:'Use estas equivalências para variar o cardápio mantendo o valor nutricional semelhante.',size:18,color:'8A7F5C',italics:true})],spacing:{after:120}}),
+          new Paragraph({children:[new TextRun({text:'Use estas equivalências para variar o cardápio mantendo o valor nutricional semelhante.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2340,7020],rows:[
             new TableRow({children:[hCell('Grupo'),hCell('Equivalências')]}),
             ...substRows,
           ]}),
           new Paragraph({spacing:{after:200}}),
           HR(),
+          H1('SALADA E LEGUMES — PADRÃO DE PREPARO'),
+          new Paragraph({children:[new TextRun({text:'1) Salada/Hortaliças — consumir primeiro: ',bold:true,size:18,color:'161616'}),new TextRun({text:'01 prato raso de servir cheio, temperado com ervas desidratadas a gosto, sal (1 g — sachê padrão), suco de limão ou vinagre, e pimenta-do-reino (opcional). Sem molhos industrializados — apenas versões naturais ou molho tabasco.',size:18})],spacing:{after:100}}),
+          new Paragraph({children:[new TextRun({text:'2) Legumes: ',bold:true,size:18,color:'161616'}),new TextRun({text:'apenas os cultivados acima da terra, com baixo ou zero amido (ex.: brócolis, couve-flor, abobrinha, berinjela, pimentão, vagem, chuchu, couve, espinafre, rúcula, acelga, repolho, couve-de-bruxelas, quiabo, pepino, tomate) — 01 prato de sobremesa cheio, preferencialmente no vapor ou refogados. O azeite já calculado para a refeição deve ser dividido entre o preparo da proteína e dos legumes — não some quantidade extra. Tempero: alho, cebola, ervas, suco de limão, sal (1 g na hora de servir), pimenta ou tabasco.',size:18})],spacing:{after:200}}),
+          HR(),
           H1('ALGUMAS RECEITAS — MODO DE PREPARO'),
-          new Paragraph({children:[new TextRun({text:'Quantidade de azeite calculada proporcionalmente à sua meta diária de gordura. Sal: no máximo 1 g por porção (1 sachê padrão Cisne), salvo orientação diferente abaixo.',size:18,color:'8A7F5C',italics:true})],spacing:{after:120}}),
+          new Paragraph({children:[new TextRun({text:'Quantidade de azeite calculada proporcionalmente à sua meta diária de gordura. Sal: no máximo 1 g por porção (1 sachê padrão Cisne), salvo orientação diferente abaixo.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           ...receitasBlocks,
           new Paragraph({spacing:{after:240}}),
           HR(),
+          H1('RECEITAS FIT — SUBSTITUIÇÕES DE LANCHE E SOBREMESA'),
+          new Paragraph({children:[new TextRun({text:'Pode usar no lugar de qualquer lanche ou sobremesa marcada como "Receitas Fit" no cardápio acima.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
+          ...receitasFitBlocks,
+          new Paragraph({spacing:{after:240}}),
+          HR(),
           ...fechoBlocks,
-          new Paragraph({children:[new TextRun({text:'Este plano alimentar foi elaborado com base nos dados informados pelo paciente. Acompanhamento profissional regular é fundamental para ajuste das quantidades e progresso nutricional.',size:16,color:'7F8C8D',italics:true})],spacing:{after:80}}),
+          new Paragraph({children:[new TextRun({text:'Este plano alimentar foi elaborado com base nos dados informados pelo paciente. Acompanhamento profissional regular é fundamental para ajuste das quantidades e progresso nutricional.',size:16,color:'7F8C8D'})],spacing:{after:80}}),
           new Paragraph({children:[new TextRun({text:`Referências: Guia Alimentar para a Pop. Brasileira (MS, 2014) · ABESO · SBC/SBD 2025 · OMS · Tabela TACO 4ª ed.`,size:14,color:'7F8C8D'})]})
         ]
       }]
@@ -4502,11 +4675,12 @@ function porMl(mlBase,k,nome,cas,unMl,unNome){
   return t;
 }
 const LIVRE_PRATO='01 prato raso de servir cheio';
+const LIVRE_PRATO_LEGUMES='01 prato de sobremesa cheio';
 const NOTA_FEIJAO='Sem bacon, linguiça, toucinho ou outros embutidos — tempero natural, sal moderado, mínimo de gordura';
 const NOTA_CALDO='Preparo sem bacon, linguiça, toucinho ou outros embutidos — tempero natural, sal moderado, mínimo de gordura';
-const LEGUMES_LIVRE='Legumes cozidos no vapor, sem uso de gordura (vegetais que crescem acima da terra): '+LIVRE_PRATO;
-const LEGUMES_LIVRE_NAO_AMIL='Legumes não amiláceos cozidos no vapor, sem uso de gordura (vegetais que crescem acima da terra): '+LIVRE_PRATO;
-const SOBREMESA_TXT='Sobremesa (escolha 1, ~100 kcal): 1 bombom (Sonho de Valsa ou Ouro Branco) OU 1 Trento OU 1 fruta OU gelatina zero + 20 g de leite condensado OU 1 suspiro';
+const LEGUMES_LIVRE='Legumes (cultivados acima da terra, baixo/zero amido): '+LIVRE_PRATO_LEGUMES;
+const LEGUMES_LIVRE_NAO_AMIL='Legumes (cultivados acima da terra, baixo/zero amido): '+LIVRE_PRATO_LEGUMES;
+const SOBREMESA_TXT='Sobremesa (escolha 1, ~100 kcal): 1 bombom (Sonho de Valsa ou Ouro Branco), 1 Trento, 1 fruta, gelatina zero com 20 g de leite condensado, ou 1 suspiro';
 function isRefeicaoGrande(nome){return /almo[çc]o|jantar/i.test(nome||'');}
 function aplicarSobremesaFixa(plan){
   (plan||[]).forEach(m=>{
@@ -4518,7 +4692,8 @@ function aplicarSobremesaFixa(plan){
   return plan;
 }
 const PIPOCA_OPCAO='Pipoca de milho, sem óleo (30 g de milho de pipoca cru, estourada em panela antiaderente ou de micro-ondas, sem óleo/manteiga)';
-function aplicarPipocaLanche(plan){
+function aplicarPipocaLanche(plan,modelo,regras){
+  if(modelo==='ceto'||(regras&&regras.semGrao))return plan;
   (plan||[]).forEach(m=>{
     if(/lanche/i.test(m.refeicao)&&!(m.opcoes||[]).some(o=>/pipoca/i.test(o))){
       m.opcoes=(m.opcoes||[]).concat([PIPOCA_OPCAO]);
@@ -4542,6 +4717,23 @@ const MODELOS_DIETA={
 };
 const MODELOS_ESPECIAIS={bariatrica:{nome:'Bariátrica (pós-cirurgia, por fases)',desc:'Gera um plano por fase (líquida, pastosa/purê, branda, regular adaptada), com textura e volume próprios — não usa a tabela normal de refeições.'}};
 
+// ── distribuição de calorias e gordura ao longo do dia (perfis prontos + ajuste manual por refeição) ──
+const DIST_BASE={cafe:20,lancheM:10,almoco:30,lancheT:10,jantar:25,ceia:5};
+const DIST_PRESETS={
+  padrao:{cafe:20,lancheM:10,almoco:30,lancheT:10,jantar:25,ceia:5},
+  noite:{cafe:15,lancheM:8,almoco:25,lancheT:12,jantar:30,ceia:10},
+  manha:{cafe:25,lancheM:13,almoco:35,lancheT:8,jantar:15,ceia:4}
+};
+const LANCHE_TEMPLATES={
+  grao_bico:{nome:'Grão-de-bico torrado e temperado',build:(g)=>g(40,'grão-de-bico torrado e temperado (páprica, alho em pó)',30,'punhado(s)')},
+  tapioca_queijo_ovo:{nome:'Tapioca com queijo coalho/minas e ovo',build:(g)=>g(40,'goma de tapioca',40,'unidade(s)')+' + '+g(30,'queijo coalho ou minas',30,'fatia(s)')+' + '+g(50,'ovo mexido (1 ovo)',50,'unidade(s)')},
+  cuscuz_ovo_queijo:{nome:'Cuscuz nordestino com ovo e queijo',build:(g)=>g(60,'cuscuz de milho cozido',60,'fatia(s)')+' + '+g(50,'ovo mexido (1 ovo)',50,'unidade(s)')+' + '+g(20,'queijo muçarela',20,'fatia(s)')},
+  batata_doce_ovo:{nome:'Batata doce cozida com ovo',build:(g)=>g(100,'batata doce cozida',100,'unidade pequena')+' + '+g(50,'ovo cozido (1 ovo)',50,'unidade(s)')},
+  cottage_torrada:{nome:'Queijo cottage (ou ricota temperada) com torrada',build:(g)=>g(100,'queijo cottage (ou ricota amassada e temperada)',100,'pote(s)')+' + '+g(30,'torrada integral',15,'unidade(s)')},
+  sardinha_torrada:{nome:'Sardinha em lata com torrada',build:(g)=>g(60,'sardinha em lata (escorrida)',60,'unidade(s)')+' + '+g(30,'torrada integral',15,'unidade(s)')},
+  iogurte_aveia_canela:{nome:'Iogurte natural com aveia e canela',build:(g)=>g(170,'iogurte natural',170,'pote(s)')+' + '+g(20,'aveia em flocos',20,'col. sopa')+' + canela a gosto'},
+  ovo_fruta:{nome:'Ovo cozido com fruta',build:(g,ml,fr)=>g(100,'ovo cozido (2 ovos)',50,'unidade(s)')+' + '+g(100,fr(),100,'unidade(s)')}
+};
 function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   const regras=Object.assign({},(MODELOS_DIETA[modelo]&&MODELOS_DIETA[modelo].regras)||{},regrasIn||{});
   const low=obe||kcal<1600;
@@ -4557,38 +4749,52 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   const FRUTAS_ALT=['banana','maçã','manga','uva'];
   let _frIdx=0;
   const fr=()=>{const arr=low?FRUTAS_LOW:FRUTAS_ALT;const n=arr[_frIdx%arr.length];_frIdx++;return n;};
+  // ── bebidas: rotaciona café/chá de manhã, e chás calmantes à tarde/noite — sempre com opção de sucralose ──
+  let _bebMIdx=0;
+  const bebManha=()=>{
+    const t=_bebMIdx%4;_bebMIdx++;
+    if(t===0)return'café sem açúcar (ou adoçar com sucralose)';
+    if(t===1)return'café com '+ml(150,'leite desnatado',200,'copo(s)')+' (sem açúcar, ou adoçar com sucralose)';
+    if(t===2)return'chá preto sem açúcar (ou adoçar com sucralose)';
+    return'chá mate sem açúcar (ou adoçar com sucralose)';
+  };
+  let _bebNIdx=0;
+  const bebNoite=()=>{const n=_bebNIdx%2===0?'chá de camomila sem açúcar (ou adoçar com sucralose)':'chá de hortelã sem açúcar (ou adoçar com sucralose)';_bebNIdx++;return n;};
+  // ── ovo: em dieta mais restrita em caloria, troca parte da gema por clara de ovo pasteurizada (mantém proteína, reduz caloria/gordura) — não se aplica à cetogênica, que depende da gordura da gema ──
+  const ovoCafe2=()=>low
+    ?g(50,'ovo mexido (1 ovo inteiro)',50,'unidade(s)')+' + '+g(40,'clara de ovo pasteurizada',0,'')
+    :g(100,'ovos mexidos (2 ovos)',50,'unidade(s)');
 
   // ── vegetariana/vegana: fontes proteicas conforme flags ──
   if(regras.semCarne){
     const permOvo=!regras.semOvo,permLat=!regras.semLaticinio;
     const protAlmoco=[
-      g(90,'grão-de-bico cozido',150,'concha')+' + '+g(60,'arroz '+(regras.integral?'integral':'branco')+' cozido',25,'col. sopa')+' + '+NOTA_FEIJAO,
-      g(90,'lentilha cozida',150,'concha')+' + '+g(60,'arroz '+(regras.integral?'integral':'branco')+' cozido',25,'col. sopa')+' + '+NOTA_FEIJAO,
+      g(90,'grão-de-bico cozido',150,'concha(s)')+' + '+g(60,'arroz '+(regras.integral?'integral':'branco')+' cozido',25,'col. sopa')+' + '+NOTA_FEIJAO,
+      g(90,'lentilha cozida',150,'concha(s)')+' + '+g(60,'arroz '+(regras.integral?'integral':'branco')+' cozido',25,'col. sopa')+' + '+NOTA_FEIJAO,
       g(120,'tofu grelhado',120,'porção')+' + '+g(60,'arroz '+(regras.integral?'integral':'branco')+' cozido',25,'col. sopa')
     ];
     const cafeOpcoes=[
-      permOvo?g(100,'ovos mexidos (2 ovos)',50,'unidade')+' + '+g(50,'pão francês sem miolo',50,'unidade')+' + café sem açúcar':g(30,'pasta de grão-de-bico (homus)',15,'col. sopa')+' + '+g(50,'pão francês sem miolo',50,'unidade')+' + café sem açúcar',
-      permLat?g(170,'iogurte natural',170,'pote')+' + '+g(20,'granola',10,'col. sopa')+' + '+g(100,'banana',100,'unidade'):g(170,'iogurte de soja/coco sem açúcar',170,'pote')+' + '+g(20,'granola',10,'col. sopa')+' + '+g(100,'banana',100,'unidade'),
-      g(50,'pão francês sem miolo',50,'unidade')+' + '+g(15,'geleia sem açúcar',15,'col. sopa')+(permLat?' + '+g(20,'queijo mussarela',20,'fatia'):'')+' + café sem açúcar'
+      permOvo?ovoCafe2()+' + '+g(50,'pão francês sem miolo',50,'unidade(s)')+' + '+bebManha():g(30,'pasta de grão-de-bico (homus)',15,'col. sopa')+' + '+g(50,'pão francês sem miolo',50,'unidade(s)')+' + '+bebManha(),
+      permLat?g(170,'iogurte natural',170,'pote(s)')+' + '+g(20,'granola sem açúcar',10,'col. sopa')+' + '+g(100,'banana',100,'unidade(s)'):g(170,'iogurte de soja/coco sem açúcar',170,'pote(s)')+' + '+g(20,'granola sem açúcar',10,'col. sopa')+' + '+g(100,'banana',100,'unidade(s)'),
+      g(50,'pão francês sem miolo',50,'unidade(s)')+' + '+g(15,'geleia sem açúcar',15,'col. sopa')+(permLat?' + '+g(20,'queijo muçarela',20,'fatia(s)'):'')+' + '+bebManha()
     ];
     return[
       {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:cafeOpcoes},
       {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:[
-        g(120,fr(),120,'unidade média'),
-        permLat?g(170,'iogurte natural',170,'pote')+' + '+g(100,fr(),100,'unidade'):g(15,'castanhas',8,'unidade(s)')+' + '+g(100,fr(),100,'unidade')
+        permLat?g(170,'iogurte natural',170,'pote(s)')+' + '+g(100,fr(),100,'unidade(s)'):g(15,'castanhas',8,'unidade(s)')+' + '+g(100,fr(),100,'unidade(s)'),
+        ...(permLat?[RECEITAS_FIT_REF]:[])
       ]},
-      {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:protAlmoco.map(p=>p+' + salada crua: '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(12))},
+      {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:protAlmoco.map(p=>p+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(12))},
       {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:[
-        permLat?'Vitamina: '+ml(200,'leite desnatado',200,'copo')+' + '+g(100,fr(),100,'unidade'):'Vitamina: '+ml(200,'bebida vegetal (soja/coco) sem açúcar',200,'copo')+' + '+g(100,fr(),100,'unidade'),
-        g(100,'gelatina zero',100,'pote')+' + '+g(100,fr(),100,'unidade')
+        permLat?'Vitamina: '+ml(200,'leite desnatado',200,'copo(s)')+' + '+g(100,fr(),100,'unidade(s)'):'Vitamina: '+ml(200,'bebida vegetal (soja/coco) sem açúcar',200,'copo(s)')+' + '+g(100,fr(),100,'unidade(s)'),
+        ...(permLat?[RECEITAS_FIT_REF]:[])
       ]},
       {refeicao:'🌙 Jantar',horario:'19h–20h',opcoes:[
-        g(90,'grão-de-bico ou lentilha cozidos',150,'concha')+' + '+NOTA_FEIJAO+' + '+LEGUMES_LIVRE+' + salada: '+LIVRE_PRATO,
+        g(90,'grão-de-bico ou lentilha cozidos',150,'concha(s)')+' + '+NOTA_FEIJAO+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
         g(300,'sopa de legumes',250,'concha(s)')+' + '+NOTA_CALDO+' + '+g(120,'tofu em cubos',120,'porção')+' + '+g(25,'pão francês sem miolo',25,'unidade pequena')+semSal
       ]},
       {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[
-        permLat?ml(200,'leite morno',200,'copo')+' + '+g(30,'torradas',15,'unidade(s)'):ml(200,'bebida vegetal morna sem açúcar',200,'copo')+' + '+g(30,'torradas',15,'unidade(s)'),
-        permLat?g(170,'iogurte natural',170,'pote')+' + canela a gosto':g(15,'castanhas',8,'unidade(s)')
+        permLat?bebNoite()+' + '+g(30,'torradas',15,'unidade(s)'):bebNoite()+' + '+g(30,'torradas',15,'unidade(s)')
       ]}
     ];
   }
@@ -4597,20 +4803,20 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   if(regras.semGrao){
     return[
       {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
-        g(100,'ovos mexidos (2 ovos)',50,'unidade')+' + '+g(100,'abacate',100,'metade')+' + café sem açúcar',
-        g(100,fr(),100,'unidade')+' + '+g(20,'castanhas',10,'unidade(s)')
+        ovoCafe2()+' + '+g(100,'abacate',100,'metade')+' + '+bebManha(),
+        g(100,fr(),100,'unidade(s)')+' + '+g(20,'castanhas',10,'unidade(s)')
       ]},
       {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:[g(120,fr(),120,'unidade média')+' + '+g(15,'castanhas',8,'unidade(s)')]},
       {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:[
-        g(low?100:130,'batata-doce cozida',130,'unidade média')+' + '+g(low?100:120,'frango grelhado',120,'filé médio')+' + salada crua: '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(12),
-        g(low?100:130,'mandioca cozida',100,'pedaço')+' + '+g(low?100:120,'carne bovina magra',100,'porção')+' + salada: '+LIVRE_PRATO+' + '+az(12)+semSal
+        g(low?100:130,'batata-doce cozida',130,'unidade média')+' + '+g(low?100:120,'frango grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(12),
+        g(low?100:130,'mandioca cozida',100,'pedaço')+' + '+g(low?100:120,'carne bovina magra',100,'porção')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+az(12)+semSal
       ]},
-      {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:[g(100,fr(),100,'unidade')+' + '+g(15,'castanhas',8,'unidade(s)')]},
+      {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:[g(100,fr(),100,'unidade(s)')+' + '+g(15,'castanhas',8,'unidade(s)')]},
       {refeicao:'🌙 Jantar',horario:'19h–20h',opcoes:[
-        g(100,'batata-doce cozida',100,'unidade pequena')+' + '+g(100,'peixe grelhado',100,'filé')+' + '+LEGUMES_LIVRE+' + salada: '+LIVRE_PRATO,
-        g(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + '+LEGUMES_LIVRE+' + salada: '+LIVRE_PRATO
+        g(100,'batata-doce cozida',100,'unidade pequena')+' + '+g(100,'peixe grelhado',100,'filé(s)')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
+        g(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
       ]},
-      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(15,'castanhas',8,'unidade(s)'),g(100,fr(),100,'unidade')]}
+      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(15,'castanhas',8,'unidade(s)'),g(100,fr(),100,'unidade(s)')]}
     ];
   }
 
@@ -4618,20 +4824,20 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   if(regras.integral&&modelo==='mediterranea'){
     return[
       {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
-        g(50,'pão integral',50,'unidade')+' + '+g(100,'abacate amassado',100,'metade')+' + café sem açúcar',
-        g(170,'iogurte natural',170,'pote')+' + '+g(20,'aveia em flocos',20,'col. sopa')+' + '+g(100,fr(),100,'unidade')
+        g(50,'pão integral',50,'unidade(s)')+' + '+g(100,'abacate amassado',100,'metade')+' + '+bebManha(),
+        g(170,'iogurte natural',170,'pote(s)')+' + '+g(20,'aveia em flocos',20,'col. sopa')+' + '+g(100,fr(),100,'unidade(s)')
       ]},
-      {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:[g(120,fr(),120,'unidade média')+' + '+g(15,'castanhas',8,'unidade(s)')]},
+      {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:[g(120,fr(),120,'unidade média')+' + '+g(15,'castanhas',8,'unidade(s)'),RECEITAS_FIT_REF]},
       {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:[
-        g(low?75:100,'arroz integral cozido',25,'col. sopa')+' + '+g(60,'grão-de-bico cozido',40,'col. de servir')+' + '+NOTA_FEIJAO+' + '+g(low?100:120,'peixe grelhado',120,'filé médio')+' + salada crua: '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(15),
-        g(low?75:100,'quinoa cozida',25,'col. sopa')+' + '+g(low?100:120,'frango grelhado',120,'filé médio')+' + salada: '+LIVRE_PRATO+' + '+az(15)
+        g(low?75:100,'arroz integral cozido',25,'col. sopa')+' + '+g(60,'grão-de-bico cozido',40,'col. de servir')+' + '+NOTA_FEIJAO+' + '+g(low?100:120,'peixe grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(15),
+        g(low?75:100,'quinoa cozida',25,'col. sopa')+' + '+g(low?100:120,'frango grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+az(15)
       ]},
-      {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:['Vitamina: '+ml(200,'leite desnatado',200,'copo')+' + '+g(100,fr(),100,'unidade')]},
+      {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:['Vitamina: '+ml(200,'leite desnatado',200,'copo(s)')+' + '+g(100,fr(),100,'unidade(s)'),RECEITAS_FIT_REF]},
       {refeicao:'🌙 Jantar',horario:'19h–20h',opcoes:[
-        g(90,'sardinha grelhada',90,'unidade(s)')+' + '+LEGUMES_LIVRE+' + salada: '+LIVRE_PRATO+' + '+az(10),
-        g(300,'sopa de legumes com azeite',250,'concha(s)')+' + '+NOTA_CALDO+' + '+g(50,'pão integral',50,'unidade')+semSal
+        g(90,'sardinha grelhada',90,'unidade(s)')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+az(10),
+        g(300,'sopa de legumes com azeite',250,'concha(s)')+' + '+NOTA_CALDO+' + '+g(50,'pão integral',50,'unidade(s)')+semSal
       ]},
-      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(170,'iogurte natural',170,'pote')+' + '+g(15,'nozes',4,'unidade(s)')]}
+      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(170,'iogurte natural',170,'pote(s)')+' + '+g(15,'nozes',4,'unidade(s)')]}
     ];
   }
 
@@ -4640,20 +4846,20 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
     const azC=(b)=>porG(b,1,'azeite extravirgem',cas,4.5,'col. chá');
     return[
       {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
-        g(150,'ovos mexidos (3 ovos) com '+azC(10),50,'unidade')+' + '+g(50,'abacate',50,'fatia')+' + café sem açúcar',
-        g(30,'queijo mussarela',30,'fatia')+' + '+g(20,'castanhas',10,'unidade(s)')+' + café sem açúcar'
+        g(150,'ovos mexidos (3 ovos) com '+azC(10),50,'unidade(s)')+' + '+g(50,'abacate',50,'fatia(s)')+' + '+bebManha(),
+        g(30,'queijo muçarela',30,'fatia(s)')+' + '+g(20,'castanhas',10,'unidade(s)')+' + '+bebManha()
       ]},
-      {refeicao:'🥑 Lanche Manhã',horario:'10h',opcoes:[g(20,'castanhas',10,'unidade(s)'),g(50,'queijo mussarela',50,'fatia')]},
+      {refeicao:'🥑 Lanche Manhã',horario:'10h',opcoes:[g(20,'castanhas',10,'unidade(s)'),g(50,'queijo muçarela',50,'fatia(s)')]},
       {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:[
         g(low?100:120,'frango grelhado',120,'filé médio')+' + salada crua com '+azC(15)+' + '+LEGUMES_LIVRE_NAO_AMIL,
         g(low?100:120,'carne bovina',100,'porção')+' + '+LEGUMES_LIVRE+' + '+azC(15)+semSal
       ]},
       {refeicao:'🥑 Lanche Tarde',horario:'15h–16h',opcoes:[g(60,'frutas vermelhas (morango/mirtilo)',60,'porção')+' + '+g(20,'castanhas',10,'unidade(s)')]},
       {refeicao:'🌙 Jantar',horario:'19h–20h',opcoes:[
-        g(100,'peixe grelhado',100,'filé')+' + '+LEGUMES_LIVRE+' + '+azC(15)+' + salada: '+LIVRE_PRATO,
+        g(100,'peixe grelhado',100,'filé(s)')+' + '+LEGUMES_LIVRE+' + '+azC(15)+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
         g(90,'sardinha',90,'unidade(s)')+' + salada com '+azC(15)
       ]},
-      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(20,'castanhas',10,'unidade(s)'),g(30,'queijo mussarela',30,'fatia')]}
+      {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[g(20,'castanhas',10,'unidade(s)'),g(30,'queijo muçarela',30,'fatia(s)')]}
     ];
   }
 
@@ -4661,37 +4867,49 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   const cortarCarb=modelo==='lowcarb';
   const semTrigo=regras.lowFodmap;
   const semFeijao=regras.lowFodmap;
-  const paoBase=semTrigo?g(40,'pão sem glúten',40,'unidade'):g(50,'pão francês sem miolo',50,'unidade');
-  const arrozAlmoco=cortarCarb?g(40,'arroz branco cozido',25,'col. sopa'):g(low?75:100,'arroz branco cozido',25,'col. sopa');
-  const feijaoAlmoco=semFeijao?'':' + '+g(60,'feijão cozido',40,'col. de servir')+' + '+NOTA_FEIJAO;
-  const frutaLanche=regras.lowFodmap?g(100,fr(),100,'unidade/porção'):g(120,fr(),120,'unidade média');
+  // ── distribuição horária: perfil pronto (regras.distPerfil) ou % manual (regras.distCal/distFat) por refeição ──
+  const distCal=Object.assign({},DIST_PRESETS[regras.distPerfil]||DIST_PRESETS.padrao,regras.distCal||{});
+  const distFat=Object.assign({},DIST_PRESETS[regras.distPerfilFat]||DIST_PRESETS.padrao,regras.distFat||{});
+  const kM=(key)=>k*((distCal[key]!=null?distCal[key]:DIST_BASE[key])/DIST_BASE[key]);
+  const fM=(key)=>((distFat[key]!=null?distFat[key]:DIST_BASE[key])/DIST_BASE[key]);
+  const gCafe=(b,n,uG,uN)=>porG(b,kM('cafe'),n,cas,uG,uN);
+  const gLancheM=(b,n,uG,uN)=>porG(b,kM('lancheM'),n,cas,uG,uN);
+  const gAlmoco=(b,n,uG,uN)=>porG(b,kM('almoco'),n,cas,uG,uN);
+  const azAlmoco=(b)=>porG(b,fM('almoco'),'azeite extravirgem',cas,4.5,'col. chá');
+  const gLancheT=(b,n,uG,uN)=>porG(b,kM('lancheT'),n,cas,uG,uN);
+  const mlLancheT=(b,n,uMl,uN)=>porMl(b,kM('lancheT'),n,cas,uMl,uN);
+  const gJantar=(b,n,uG,uN)=>porG(b,kM('jantar'),n,cas,uG,uN);
+  const gCeia=(b,n,uG,uN)=>porG(b,kM('ceia'),n,cas,uG,uN);
+  const mlCeia=(b,n,uMl,uN)=>porMl(b,kM('ceia'),n,cas,uMl,uN);
+  const paoBase=semTrigo?gCafe(40,'pão sem glúten',40,'unidade(s)'):gCafe(50,'pão francês sem miolo',50,'unidade(s)');
+  const arrozAlmoco=cortarCarb?gAlmoco(40,'arroz branco cozido',25,'col. sopa'):gAlmoco(low?75:100,'arroz branco cozido',25,'col. sopa');
+  const feijaoAlmoco=semFeijao?'':' + '+gAlmoco(60,'feijão cozido',40,'col. de servir')+' + '+NOTA_FEIJAO;
+  const frutaLanche=regras.lowFodmap?gLancheM(100,fr(),100,'unidade/porção'):gLancheM(120,fr(),120,'unidade média');
+  const paoForma=semTrigo?gLancheT(50,'pão de forma sem glúten',25,'fatia(s)'):gLancheT(50,'pão de forma',25,'fatia(s)');
+  const sanduicheAtum=paoForma+' + '+gLancheT(50,'atum em lata (conservado em água), escorrido',80,'lata(s) pequena(s)')+' + '+gLancheT(10,'requeijão light',10,'col. sopa')+' + tomate, cenoura ralada e alface a gosto, temperados com sal e pimenta-do-reino';
   return[
     {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
-      paoBase+' + '+g(20,'requeijão light',10,'col. sopa')+' + café sem açúcar',
-      paoBase+' + '+g(15,'geleia sem açúcar',15,'col. sopa')+' + '+g(20,'queijo mussarela',20,'fatia')+' + café com '+ml(150,'leite desnatado',200,'copo'),
-      g(100,'ovos mexidos (2 ovos)',50,'unidade')+' + '+paoBase+' + café sem açúcar',
-      g(170,'iogurte natural',170,'pote')+' + '+g(20,'granola'+(semTrigo?' sem glúten':''),10,'col. sopa')+' + '+g(100,'banana',100,'unidade')
+      paoBase+' + '+gCafe(20,'requeijão light',10,'col. sopa')+' + '+bebManha(),
+      paoBase+' + '+gCafe(15,'geleia sem açúcar',15,'col. sopa')+' + '+gCafe(20,'queijo muçarela',20,'fatia(s)')+' + '+bebManha(),
+      ovoCafe2()+' + '+paoBase+' + '+bebManha(),
+      gCafe(170,'iogurte natural',170,'pote(s)')+' + '+gCafe(20,'granola sem açúcar'+(semTrigo?' sem glúten':''),10,'col. sopa')+' + '+gCafe(100,'banana',100,'unidade(s)')
     ]},
-    {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:[frutaLanche,g(170,'iogurte natural',170,'pote')+' + '+g(100,fr(),100,'unidade')]},
+    {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:regras.lancheManha&&LANCHE_TEMPLATES[regras.lancheManha]?[LANCHE_TEMPLATES[regras.lancheManha].build(gLancheM,gLancheM,fr)]:[frutaLanche+' + '+gLancheM(170,'iogurte natural',170,'pote(s)'),RECEITAS_FIT_REF]},
     {refeicao:'🍽 '+primProt+'Almoço',horario:'12h–13h',opcoes:[
-      arrozAlmoco+feijaoAlmoco+' + '+g(low?100:120,'frango grelhado',120,'filé médio')+' + salada crua: '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+az(12),
-      arrozAlmoco+feijaoAlmoco+' + '+g(low?100:120,'carne bovina magra',100,'porção')+' + salada: '+LIVRE_PRATO+' + '+az(12)+semSal,
-      (cortarCarb?'':g(low?75:100,'macarrão comum cozido',25,'col. sopa')+' + ')+g(80,'molho de tomate caseiro',40,'col. de servir')+' + '+NOTA_CALDO+' + '+g(80,'atum em lata (conservado em água), escorrido',80,'lata pequena')+' + salada: '+LIVRE_PRATO
+      arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(low?100:120,'frango grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+azAlmoco(12),
+      arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(low?100:120,'carne bovina magra',100,'porção')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+azAlmoco(12)+semSal,
+      (cortarCarb?'':gAlmoco(low?75:100,'macarrão comum cozido',25,'col. sopa')+' + ')+gAlmoco(80,'molho de tomate caseiro',40,'col. de servir')+' + '+NOTA_CALDO+' + '+gAlmoco(80,'atum em lata (conservado em água), escorrido',80,'lata(s) pequena(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
     ]},
-    {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:[
-      'Vitamina: '+ml(200,'leite desnatado',200,'copo')+' + '+g(100,fr(),100,'unidade'),
-      paoBase+' (metade) + '+g(20,'queijo mussarela',20,'fatia'),
-      g(100,'gelatina zero',100,'pote')+' + '+g(100,fr(),100,'unidade')
-    ]},
+    {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:regras.lancheTarde&&LANCHE_TEMPLATES[regras.lancheTarde]?[LANCHE_TEMPLATES[regras.lancheTarde].build(gLancheT,mlLancheT,fr)]:['Vitamina: '+mlLancheT(200,'leite desnatado',200,'copo(s)')+' + '+gLancheT(100,fr(),100,'unidade(s)'),sanduicheAtum,RECEITAS_FIT_REF]},
     {refeicao:'🌙 '+primProt+'Jantar',horario:'19h–20h',opcoes:[
-      (cortarCarb?'':g(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+g(100,'peixe grelhado',100,'filé')+' + '+LEGUMES_LIVRE+' + salada: '+LIVRE_PRATO,
-      g(300,'sopa de legumes',250,'concha(s)')+' + '+NOTA_CALDO+' + '+g(low?80:100,'frango desfiado',100,'porção')+(semTrigo?'':' + '+g(25,'pão francês sem miolo',25,'unidade pequena'))+semSal,
-      (cortarCarb?'':g(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+g(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + salada: '+LIVRE_PRATO
+      (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(100,'peixe grelhado',100,'filé(s)')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
+      gJantar(300,'sopa de legumes',250,'concha(s)')+' + '+NOTA_CALDO+' + '+gJantar(low?80:100,'frango desfiado',100,'porção')+(semTrigo?'':' + '+gJantar(25,'pão francês sem miolo',25,'unidade pequena'))+semSal,
+      (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
     ]},
     {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[
-      ml(200,'leite morno',200,'copo')+' + '+g(30,'torradas'+(semTrigo?' sem glúten':''),15,'unidade(s)'),
-      g(170,'iogurte natural',170,'pote')+' + canela a gosto',
-      'Chá sem açúcar (ou zero açúcar) + '+g(20,'queijo mussarela',20,'fatia')
+      mlCeia(200,'leite morno',200,'copo(s)')+' + '+gCeia(30,'torradas'+(semTrigo?' sem glúten':''),15,'unidade(s)'),
+      gCeia(170,'iogurte natural',170,'pote(s)')+' + canela a gosto',
+      bebNoite()+' + '+gCeia(20,'queijo muçarela',20,'fatia(s)')
     ]}
   ];
 }
@@ -4715,7 +4933,7 @@ function buildOris(dm,has,dis,obe,d,modelo,regras){
     os.push({cat:'Refeição livre',txt:txtRl});
   }
   os.push({cat:'Adoçantes',txt:'Padronize a sucralose como adoçante nas preparações e bebidas (café, chá, sucos, gelatina) que exigirem adoçar — evite açúcar refinado, mel e demais adoçantes.'});
-  os.push({cat:'Hidratação',txt:`Beba ${d.peso?Math.max(3,Math.round(parseFloat(d.peso)*0.04*10)/10):3.0}L de água/dia. Pode beber normalmente durante as refeições — pode associar bebidas zero açúcar em geral (refrigerante, chá etc.).`});
+  os.push({cat:'Hidratação',txt:`Beba ${d.peso?Math.max(3,Math.round(parseFloat(d.peso)*0.04*10)/10):3.0}L de água/dia. Pode beber normalmente durante as refeições — pode associar bebidas zero açúcar em geral (refrigerante, chá etc.). Pela manhã, prefira café ou chá preto/mate; à tarde e à noite, prefira chás calmantes (camomila, hortelã) — sempre sem açúcar, podendo adoçar com sucralose.`});
   if(has)os.push({cat:'Hipertensão',txt:'Limite o sal a <5g/dia. Evite embutidos, enlatados, temperos prontos e frituras. Aumente alimentos ricos em potássio: banana, laranja, feijão, batata doce.'});
   if(dm)os.push({cat:'Diabetes',txt:'Controle as porções de arroz, pão e massas para manter a resposta glicêmica adequada. Fracione bem as refeições. Evite açúcar, mel, suco de fruta e refrigerante com açúcar — prefira as versões zero. Monitore a glicemia.'});
   if(dis)os.push({cat:'Dislipidemia',txt:'Inclua peixes como sardinha e outros peixes de água fria 3x/semana. Use azeite extravirgem como gordura principal. Inclua aveia, linhaça, chia e castanhas. Evite gordura saturada e trans.'});
@@ -4756,16 +4974,6 @@ function buildFrutasLiberadas(){
 // Estrutura simples e livre, pensada para o paciente ler como quem não entende de nutrição.
 function buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj){
   const rows=[];
-  const add=(item,dose,horario)=>rows.push({item,dose,horario,rec:''});
-  add('Proteína (fonte alimentar)','Conforme a meta da dieta','Distribuída nas refeições principais');
-  add('Ômega-3','1–2 g/dia (se cápsula)','Junto com uma refeição');
-  add('Vitamina D','Conforme avaliação','Junto com refeição com gordura');
-  add('Vitamina B12','Conforme avaliação','Longe das refeições');
-  add('Ferro + vitamina C','Conforme avaliação','Longe de café/chá');
-  add('Cálcio + vitamina D','1000–1200 mg/dia (cálcio)','—');
-  add('Magnésio','Conforme avaliação','À noite');
-  if(hasHAS)add('Potássio','Via alimentação','—');
-  if(hasDM)add('Cromo','Conforme avaliação','—');
   return rows;
 }
 function buildEAATable(d){
@@ -4788,12 +4996,29 @@ function buildSubstituicoes(cas){
     {grupo:'Frutas (1 porção ≈ 70 kcal)',itens:[a(100,'banana','1 unidade'),a(130,'maçã','1 unidade'),a(180,'laranja','1 unidade'),a(150,'mamão','1 fatia'),a(60,'uvas','10 unidades'),a(150,'pera','1 unidade')].join(' = ')},
     {grupo:'Vegetais e verduras (consumo livre)',itens:'Cozidos na água ou no vapor (ou crus) e temperados apenas com até 1 g de sal (1 sachê padrão Cisne), limão, ervas secas ou frescas e pimenta-do-reino: consumo livre, sempre na medida de '+LIVRE_PRATO+' por refeição. Alface, tomate, pepino, rúcula, couve, brócolis, abobrinha, cenoura: combine variedade de cores.'},
     {grupo:'Gorduras (1 porção ≈ 90 kcal)',itens:[a(10,'azeite','2 col. chá'),a(55,'abacate','⅓ de unidade'),a(15,'castanhas','8 unidades'),a(20,'sementes (chia ou linhaça)','2 col. sopa')].join(' = ')},
-    {grupo:'Laticínios e frios (1 porção ≈ 110 kcal)',itens:[m(200,'leite desnatado','1 copo'),a(170,'iogurte natural','1 pote'),a(30,'queijo mussarela','1 fatia'),a(20,'requeijão light','1 col. sopa')].join(' = ')},
+    {grupo:'Laticínios e frios (1 porção ≈ 110 kcal)',itens:[m(200,'leite desnatado','1 copo'),a(170,'iogurte natural','1 pote'),a(30,'queijo muçarela','1 fatia'),a(20,'requeijão light','1 col. sopa')].join(' = ')},
     {grupo:'Doces (consumo ocasional, 2–3x por semana)',itens:'Gelatina zero (100 g): consumo livre = 20 g de leite condensado (≈1 col. sobremesa) = 1 bombom (ex.: Sonho de Valsa)'}
   ];
 }
 
 // ── RECEITAS COM MODO DE FAZER (em gramas, cruzando o lipídio calculado da dieta) ──
+const RECEITAS_FIT_REF='Receitas Fit (ver "Receitas Fit" no final do documento): pode substituir por qualquer uma das opções A a D';
+function buildReceitasFit(){
+  return[
+    {titulo:'A) Mousse Fake Fit de Whey',
+      ingredientes:'1 pacote de gelatina zero (sabor à escolha) · 1 a 3 scoops (30 g cada) de whey protein, conforme sua meta de proteína do dia',
+      modo:'1) Dissolva a gelatina zero em água conforme as instruções da embalagem. 2) Bata no liquidificador junto com o whey protein até dobrar de volume. 3) Leve à geladeira até firmar.'},
+    {titulo:'B) Bolo de Caneca Fit',
+      ingredientes:'1 ovo inteiro · 2 col. sopa (20 g) de farinha de aveia · 1 col. café (3 g) de fermento em pó · 1 col. sopa (6 g) de cacau 100% · Sucralose a gosto',
+      modo:'1) Misture todos os ingredientes direto na caneca até ficar homogêneo. 2) Leve ao micro-ondas por 2 a 3 minutos, observando o ponto aos poucos.'},
+    {titulo:'C) Panqueca Proteica de Banana',
+      ingredientes:'1 ovo inteiro · 1 banana amassada · 1 col. sopa (10 g) de farinha de aveia',
+      modo:'1) Misture os ingredientes até formar uma massa homogênea. 2) Frite em frigideira antiaderente, sem óleo, 2 a 3 minutos de cada lado.'},
+    {titulo:'D) Brigadeiro Fit',
+      ingredientes:'2 col. sopa (20 g) de leite em pó desnatado · 1 col. sopa (5 g) de cacau 100% · Água até dar liga · Sucralose a gosto',
+      modo:'1) Misture o leite em pó e o cacau. 2) Adicione água aos poucos até formar uma pasta que desgrude das mãos. 3) Enrole em bolinha e leve à geladeira.'}
+  ];
+}
 function buildReceitas(fatG,hasHAS,cas){
   const oilG=Math.max(3,Math.round((fatG*0.15)/3));
   const az='azeite extravirgem: '+oilG+' g'+(cas?' (≈ '+nCas(oilG/4.5)+' col. chá)':'');
