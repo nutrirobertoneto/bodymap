@@ -63,20 +63,35 @@ Responda APENAS com JSON válido, sem markdown e sem texto extra, neste formato:
       ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: arquivoBase64 } }
       : { type: 'image', source: { type: 'base64', media_type: mediaType, data: arquivoBase64 } };
 
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
-        temperature: 0,
-        messages: [{ role: 'user', content: [bloco, { type: 'text', text: prompt }] }]
-      })
-    });
+    // Timeout interno: aborta antes do Netlify matar a função (30s), pra devolver um erro legível em vez de resposta vazia.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+    let r;
+    try {
+      r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 4000,
+          temperature: 0,
+          messages: [{ role: 'user', content: [bloco, { type: 'text', text: prompt }] }]
+        })
+      });
+    } catch (fetchErr) {
+      if (fetchErr.name === 'AbortError') {
+        return resp(504, { erro: 'O exame demorou demais para ser analisado (mais de 25s). Tente um arquivo menor ou com menos páginas.' });
+      }
+      throw fetchErr;
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     const data = await r.json();
     if (!r.ok) return resp(r.status, { erro: 'Erro na API da Anthropic', detalhe: data });
