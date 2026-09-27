@@ -2056,6 +2056,7 @@ function persistirRascunho(){
   const d=collectData();
   try{sessionStorage.setItem(DK,JSON.stringify(d));}
   catch(e){try{const l={...d};PHOTO_FIELDS.forEach(k=>delete l[k]);sessionStorage.setItem(DK,JSON.stringify(l));}catch(_){}}
+  salvarRascunhoDieta();
   return salvarRecuperacao(d);
 }
 async function salvarRecuperacao(d){
@@ -4289,19 +4290,50 @@ function dietToggleCaseiras(){
   dietPlanEdit=JSON.parse(JSON.stringify(base.PLAN));
   renderDietMealRows();
 }
+const DIET_DK='bm_diet_draft';
+function dietChavePaciente(d){return String((d&&(d.id||d.nome))||'');}
+function salvarRascunhoDieta(){
+  if(!dietPlanEdit||!dietPlanEdit.length||!dietDataCache)return;
+  try{
+    sessionStorage.setItem(DIET_DK,JSON.stringify({
+      chave:dietChavePaciente(dietDataCache),savedAt:new Date().toISOString(),
+      dietPlanEdit,dietSupEdit,dietEAAEdit,dietFarmEdit,dietOv,dietCas,
+      dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale
+    }));
+  }catch(e){}
+}
+function limparRascunhoDieta(){try{sessionStorage.removeItem(DIET_DK);}catch(e){}}
 function abrirEditorDieta(dataOverride,ov){
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
   dietPesosLocked={};dietPesosStale=!!(ov&&ov.manual);
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
+  let restaurado=false;
+  try{
+    const raw=sessionStorage.getItem(DIET_DK);
+    if(raw){
+      const rasc=JSON.parse(raw);
+      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei uma dieta não salva desse Bodymate, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'. Continuar de onde parou em vez de gerar do zero?')){
+        dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
+        dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
+        dietPesosLocked=rasc.dietPesosLocked||{};dietPesosStale=!!rasc.dietPesosStale;
+        if(cbc)cbc.checked=dietCas;
+        restaurado=true;
+      }
+    }
+  }catch(e){}
   const base=calcDietaBase(d,dietOv,dietCas);
-  dietIncluirSup=base.incluirSup;dietIncluirEAA=base.incluirEAA;dietIncluirFarm=base.incluirFarm;
+  if(!restaurado){
+    dietIncluirSup=base.incluirSup;dietIncluirEAA=base.incluirEAA;dietIncluirFarm=base.incluirFarm;
+  }
   dietResumoLinha(base);
-  dietPlanEdit=JSON.parse(JSON.stringify(base.PLAN));
-  dietSupEdit=JSON.parse(JSON.stringify(base.SUP));
-  dietEAAEdit=JSON.parse(JSON.stringify(base.EAA));
-  dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
+  if(!restaurado){
+    dietPlanEdit=JSON.parse(JSON.stringify(base.PLAN));
+    dietSupEdit=JSON.parse(JSON.stringify(base.SUP));
+    dietEAAEdit=JSON.parse(JSON.stringify(base.EAA));
+    dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
+  }
   renderDietMealRows();
   renderDietSupRows();
   renderDietEAARows();
@@ -4376,11 +4408,31 @@ function verificarConflitosDieta(){
 const DIET_FOODS_FLAT=Object.values(FOODS).flat();
 
 function capFirst(s){s=String(s||'');return s.length?s.charAt(0).toUpperCase()+s.slice(1):s;}
+// ── Identifica bebidas/líquidos pra trocar o rótulo de "g" pra "ml" — cobre a lista fixa e nomes digitados/estimados por IA ──
+function ehLiquido(nome){
+  const n=(nome||'').toLowerCase();
+  return /\bágua\b|\bleite\b|\bsuco\b|refrigerante|\bchá\b|isot[ôo]nico|achocolatado|\bcafé\b|\bcaldo\b|vitamina de fruta|\bkefir\b|cerveja/.test(n);
+}
+// ── Lista, sem repetir, os alimentos que realmente entraram no cardápio final — usado pra pedir substituições sob medida por IA ──
+function itensUnicosDoPlan(plan){
+  const vistos={};
+  (plan||[]).forEach(m=>{
+    (m.opcoes||[]).forEach(o=>{
+      parseOpcaoStr(o).forEach(r=>{
+        if(r.tipo==='item'&&r.alimento&&!vistos[r.alimento]){
+          const nut=foodNut(r.alimento);
+          vistos[r.alimento]={nome:r.alimento,gramas:Math.round(parseFloat(r.gramas)||100),kcal:nut[0],prot:nut[1],fat:nut[2],carb:nut[3]};
+        }
+      });
+    });
+  });
+  return Object.values(vistos);
+}
 function parseOpcaoStr(str){
   const segs=(str||'').split(' + ').map(t=>t.trim()).filter(Boolean);
   if(!segs.length)return[{tipo:'item',alimento:'',gramas:'',medida:''}];
   return segs.map(seg=>{
-    const m=seg.match(/^(\d+(?:[.,]\d+)?)\s*g\s+de\s*(.*?)(?:\s*\(([^)]+)\))?$/i);
+    const m=seg.match(/^(\d+(?:[.,]\d+)?)\s*(?:g|ml)\s+de\s*(.*?)(?:\s*\(([^)]+)\))?$/i);
     if(m)return{tipo:'item',alimento:m[2].trim(),gramas:m[1].replace(',','.'),medida:m[3]||''};
     return{tipo:'texto',valor:seg};
   });
@@ -4388,7 +4440,7 @@ function parseOpcaoStr(str){
 function serializeOpcaoRows(rows){
   return rows.map(r=>{
     if(r.tipo==='texto')return r.valor||'';
-    const base=(r.gramas||'0')+' g de '+(r.alimento||'');
+    const base=(r.gramas||'0')+' '+(ehLiquido(r.alimento)?'ml':'g')+' de '+(r.alimento||'');
     return r.medida?base+' ('+r.medida+')':base;
   }).filter(v=>v!=='').join(' + ');
 }
@@ -4404,7 +4456,7 @@ function renderDietMealRows(){
       const rows=parseOpcaoStr(o);
       const rowsHtml=rows.map((r,k)=>r.tipo==='texto'
         ?`<div class="med-row"><input class="di" style="flex:1" value="${escH(capFirst(r.valor))}" placeholder="Observação (ex: café sem açúcar)" oninput="dietOpcaoRowEdit(${i},${j},${k},'valor',this.value)"><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
-        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="g" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">g</span><button class="rf" title="Não achou na lista? Estima por IA (kcal/macros)" style="font-size:11px;padding:6px 8px;white-space:nowrap" onclick="estimarAlimentoIA(${i},${j},${k})">🤖</button><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
+        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" title="Não achou na lista? Estima por IA (kcal/macros)" style="font-size:11px;padding:6px 8px;white-space:nowrap" onclick="estimarAlimentoIA(${i},${j},${k})">🤖</button><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
       ).join('');
       return `<div style="border:1px solid var(--br);border-radius:8px;padding:10px;margin-top:8px;background:var(--gp)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -4771,10 +4823,43 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       dCell(s.obs,'FEFDF8',2660),
     ]}));
 
+    function dCellSm(txt,fillOrColor,w,isHeader){
+      return isHeader
+        ?new TableCell({borders:hdrBdrAll,shading:{fill:fillOrColor,type:ShadingType.CLEAR},margins:{top:50,bottom:50,left:100,right:100},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:15})]})]})
+        :new TableCell({borders:bdrAll,shading:{fill:fillOrColor,type:ShadingType.CLEAR},margins:{top:40,bottom:40,left:100,right:100},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:13})]})]});
+    }
     const substRows=buildSubstituicoes(dietCas).map(s=>new TableRow({children:[
-      dCell(s.grupo,'FBF3DC',2340),
-      dCell(s.itens,'FFFFFF',7020),
+      dCellSm(s.grupo,'F7F3E8',2340,false),
+      dCellSm(s.itens,'FFFFFF',7020,false),
     ]}));
+
+    // ── Substituições inteligentes: pergunta à IA por trocas equivalentes só dos itens que realmente entraram neste cardápio ──
+    let substIABlocks=[];
+    try{
+      const itensUsados=itensUnicosDoPlan(PLAN);
+      if(itensUsados.length){
+        const rSub=await fetch('/.netlify/functions/sugerir-substituicoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados})});
+        const dataSub=await rSub.json();
+        if(rSub.ok&&Array.isArray(dataSub.substituicoes)&&dataSub.substituicoes.length){
+          const rowsIA=dataSub.substituicoes.map(s=>new TableRow({children:[
+            dCell(s.nome+' ('+s.gramas+(ehLiquido(s.nome)?' ml':' g')+')','FDF3D8',2340),
+            dCell((s.opcoes||[]).map(o=>o.gramas+(ehLiquido(o.nome)?' ml':' g')+' de '+o.nome).join(' · '),'FFFDF5',7020),
+          ]}));
+          const hCellDest=(txt,w)=>new TableCell({borders:hdrBdrAll,shading:{fill:'C99A1E',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]});
+          substIABlocks=[
+            new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[9360],borders:{top:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},bottom:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},left:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},right:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'}},rows:[
+              new TableRow({children:[new TableCell({shading:{fill:'FDF3D8',type:ShadingType.CLEAR},margins:{top:160,bottom:160,left:180,right:180},children:[
+                new Paragraph({children:[new TextRun({text:'🤖 SUBSTITUIÇÕES INTELIGENTES',bold:true,color:'9A7B0A',size:28})],spacing:{after:60}}),
+                new Paragraph({children:[new TextRun({text:'Geradas por IA a partir do que foi escolhido nesta dieta — revise antes de repassar ao Bodymate.',size:18,color:'8A7F5C',italics:true})],spacing:{after:160}}),
+                new Table({width:{size:9000,type:WidthType.DXA},columnWidths:[2250,6750],rows:[new TableRow({children:[hCellDest('Item do cardápio',2250),hCellDest('Pode trocar por',6750)]}),...rowsIA]}),
+              ]})]})
+            ]}),
+            new Paragraph({spacing:{after:200}}),
+            HR()
+          ];
+        }
+      }
+    }catch(e){substIABlocks=[];}
 
     const receitasBlocks=buildReceitas(fatG,hasHAS,dietCas).flatMap(r=>[
       H2(r.titulo),
@@ -5026,10 +5111,11 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           P(buildFrutasLiberadas().join(' · ')),
           new Paragraph({spacing:{after:200}}),
           HR(),
-          H1('LISTAS DE SUBSTITUIÇÃO'),
-          new Paragraph({children:[new TextRun({text:'Use estas equivalências para variar o cardápio mantendo o valor nutricional semelhante.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
+          ...substIABlocks,
+          H2('Lista de referência geral (equivalências amplas, não específicas deste cardápio)'),
+          new Paragraph({children:[new TextRun({text:'Consulte apenas se quiser mais variedade além do sugerido acima.',size:15,italics:true,color:'8A7F5C'})],spacing:{after:100}}),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2340,7020],rows:[
-            new TableRow({children:[hCell('Grupo'),hCell('Equivalências')]}),
+            new TableRow({children:[dCellSm('Grupo','8A7F5C',2340,true),dCellSm('Equivalências','8A7F5C',7020,true)]}),
             ...substRows,
           ]}),
           new Paragraph({spacing:{after:200}}),
@@ -5058,6 +5144,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     const a=document.createElement('a');
     a.href=url;a.download=`PlanoAlimentar_${(d.nome||'Bodymate').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    limparRascunhoDieta();
     showToast('✅ PLANNER baixado com sucesso!');
   }catch(e){console.error(e);showToast('❌ Erro ao gerar: '+e.message,'#c0392b');}
 }
