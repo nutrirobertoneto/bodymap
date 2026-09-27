@@ -1698,7 +1698,7 @@ function renderExameIA(){
   add.addEventListener('click',()=>{e.marcadores.push({nome:'',valor:'',unidade:'',referencia:'',status:'normal',origemRef:'laudo',nota:''});renderExameIA();});
   box.appendChild(add);
   box.appendChild(mk('label','display:block;margin-top:14px;font-size:11.5px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.5px','Interpretação para a conduta nutricional (editável)'));
-  const ta=mk('textarea','margin-top:5px;min-height:110px');ta.className='fc';ta.value=e.resumo||'';
+  const ta=mk('textarea','margin-top:5px;min-height:180px;line-height:1.65;resize:vertical;font-size:13.5px');ta.className='fc';ta.value=e.resumo||'';
   ta.addEventListener('input',()=>{e.resumo=ta.value;autoSave();});box.appendChild(ta);
   box.appendChild(mk('div','font-size:10.5px;color:var(--mu);margin-top:4px','Leitura automática por IA: confira cada valor com o laudo original antes de aceitar.'));
   if(!e.aprovado){
@@ -1746,7 +1746,7 @@ async function analisarTodosExames(consideracoes){
     (res.exame.marcadores||[]).forEach(m=>marcadores.push(multi?{...m,nome:m.nome+' ('+res.arquivo+')'}:m));
   });
   const resumo=multi
-    ?resultados.map(res=>'['+res.arquivo+'] '+(res.exame.resumo||'')).join('\n\n')
+    ?resultados.map(res=>'📄 '+res.arquivo+'\n'+(res.exame.resumo||'')).join('\n\n──────────\n\n')
     :(resultados[0].exame.resumo||'');
   const laboratorio=resultados.map(r=>r.exame.laboratorio).find(Boolean)||'';
   const coleta=resultados.map(r=>r.exame.coleta).find(Boolean)||'';
