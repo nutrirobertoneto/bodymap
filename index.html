@@ -1891,7 +1891,7 @@ function consentRelHtml(d){
   const s=x=>x?'sim':'não';
   return '<div style="margin-top:14px;padding:10px 16px;border:1px solid var(--br);border-radius:var(--rs);font-size:10.5px;color:var(--mu);line-height:1.6">🔒 <b>Consentimento LGPD (Lei Geral de Proteção de Dados):</b> registrado em '+escH(new Date(c.dataHora).toLocaleString('pt-BR'))+' · termo versão '+escH(c.versao)+' (código '+escH(c.termoHash)+') · por '+escH(c.consentente)+(c.quem==='responsavel'?' (responsável legal, '+escH(c.vinculo)+')':' (paciente)')+' · '+(c.forma==='consulta'?'na consulta':'preenchido pelo próprio')+' · dados de saúde: '+s(c.aceites.dados)+' · fotos e exames: '+s(c.aceites.fotosExames)+' · uso de IA (Inteligência Artificial): '+s(c.aceites.ia)+'</div>';
 }
-document.addEventListener('DOMContentLoaded',()=>{const dmr=document.getElementById('dietMealRows');if(dmr)dmr.addEventListener('input',()=>{dietEditado=true;});renderConsent();renderExameIA();const id=document.getElementById('idade');if(id)id.addEventListener('input',consQuemChange);});
+document.addEventListener('DOMContentLoaded',()=>{const dmr=document.getElementById('dietMealRows');if(dmr)dmr.addEventListener('input',()=>{dietEditado=true;autoSave();});renderConsent();renderExameIA();const id=document.getElementById('idade');if(id)id.addEventListener('input',consQuemChange);});
 
 // ═══════ SESSÃO, RECUPERAÇÃO, PACIENTES, PASTA E BACKUP ═══════
 const RK_ROLE='bm_role',LBK='pts_anamnese_lastbackup',HOSTS_IA=['bodymapmetric.netlify.app','localhost'];
@@ -4478,6 +4478,7 @@ function renderDietMealRows(){
       <button class="btn bs" style="padding:5px 10px;font-size:11px;margin-top:6px" onclick="addOpcaoDiet(${i})">+ opção</button>
     </div>`;
   }).join('');
+  salvarRascunhoDieta();
 }
 let dietPesosLocked={}; // chave i_j_alimento → true quando o peso foi editado à mão (o Refresh não mexe nele)
 let dietPesosStale=false; // true quando algo mudou desde o último Refresh — trava o "Gerar Word"
