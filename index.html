@@ -274,9 +274,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <p style="margin-bottom:22px">Quem está acessando esta avaliação?</p>
     <div style="display:flex;flex-direction:column;gap:12px">
       <button class="btn bp" style="justify-content:center;padding:16px" onclick="openGatePw()">👨‍⚕️ Nutricionista</button>
-      <button class="btn bs" style="justify-content:center;padding:16px" onclick="enterAsPaciente()">🧑 Bodymate</button>
+      <button class="btn bs" style="justify-content:center;padding:16px;flex-direction:column;gap:2px;line-height:1.3" onclick="enterAsPaciente()">🧑 Bodymate<span style="font-size:11px;font-weight:700;opacity:.8">(paciente/cliente)</span></button>
     </div>
-    <p style="font-size:9.5px;color:var(--mu);opacity:.65;text-align:center;margin-top:6px;margin-bottom:0">(também chamado de paciente/cliente)</p>
     <p style="font-size:10.5px;color:var(--mu);margin-top:18px;margin-bottom:0">Bodymate: preenche identificação, DCA, frequência, atividade e hábitos. Medições e relatório ficam restritos ao profissional.</p>
     <button class="btn bs" onclick="abrirVideoIntro('tutorial')" style="justify-content:center;padding:12px;margin-top:14px;width:100%">▶️ Como usar o BodyMap</button>
     <div style="display:flex;justify-content:center;margin-top:10px">
@@ -360,6 +359,18 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         </div>
       </div>
       <div class="div"></div>
+      <div class="card" style="background:var(--gp);border:1.5px solid var(--gd);margin-bottom:16px">
+        <div class="rstit" style="margin-bottom:4px">📏 Medidas essenciais (com fita métrica)</div>
+        <p style="font-size:11px;color:var(--mu);margin-bottom:10px">Meça sem apertar a fita, de pé, respiração normal. Com isso dá pra estimar o % de gordura mesmo sem foto ou plicometria.</p>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+          <div id="medEssenciaisFig" style="flex-shrink:0"></div>
+          <div class="fg3" id="medEssenciaisGrid" style="flex:1;min-width:220px">
+            <div class="fg"><label class="fl">Pescoço (cm)</label><input type="number" id="pescoco" step="0.1" class="fc" placeholder="Ex: 37" oninput="calcSkinfold();calcCP();autoSave();updateAnthroMap();renderMedidasEssenciaisSvg()"></div>
+            <div class="fg"><label class="fl">Cintura (cm)</label><input type="number" id="cintura" step="0.1" class="fc" placeholder="Ex: 88" oninput="calcRCQ();calcSkinfold();calcRCE();calcIC();autoSave();updateAnthroMap();renderMedidasEssenciaisSvg()"></div>
+            <div class="fg" id="fgQuadrilEssencial" style="display:none"><label class="fl">Quadril (cm)</label><input type="number" id="quadril" step="0.1" class="fc" placeholder="Ex: 100" oninput="calcRCQ();calcSkinfold();calcIAC();autoSave();updateAnthroMap();renderMedidasEssenciaisSvg()"></div>
+          </div>
+        </div>
+      </div>
       <div class="fg3">
         <div class="fg"><label class="fl">Peso atual (kg)</label><input type="number" id="peso" step="0.1" class="fc" placeholder="Ex: 72.5" oninput="calcIMC();autoSave()"></div>
         <div class="fg"><label class="fl">Altura (cm)</label><input type="number" id="altura" step="0.1" class="fc" placeholder="Ex: 170" oninput="calcIMC();autoSave()"></div>
@@ -443,19 +454,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div class="ibox"><div class="v" id="icN">—</div><div class="l">Índice Conicidade</div><div class="c" id="icCl">—</div></div>
         <div class="ibox"><div class="v" id="cpN">—</div><div class="l">Circunf. Pescoço</div><div class="c" id="cpCl">—</div></div>
       </div>
-      <p style="font-size:11px;color:var(--mu);margin-top:6px">Peso, altura, idade e sexo biológico são preenchidos na aba <b>Identificação</b> (o Bodymate também pode informar).</p>
+      <p style="font-size:11px;color:var(--mu);margin-top:6px">Peso, altura, idade e sexo biológico são preenchidos na aba <b>Identificação</b> (o Bodymate também pode informar). Cintura, pescoço e quadril também ficam na aba <b>Identificação</b>, em destaque — o Bodymate consegue preencher essas três sozinho.</p>
 
       <div class="div"></div>
       <div class="rstit" style="margin-bottom:10px">📐 Circunferências (cm) <span style="font-weight:400;font-size:11px;color:var(--mu);text-transform:none;letter-spacing:0">— usadas na estimativa de % gordura (método da Marinha dos EUA) e nos índices complementares</span></div>
       <div class="fg3">
-        <div class="fg"><label class="fl">Pescoço</label><input type="number" id="pescoco" step="0.1" class="fc" placeholder="Ex: 37" oninput="calcSkinfold();calcCP();autoSave();updateAnthroMap()"></div>
         <div class="fg"><label class="fl">Ombro</label><input type="number" id="ombro" step="0.1" class="fc" placeholder="Ex: 110" oninput="autoSave();updateAnthroMap()"></div>
         <div class="fg"><label class="fl">Tórax / Peito</label><input type="number" id="torax" step="0.1" class="fc" placeholder="Ex: 96" oninput="autoSave();updateAnthroMap()"></div>
-      </div>
-      <div class="fg3" style="margin-top:16px">
-        <div class="fg"><label class="fl">Cintura</label><input type="number" id="cintura" step="0.1" class="fc" placeholder="Ex: 88" oninput="calcRCQ();calcSkinfold();calcRCE();calcIC();autoSave();updateAnthroMap()"></div>
         <div class="fg"><label class="fl">Abdômen</label><input type="number" id="abdomen" step="0.1" class="fc" placeholder="Ex: 90" oninput="autoSave();updateAnthroMap()"></div>
-        <div class="fg"><label class="fl">Quadril</label><input type="number" id="quadril" step="0.1" class="fc" placeholder="Ex: 100" oninput="calcRCQ();calcSkinfold();calcIAC();autoSave();updateAnthroMap()"></div>
       </div>
       <div class="fg3" style="margin-top:16px">
         <div class="fg"><label class="fl">Braço relaxado (bíceps)</label><input type="number" id="biceps" step="0.1" class="fc" placeholder="Ex: 30" oninput="autoSave();updateAnthroMap()"></div>
@@ -693,7 +699,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div class="ch"><div class="chi ig">🌿</div><div><h3>Frequência de Consumo Alimentar (QFA)</h3><p>Com que frequência você consome cada grupo?</p></div></div>
     <div class="cb" style="padding:16px 24px">
       <div id="qfaProgressBox" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-        <button class="btn bp" onclick="openQFA(0)">▶️ Responder QFA (14 grupos)</button>
+        <button class="btn bp" onclick="openQFA(0)" style="font-size:16px;padding:14px 26px;box-shadow:0 3px 10px rgba(0,0,0,.15)">▶️ Clique aqui para preencher — Frequência (14 grupos)</button>
         <div id="qfaProgTxt" style="font-size:12.5px;color:var(--mu)"></div>
       </div>
       <table class="ft" id="ftable" style="display:none"></table>
@@ -1191,8 +1197,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div class="div"></div>
       <div class="fg">
         <label class="fl">Exame laboratorial (PDF ou imagem)</label>
-        <input type="file" accept="image/*,application/pdf" id="exameInput" class="fc" onchange="handlePhotoUpload(this,'exameArquivo')">
+        <input type="file" accept="image/*,application/pdf" id="exameInput" class="fc" multiple onchange="handleExameUpload(this)">
         <div id="exameArquivoPreview" style="margin-top:8px"></div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px">Pode selecionar mais de um arquivo (segure Ctrl ao escolher, ou selecione de novo pra adicionar mais).</div>
       </div>
       <div id="iaExameBox" style="margin-top:14px">
         <button type="button" class="btn bp" id="btnAnalisarExame" onclick="analisarExameIA()">🧪 Analisar exame por IA (Inteligência Artificial)</button>
@@ -1509,14 +1516,53 @@ function handlePhotoUpload(inputEl,field){
   reader.onload=async e=>{
     let dataUrl=e.target.result,tipo=file.type;
     if(tipo&&tipo.startsWith('image/')&&tipo!=='image/gif'){
-      try{dataUrl=await comprimirImagemDataUrl(dataUrl,field==='exameArquivo'?2200:1600,field==='exameArquivo'?0.88:0.82);tipo='image/jpeg';}catch(err){}
+      try{dataUrl=await comprimirImagemDataUrl(dataUrl,1600,0.82);tipo='image/jpeg';}catch(err){}
     }
     photoData[field]={name:file.name,type:tipo,data:dataUrl};
-    if(field==='exameArquivo'){exameIA=null;renderExameIA();}
     renderPhotoPreview(field);
     autoSave();
   };
   reader.readAsDataURL(file);
+}
+// ── Exame laboratorial: aceita vários arquivos (a pessoa pode ter mais de um exame separado) ──
+async function handleExameUpload(inputEl){
+  const files=Array.from(inputEl.files||[]);
+  if(!files.length)return;
+  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){
+    inputEl.value='';
+    showToast('⚠️ Registre o consentimento (aba Identificação) antes de enviar fotos e exames','#e67e22');
+    irParaConsentimento();
+    return;
+  }
+  const maxMB=8;
+  if(!Array.isArray(photoData.exameArquivo))photoData.exameArquivo=[];
+  for(const file of files){
+    if(file.size>maxMB*1024*1024){showToast(`⚠️ "${file.name}" muito grande (máx ${maxMB}MB) — comprima antes de enviar`,'#e67e22');continue;}
+    const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(file);});
+    let finalUrl=dataUrl,tipo=file.type;
+    if(tipo&&tipo.startsWith('image/')&&tipo!=='image/gif'){
+      try{finalUrl=await comprimirImagemDataUrl(dataUrl,2200,0.88);tipo='image/jpeg';}catch(err){}
+    }
+    photoData.exameArquivo.push({name:file.name,type:tipo,data:finalUrl});
+  }
+  exameIA=null;renderExameIA();
+  renderExameFilesPreview();
+  autoSave();
+  inputEl.value='';
+}
+function renderExameFilesPreview(){
+  const box=document.getElementById('exameArquivoPreview');
+  if(!box)return;
+  const files=photoData.exameArquivo;
+  if(!Array.isArray(files)||!files.length){box.innerHTML='';return;}
+  box.innerHTML=files.map((f,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;font-size:11.5px;padding:8px 10px;background:var(--gp);border-radius:8px;border:1px solid var(--br);margin-bottom:6px"><span>📄 ${escH(f.name)}</span><button type="button" class="rf" onclick="removeExameArquivo(${i})">✕</button></div>`).join('');
+}
+function removeExameArquivo(i){
+  if(!Array.isArray(photoData.exameArquivo))return;
+  photoData.exameArquivo.splice(i,1);
+  exameIA=null;renderExameIA();
+  renderExameFilesPreview();
+  autoSave();
 }
 // ── CONSENTIMENTO (LGPD) ──
 // Modelo inicial de termo: revisar com advogado antes de usar com pacientes.
@@ -1674,28 +1720,51 @@ function renderExameIA(){
   box.appendChild(ap);
   atualizarAlertasExame();
 }
-async function reanalisarExameIA(){
-  if(!iaPermitida())return;
-  const f=photoData.exameArquivo;
-  if(!f||!exameIA){showToast('⚠️ Analise o exame primeiro','#e67e22');return;}
-  const consideracoes=(document.getElementById('exameDiscussao')?.value||'').trim();
-  if(!consideracoes){showToast('⚠️ Escreva suas considerações antes de pedir a reanálise','#e67e22');return;}
-  const btn=document.getElementById('btnReanalisarExame'),box=document.getElementById('exameIAResultado');
+async function analisarTodosExames(consideracoes){
+  const files=photoData.exameArquivo;
+  if(!Array.isArray(files)||!files.length)throw new Error('Nenhum arquivo de exame enviado.');
   const sx=document.querySelector('input[name="sexo"]:checked')?.value;
   const sexo=(sx==='M'||sx==='F')?sx:'';
   const idade=document.getElementById('idade').value||'';
-  if(btn)btn.disabled=true;
-  showToast('⏳ Reanalisando com suas considerações...');
-  try{
+  const resultados=[];
+  for(const f of files){
     let arquivoBase64,mediaType;
     if(f.type==='application/pdf'){arquivoBase64=f.data.split(',')[1];mediaType='application/pdf';}
     else if(f.type&&f.type.startsWith('image/')){arquivoBase64=await reduzirImagemIA(f.data,2000,0.85);mediaType='image/jpeg';}
-    else throw new Error('Formato não suportado.');
-    const resp=await fetch('/.netlify/functions/analisar-exame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arquivoBase64,mediaType,sexo,idade,anterior:{marcadores:exameIA.marcadores,resumo:exameIA.resumo},consideracoes})});
-    let r;try{r=await resp.json();}catch(e){throw new Error('Resposta inválida do servidor. Tente novamente.');}
-    if(!resp.ok||!r.exame)throw new Error(r.erro||'Não foi possível reanalisar o exame');
+    else throw new Error('Formato não suportado em "'+f.name+'". Use PDF ou imagem.');
+    if(arquivoBase64.length>5.6*1024*1024)throw new Error('Arquivo "'+f.name+'" grande demais para a análise (limite de cerca de 4 MB). Comprima ou envie só as páginas principais.');
+    const body={arquivoBase64,mediaType,sexo,idade};
+    if(consideracoes){body.consideracoes=consideracoes;if(exameIA)body.anterior={marcadores:exameIA.marcadores,resumo:exameIA.resumo};}
+    const resp=await fetch('/.netlify/functions/analisar-exame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    let r;try{r=await resp.json();}catch(e){throw new Error('Resposta inválida do servidor ao analisar "'+f.name+'". Tente novamente.');}
+    if(!resp.ok||!r.exame)throw new Error(r.erro||('Não foi possível analisar "'+f.name+'"'));
+    resultados.push({arquivo:f.name,exame:r.exame});
+  }
+  const multi=resultados.length>1;
+  const marcadores=[];
+  resultados.forEach(res=>{
+    (res.exame.marcadores||[]).forEach(m=>marcadores.push(multi?{...m,nome:m.nome+' ('+res.arquivo+')'}:m));
+  });
+  const resumo=multi
+    ?resultados.map(res=>'['+res.arquivo+'] '+(res.exame.resumo||'')).join('\n\n')
+    :(resultados[0].exame.resumo||'');
+  const laboratorio=resultados.map(r=>r.exame.laboratorio).find(Boolean)||'';
+  const coleta=resultados.map(r=>r.exame.coleta).find(Boolean)||'';
+  return{marcadores,resumo,laboratorio,coleta,arquivo:resultados.map(r=>r.arquivo).join(', ')};
+}
+async function reanalisarExameIA(){
+  if(!iaPermitida())return;
+  const files=photoData.exameArquivo;
+  if(!Array.isArray(files)||!files.length||!exameIA){showToast('⚠️ Analise o(s) exame(s) primeiro','#e67e22');return;}
+  const consideracoes=(document.getElementById('exameDiscussao')?.value||'').trim();
+  if(!consideracoes){showToast('⚠️ Escreva suas considerações antes de pedir a reanálise','#e67e22');return;}
+  const btn=document.getElementById('btnReanalisarExame'),box=document.getElementById('exameIAResultado');
+  if(btn)btn.disabled=true;
+  showToast('⏳ Reanalisando com suas considerações...');
+  try{
+    const merged=await analisarTodosExames(consideracoes);
     const reanalises=(exameIA.reanalises||0)+1;
-    exameIA={...r.exame,aprovado:false,arquivo:f.name,analisadoEm:new Date().toISOString(),reanalises,ultimaConsideracao:consideracoes};
+    exameIA={...merged,aprovado:false,analisadoEm:new Date().toISOString(),reanalises,ultimaConsideracao:consideracoes};
     renderExameIA();autoSave();
     showToast('✅ Reanálise concluída');
   }catch(e){
@@ -1704,24 +1773,17 @@ async function reanalisarExameIA(){
 }
 async function analisarExameIA(){
   if(!iaPermitida())return;
-  const f=photoData.exameArquivo;
-  if(!f){showToast('⚠️ Envie primeiro o exame (PDF ou imagem)','#e67e22');return;}
+  const files=photoData.exameArquivo;
+  if(!Array.isArray(files)||!files.length){showToast('⚠️ Envie primeiro o(s) exame(s) (PDF ou imagem)','#e67e22');return;}
   const btn=document.getElementById('btnAnalisarExame'),box=document.getElementById('exameIAResultado');
   const sx=document.querySelector('input[name="sexo"]:checked')?.value;
   const sexo=(sx==='M'||sx==='F')?sx:'';
   const idade=document.getElementById('idade').value||'';
   btn.disabled=true;
-  box.textContent='⏳ Lendo o exame (pode levar até 1 minuto)...';
+  box.textContent='⏳ Lendo '+(files.length>1?files.length+' exames':'o exame')+' (pode levar até 1 minuto)...';
   try{
-    let arquivoBase64,mediaType;
-    if(f.type==='application/pdf'){arquivoBase64=f.data.split(',')[1];mediaType='application/pdf';}
-    else if(f.type&&f.type.startsWith('image/')){arquivoBase64=await reduzirImagemIA(f.data,2000,0.85);mediaType='image/jpeg';}
-    else throw new Error('Formato não suportado. Use PDF ou imagem.');
-    if(arquivoBase64.length>5.6*1024*1024)throw new Error('Arquivo grande demais para a análise (limite de cerca de 4 MB). Comprima o PDF ou envie só as páginas principais.');
-    const resp=await fetch('/.netlify/functions/analisar-exame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arquivoBase64,mediaType,sexo,idade})});
-    let r;try{r=await resp.json();}catch(e){throw new Error('Resposta inválida do servidor. Tente novamente.');}
-    if(!resp.ok||!r.exame)throw new Error(r.erro||'Não foi possível analisar o exame');
-    exameIA={...r.exame,aprovado:false,arquivo:f.name,analisadoEm:new Date().toISOString()};
+    const merged=await analisarTodosExames(null);
+    exameIA={...merged,aprovado:false,analisadoEm:new Date().toISOString()};
     renderExameIA();autoSave();
   }catch(e){
     box.textContent='❌ '+e.message;
@@ -1991,7 +2053,7 @@ async function resetFormularioCompleto(){
   PHOTO_FIELDS.forEach(f=>renderPhotoPreview(f));
   document.querySelectorAll('input[type=file]').forEach(i=>{i.value='';});
   renderConsent();renderExameIA();
-  atualizarMedPorDoenca();atualizarAnticonVisibilidade();atualizarGuiaFotos();
+  atualizarMedPorDoenca();atualizarAnticonVisibilidade();atualizarQuadrilVisibilidade();renderMedidasEssenciaisSvg();atualizarGuiaFotos();
   updateDCA();updDcaCnt();
   updateBodyFig();updateAnthroMap();updateCAF();
   ['imcDisp','preDisp'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
@@ -2752,6 +2814,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   updatePB();
   updateBodyFig();
   updateAnthroMap();
+  renderMedidasEssenciaisSvg();
   updateCAF();
 });
 
@@ -2774,7 +2837,7 @@ function clickRadio(label,name,val){
   const inp=label.querySelector('input');
   if(inp){inp.checked=true;}
   document.querySelectorAll(`input[name="${name}"]`).forEach(r=>r.checked=(r.value===val));
-  if(name==='sexo'){atualizarGuiaFotos();atualizarAnticonVisibilidade();calcSkinfold();calcPreensao();calcRCQ();calcIAC();calcIC();calcCP();updateAnthroMap();}
+  if(name==='sexo'){atualizarGuiaFotos();atualizarAnticonVisibilidade();atualizarQuadrilVisibilidade();renderMedidasEssenciaisSvg();calcSkinfold();calcPreensao();calcRCQ();calcIAC();calcIC();calcCP();updateAnthroMap();}
   autoSave();
 }
 function clickCheck(label){
@@ -2796,6 +2859,11 @@ function toggleAnticon(show){const e=document.getElementById('anticonDet');if(e)
 function atualizarAnticonVisibilidade(){
   const sx=document.querySelector('input[name="sexo"]:checked');
   const box=document.getElementById('anticonBox');
+  if(box)box.style.display=(sx&&sx.value==='F')?'block':'none';
+}
+function atualizarQuadrilVisibilidade(){
+  const sx=document.querySelector('input[name="sexo"]:checked');
+  const box=document.getElementById('fgQuadrilEssencial');
   if(box)box.style.display=(sx&&sx.value==='F')?'block':'none';
 }
 
@@ -3313,6 +3381,16 @@ function updateAnthroMap(){
   wrap.innerHTML=renderAnthroSvg('front',sexo,front,zonesLive)+renderAnthroSvg('back',sexo,back,zonesLive)+
     `<div style="flex-basis:100%;text-align:center;font-size:10.5px;color:var(--mu)">◆ dobra cutânea (mm) · ● circunferência (cm) — cor sólida indica campo preenchido</div>`;
 }
+// ── versão simplificada da silhueta, só com pescoço/cintura/quadril — pro Bodymate saber onde passar a fita ──
+function renderMedidasEssenciaisSvg(){
+  const wrap=document.getElementById('medEssenciaisFig');
+  if(!wrap)return;
+  const sexo=document.querySelector('input[name="sexo"]:checked')?.value||'M';
+  const ids=sexo==='F'?['pescoco','cintura','quadril']:['pescoco','cintura'];
+  const all=buildAnthroMarkers(antroVal).front;
+  const markers=all.filter(m=>ids.includes(m.id));
+  wrap.innerHTML=renderAnthroSvg('front',sexo,markers,null);
+}
 
 // ── DINAMOMETRIA / FORÇA DE PREENSÃO ──
 function calcPreensao(){
@@ -3555,6 +3633,14 @@ function saveData(){persistirRascunho();showToast('✅ Dados salvos!');}
 async function finalizar(){
   const d=collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome antes de finalizar','#e67e22');goTab(0);return false;}
+  if(userRole==='paciente'&&gorduraPctFromData(d)===null){
+    const semCintura=!d.cintura,semPescoco=!d.pescoco,semQuadril=(d.sexo==='F')&&!d.quadril;
+    if(semCintura||semPescoco||semQuadril){
+      showToast('⚠️ Meça e preencha cintura, pescoço'+(d.sexo==='F'?' e quadril':'')+' (logo no início da ficha) antes de finalizar','#e67e22');
+      goTab(0);
+      return false;
+    }
+  }
   await storeInit();
   try{sessionStorage.setItem(DK,JSON.stringify(d));}catch(e){}
   const pts=PTS.slice();
@@ -3597,7 +3683,7 @@ function loadData(dov){
     refreshProtocoloDet();
     if(d.taba==='S')document.getElementById('cqtd').style.display='block';
     ['doencas','alergias','histFam','queixasGI'].forEach(g=>{(d[g]||[]).forEach(v=>{const inp=document.querySelector(`#cg_${g} input[value="${v}"]`);if(inp){inp.checked=true;inp.closest('.co').classList.add('selected');}});});
-    atualizarMedPorDoenca();atualizarAnticonVisibilidade();
+    atualizarMedPorDoenca();atualizarAnticonVisibilidade();atualizarQuadrilVisibilidade();renderMedidasEssenciaisSvg();
     (d.medLista||[]).forEach(m=>{
       const cb=document.querySelector('.medChk[data-cat="'+m.cat+'"][value="'+CSS.escape(m.item)+'"]');
       if(cb){cb.checked=true;const lb=cb.closest('.cons-ck');if(lb)lb.classList.add('selected');}
@@ -3610,7 +3696,8 @@ function loadData(dov){
     if(d.freqTable){Object.entries(d.freqTable).forEach(([gi,oi])=>{if(oi!==null){const e=document.querySelector(`input[name="freq_${gi}"][value="${oi}"]`);if(e)e.checked=true;}});updateQfaProgress();qfaChartRender();}
     if(d.dcaSel){dcaItems=Array.from({length:10},(_,i)=>d.dcaSel[i]&&d.dcaSel[i].name?d.dcaSel[i]:{name:'',mode:'porcao',qty:1});} updateDCA();updDcaCnt();
     if(d.fotoLado&&!d.fotoLatEsq)d.fotoLatEsq=d.fotoLado;
-    PHOTO_FIELDS.forEach(f=>{if(d[f]){photoData[f]=d[f];renderPhotoPreview(f);}});
+    if(d.exameArquivo&&!Array.isArray(d.exameArquivo))d.exameArquivo=[d.exameArquivo]; // compatibilidade com fichas antigas (1 exame só)
+    PHOTO_FIELDS.forEach(f=>{if(d[f]){photoData[f]=d[f];if(f==='exameArquivo')renderExameFilesPreview();else renderPhotoPreview(f);}});
     atualizarGuiaFotos();
     consent=d.consent||null;exameIA=d.exameIA||null;renderConsent();renderExameIA();objetivoOutroToggle();
     if(d.peso&&d.altura)calcIMC();
