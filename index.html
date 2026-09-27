@@ -4295,14 +4295,14 @@ function dietChavePaciente(d){return String((d&&(d.id||d.nome))||'');}
 function salvarRascunhoDieta(){
   if(!dietPlanEdit||!dietPlanEdit.length||!dietDataCache)return;
   try{
-    sessionStorage.setItem(DIET_DK,JSON.stringify({
+    localStorage.setItem(DIET_DK,JSON.stringify({
       chave:dietChavePaciente(dietDataCache),savedAt:new Date().toISOString(),
       dietPlanEdit,dietSupEdit,dietEAAEdit,dietFarmEdit,dietOv,dietCas,
       dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale
     }));
   }catch(e){}
 }
-function limparRascunhoDieta(){try{sessionStorage.removeItem(DIET_DK);}catch(e){}}
+function limparRascunhoDieta(){try{localStorage.removeItem(DIET_DK);}catch(e){}}
 function abrirEditorDieta(dataOverride,ov){
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
@@ -4311,7 +4311,7 @@ function abrirEditorDieta(dataOverride,ov){
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
   let restaurado=false;
   try{
-    const raw=sessionStorage.getItem(DIET_DK);
+    const raw=localStorage.getItem(DIET_DK);
     if(raw){
       const rasc=JSON.parse(raw);
       if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei uma dieta não salva desse Bodymate, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'. Continuar de onde parou em vez de gerar do zero?')){
@@ -4411,7 +4411,8 @@ function capFirst(s){s=String(s||'');return s.length?s.charAt(0).toUpperCase()+s
 // ── Identifica bebidas/líquidos pra trocar o rótulo de "g" pra "ml" — cobre a lista fixa e nomes digitados/estimados por IA ──
 function ehLiquido(nome){
   const n=(nome||'').toLowerCase();
-  return /\bágua\b|\bleite\b|\bsuco\b|refrigerante|\bchá\b|isot[ôo]nico|achocolatado|\bcafé\b|\bcaldo\b|vitamina de fruta|\bkefir\b|cerveja/.test(n);
+  if(/creme de leite|doce de leite|leite condensado|leite em p[óo]|\bp[óo]\b/.test(n))return false; // derivados que não são bebida
+  return /(?<![\p{L}])(água|leite|suco|chá|café|caldo|kefir|vitamina de fruta)(?![\p{L}])|refrigerante|isot[ôo]nico|achocolatado|cerveja/u.test(n);
 }
 // ── Lista, sem repetir, os alimentos que realmente entraram no cardápio final — usado pra pedir substituições sob medida por IA ──
 function itensUnicosDoPlan(plan){
