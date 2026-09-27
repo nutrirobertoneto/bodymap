@@ -35,7 +35,7 @@ Alimento/preparação: "${nomeLimpo}"
 
 IMPORTANTE: o Bodymate precisa saber exatamente O QUE PESAR e preparar — nunca devolva um prato composto como um item único com peso total genérico. Quebre em cada ingrediente real que compõe a preparação, com o peso individual de cada um (a soma dos pesos é o peso total da porção). Use nomes de ingrediente simples e diretos (ex.: "Ovo", "Aveia", "Peito de frango" — sem "grelhado/assado" grudado no nome). Se o item digitado já for um ingrediente único e simples (ex.: "banana"), devolva só 1 ingrediente. Ignore temperos/sal/ervas que não tenham valor calórico relevante (não precisa listar "sal a gosto" como ingrediente).
 
-Considere o modo de preparo caseiro mais comum no Brasil quando não especificado (grelhado/cozido, sem excesso de óleo).
+Considere o modo de preparo caseiro mais comum no Brasil quando não especificado (grelhado/cozido, sem excesso de óleo), E use o tamanho de porção real de uma pessoa comum no dia a dia — não arredonde pra cima nem some porções generosas demais. Referências úteis: 1 xícara de café com leite ≈ 150-200 ml no total (a soma do café + leite, não cada um sozinho); 1 copo de suco ou vitamina ≈ 200 ml; 1 fatia de pão ≈ 25-50 g; 1 ovo médio ≈ 50 g; uma porção de proteína principal (almoço/jantar) ≈ 100-150 g. Se o nome digitado não indicar uma quantidade maior, assuma sempre a porção do dia a dia, nunca a maior possível.
 
 Responda APENAS com JSON válido, sem markdown e sem texto extra, neste formato exato:
 {"itens":[{"nome":"","gramas":0,"kcal":0,"prot":0,"fat":0,"carb":0,"fiber":0}],"nota":""}
