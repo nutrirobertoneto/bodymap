@@ -762,29 +762,22 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 </div>
 <div class="pw-overlay" id="dietWizardOverlay" style="display:none">
   <div class="diet-editor-box" style="width:660px">
-    <div id="dwStepChoice">
-      <h2 style="font-size:19px;margin-bottom:2px">🍽️ Como você quer montar esta dieta?</h2>
-      <p style="font-size:12.5px;color:var(--mu);margin-bottom:18px">Escolha o caminho — dá pra trocar de ideia depois, começando de novo.</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
-        <div onclick="dietEscolherAutomatico()" style="flex:1;min-width:220px;cursor:pointer;border:1px solid var(--br);border-radius:12px;padding:18px;background:var(--gp)">
-          <div style="font-size:26px;margin-bottom:8px">🤖</div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Automático</div>
-          <div style="font-size:12.5px;color:var(--mu)">O assistente monta o cardápio pra você, com calorias, macros e distribuição — você ajusta tudo depois.</div>
+    <div id="dwStepQ" style="display:none">
+      <h2 id="dwQTitulo" style="font-size:19px;margin-bottom:6px"></h2>
+      <div style="height:6px;background:var(--br);border-radius:4px;overflow:hidden;margin-bottom:10px"><div id="dwQBarIn" style="height:100%;width:0;background:var(--gd);transition:width .2s"></div></div>
+      <p id="dwQSub" style="font-size:12.5px;color:var(--mu);margin-bottom:14px"></p>
+      <div id="dwQCorpo" style="max-height:52vh;overflow-y:auto;padding-right:4px"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:18px">
+        <button class="pw-cancel" onclick="dwQVoltar()">← Voltar</button>
+        <div style="display:flex;gap:10px">
+          <button class="pw-cancel" onclick="dwQPular()">Pular (usar padrão)</button>
+          <button class="btn bp" onclick="dwQProximo()">Próximo →</button>
         </div>
-        <div onclick="dietEscolherManual()" style="flex:1;min-width:220px;cursor:pointer;border:1px solid var(--br);border-radius:12px;padding:18px;background:var(--gp)">
-          <div style="font-size:26px;margin-bottom:8px">✋</div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Manual</div>
-          <div style="font-size:12.5px;color:var(--mu)">Você escolhe cada alimento direto na tela de revisão, sem pesos. Quando terminar, clica em "Refresh" pra distribuir os pesos automaticamente, batendo a meta calórica de cada refeição.</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:20px">
-        <button class="pw-cancel" onclick="dietWizVoltarChoice()">← Voltar</button>
-        <button class="pw-cancel" onclick="fecharDietWizard()">Cancelar</button>
       </div>
     </div>
     <div id="dwStep0" style="display:none">
-      <h2 style="font-size:19px;margin-bottom:2px">🍽️ 1/4 — Modelo de dieta</h2>
-      <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">Escolha a linha que vai guiar o cardápio. Você ainda ajusta tudo nas telas seguintes.</p>
+      <h2 style="font-size:19px;margin-bottom:2px">🍽️ 1/12 — Modelo de dieta</h2>
+      <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">Escolha a linha que vai guiar o cardápio. Depois vêm as perguntas de preferência, e você ainda ajusta tudo na prévia.</p>
       <div id="dwAjusteInfo" style="display:none;margin-bottom:16px;padding:12px 14px;background:var(--gp);border-radius:10px;border:1px solid var(--br)"></div>
       <div class="cons-grid" id="dwModeloGrid" style="max-height:300px;overflow-y:auto;padding-right:4px"></div>
       <div id="dwModeloDesc" style="font-size:12px;color:var(--mu);margin-top:8px;padding:8px 10px;background:var(--gp);border-radius:8px;min-height:20px"></div>
@@ -797,12 +790,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div style="display:flex;justify-content:flex-end;margin-top:18px">
         <div style="display:flex;gap:10px">
           <button class="pw-cancel" onclick="fecharDietWizard()">Cancelar</button>
-          <button class="btn bp" onclick="dietWizProximo0()">Próximo →</button>
+          <button class="btn bp" onclick="dietWizProximo0()">Próximo → Perguntas</button>
         </div>
       </div>
     </div>
     <div id="dwStep1" style="display:none">
-      <h2 style="font-size:19px;margin-bottom:2px">⚖️ 2/4 — Distribuição de macros</h2>
+      <h2 style="font-size:19px;margin-bottom:2px">⚖️ 10/12 — Metas e distribuição</h2>
       <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">Defina as calorias e o % de cada macronutriente. O carboidrato é sempre o restante até 100%.</p>
       <div class="fg" style="margin-bottom:12px"><label class="fl">Calorias por dia (kcal)</label><input class="aj-in" style="width:120px" id="dwKcal" type="number" step="10" oninput="dietWizAtualizar()"></div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
@@ -818,28 +811,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <option value="2">2 refeições livres/semana</option>
         <option value="3">3 ou mais refeições livres/semana</option>
         <option value="dia">1 dia inteiro livre/semana</option>
-      </select></div>
-      <div class="fg" style="margin-top:14px"><label class="fl">Lanche Manhã (dentro do limite de caloria da dieta)</label><select class="di" id="dwLancheManha" style="max-width:400px">
-        <option value="">Automático (varia)</option>
-        <option value="grao_bico">Grão-de-bico torrado e temperado</option>
-        <option value="tapioca_queijo_ovo">Tapioca com queijo coalho/minas e ovo</option>
-        <option value="cuscuz_ovo_queijo">Cuscuz nordestino com ovo e queijo</option>
-        <option value="batata_doce_ovo">Batata doce cozida com ovo</option>
-        <option value="cottage_torrada">Queijo cottage (ou ricota temperada) com torrada</option>
-        <option value="sardinha_torrada">Sardinha em lata com torrada</option>
-        <option value="iogurte_aveia_canela">Iogurte natural com aveia e canela</option>
-        <option value="ovo_fruta">Ovo cozido com fruta</option>
-      </select></div>
-      <div class="fg" style="margin-top:14px"><label class="fl">Lanche Tarde (dentro do limite de caloria da dieta)</label><select class="di" id="dwLancheTarde" style="max-width:400px">
-        <option value="">Automático (varia)</option>
-        <option value="grao_bico">Grão-de-bico torrado e temperado</option>
-        <option value="tapioca_queijo_ovo">Tapioca com queijo coalho/minas e ovo</option>
-        <option value="cuscuz_ovo_queijo">Cuscuz nordestino com ovo e queijo</option>
-        <option value="batata_doce_ovo">Batata doce cozida com ovo</option>
-        <option value="cottage_torrada">Queijo cottage (ou ricota temperada) com torrada</option>
-        <option value="sardinha_torrada">Sardinha em lata com torrada</option>
-        <option value="iogurte_aveia_canela">Iogurte natural com aveia e canela</option>
-        <option value="ovo_fruta">Ovo cozido com fruta</option>
       </select></div>
       <div id="dwFomeNota" style="display:none;font-size:12px;color:var(--gd);background:var(--gp);border:1px solid var(--br);border-radius:8px;padding:8px 10px;margin-top:12px"></div>
       <div class="fg" style="margin-top:14px"><label class="fl">Distribuição de calorias ao longo do dia</label>
@@ -863,13 +834,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div style="display:flex;justify-content:space-between;margin-top:16px">
         <button class="pw-cancel" onclick="dietWizPadrao()">↺ Usar sugestão do modelo</button>
         <div style="display:flex;gap:10px">
-          <button class="pw-cancel" onclick="dietWizVoltar0()">← Voltar</button>
+          <button class="pw-cancel" onclick="dwQAbrir(DWQ_TELAS.length-1)">← Voltar</button>
           <button class="btn bp" onclick="dietWizProximo()">Próximo → Suplementação</button>
         </div>
       </div>
     </div>
     <div id="dwStep2" style="display:none">
-      <h2 style="font-size:19px;margin-bottom:2px">💊 3/4 — Suplementação, EAA e Fármacos</h2>
+      <h2 style="font-size:19px;margin-bottom:2px">💊 11/12 — Suplementação, EAA e Fármacos</h2>
       <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Três perguntas independentes — cada "sim" abre a tabela correspondente na tela seguinte, para você preencher ou editar.</p>
       <div class="fg" style="margin-bottom:14px">
         <label class="fl">Incluir suplementação, vitaminas e minerais?</label>
@@ -901,7 +872,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       </div>
     </div>
     <div id="dwStep3" style="display:none">
-      <h2 style="font-size:19px;margin-bottom:2px">📄 4/4 — Fechamento do documento</h2>
+      <h2 style="font-size:19px;margin-bottom:2px">📄 12/12 — Fechamento do documento</h2>
       <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">O que aparece no fechamento do Word, com a composição corporal do Bodymate?</p>
       <div class="cons-grid" id="dwFechoGrid"></div>
       <div class="fg" style="margin-top:18px">
@@ -923,9 +894,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 <div class="pw-overlay" id="dietEditorOverlay" style="display:none">
   <div class="diet-editor-box">
     <h2 style="font-size:19px;margin-bottom:2px">🍽️ Revisar PLANNER</h2>
-    <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Ajuste nomes, quantidades e a quantidade de refeições por dia antes de gerar o documento Word.</p>
+    <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Prévia pronta com as suas respostas. Ajuste nomes, quantidades e refeições se precisar, depois gere o Word.</p>
     <div id="dietResumoLinha" style="font-size:12.5px;font-weight:600;color:var(--gd);margin-bottom:10px"></div>
-    <label class="cons-ck" style="margin-bottom:14px"><input type="checkbox" id="dietCaseiras" onchange="dietToggleCaseiras()"><span>🏠 Mostrar também as <b>medidas caseiras</b> ao lado das gramas (o padrão é só gramas). Ao trocar, o cardápio é refeito.</span></label>
     <div style="margin-bottom:14px">
       <button class="btn bp" onclick="distribuirPesosPlano()">🔄 Refresh (recalcular pesos)</button>
       <span style="font-size:11px;color:var(--mu);margin-left:8px">Lê todos os alimentos da lista e recalcula o peso de todos (menos os que você digitou fora da base), pra bater a meta calórica de cada refeição.</span>
@@ -1398,11 +1368,11 @@ const LOGO_URI='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAAT
 // ── FOODS DB ──
 const FOODS={
   'Cereais':['Arroz branco','Arroz integral','Pão francês','Pão integral','Pão de forma','Macarrão','Macarrão integral','Aveia','Tapioca','Cuscuz','Pão de queijo','Biscoito cream cracker','Biscoito água e sal','Granola','Polenta','Farinha de mandioca','Canjica','Mingau de aveia','Farinha de aveia','Farinha de trigo','Amido de milho (maisena)'],
-  'Frutas':['Banana','Maçã','Laranja','Mamão','Melancia','Uva','Abacaxi','Manga','Morango','Pera','Goiaba','Limão','Caju','Abacate','Kiwi','Melão','Tangerina','Maracujá','Acerola','Ameixa','Pêssego','Cereja','Framboesa','Mirtilo (blueberry)','Figo','Ameixa seca','Damasco seco','Uva passa'],
+  'Frutas':['Banana','Maçã','Laranja','Mamão','Melancia','Uva','Abacaxi','Manga','Morango','Pera','Goiaba','Limão','Caju','Abacate','Kiwi','Melão','Tangerina','Maracujá','Acerola','Ameixa','Pêssego','Cereja','Framboesa','Mirtilo (blueberry)','Figo','Ameixa seca','Damasco seco','Uva passa','Frutas vermelhas','Amora'],
   'Vegetais':['Alface','Tomate','Cenoura','Beterraba','Chuchu','Abobrinha','Brócolis','Espinafre','Repolho','Couve','Pepino','Cebola','Alho','Batata','Batata doce','Mandioca','Inhame','Quiabo','Berinjela','Vagem','Milho verde','Ervilha fresca','Rúcula','Agrião','Aspargos','Cogumelo Paris','Couve-flor','Pimentão','Aipo','Alho-poró','Nabo'],
   'Proteínas':['Frango grelhado','Frango frito','Frango assado','Carne bovina grelhada','Carne moída','Bisteca','Costela','Peixe grelhado','Peixe frito','Atum em lata','Sardinha','Salmão','Ovo mexido','Ovo estrelado','Ovo cozido','Feijão carioca','Feijão preto','Lentilha','Grão-de-bico','Presunto','Peito de peru','Salsicha','Linguiça','Peito de frango','Filé de tilápia','Lombo suíno','Patinho moído','Alcatra','Filé mignon','Clara de ovo','Gema de ovo','Camarão','Feijão branco cozido','Ervilha em lata','Quinoa cozida'],
-  'Lácteos':['Leite integral','Leite semidesnatado','Leite desnatado','Iogurte natural','Iogurte grego','Iogurte com frutas','Queijo prato','Queijo minas frescal','Queijo muçarela','Queijo coalho','Requeijão','Creme de leite','Cottage','Ricota','Parmesão ralado','Queijo minas light','Whey protein (pó)','Leite em pó desnatado','Kefir','Creme de leite light','Leite condensado light'],
-  'Gorduras':['Azeite de oliva','Óleo vegetal','Manteiga','Margarina','Maionese','Bacon','Leite de coco','Pasta de amendoim','Azeite de coco'],
+  'Lácteos':['Leite de soja','Leite de amêndoas','Leite de aveia','Leite sem lactose','Iogurte de soja','Leite integral','Leite semidesnatado','Leite desnatado','Iogurte natural','Iogurte grego','Iogurte com frutas','Queijo prato','Queijo minas frescal','Queijo muçarela','Queijo coalho','Requeijão','Creme de leite','Cottage','Ricota','Parmesão ralado','Queijo minas light','Whey protein (pó)','Leite em pó desnatado','Kefir','Creme de leite light','Leite condensado light'],
+  'Gorduras':['Castanha de caju','Castanha-do-pará','Macadâmia','Nozes','Amêndoas','Chia','Linhaça','Gergelim','Azeite de oliva','Óleo vegetal','Manteiga','Margarina','Maionese','Bacon','Leite de coco','Pasta de amendoim','Azeite de coco'],
   'Bebidas':['Água','Suco natural','Suco industrializado','Refrigerante','Refrigerante zero','Café preto','Café com leite','Chá','Vitamina de fruta','Achocolatado','Isotônico','Água de coco'],
   'Ultraprocessados':['Biscoito recheado','Salgadinho','Pipoca industrializada','Bolo industrializado','Chocolate','Sorvete','Hambúrguer/Fast food','Pizza','Lasanha congelada','Nuggets','Salame','Mortadela','Doce/brigadeiro'],
   'Outros':['Açúcar','Mel','Geleia','Ketchup','Mostarda','Molho shoyu','Molho de tomate','Sal','Azeite de dendê','Vinagre','Mostarda dijon','Molho barbecue'],
@@ -1504,10 +1474,49 @@ const FOOD_NUT={
  'Farinha de aveia':[394,13.9,8.5,66.6,9.1,15],'Farinha de trigo':[360,9.8,1.4,75.1,2.3,15],'Amido de milho (maisena)':[361,0.6,0,88.7,0.5,10],
  'Quinoa cozida':[120,4.4,1.9,21.3,2.8,100],'Feijão branco cozido':[132,8.5,0.5,24.0,6.5,100],'Ervilha em lata':[68,4.5,0.4,12.0,4.0,100],
  // ── molhos e condimentos extras ──
+ // ── leites e derivados alternativos, oleaginosas, frutas vermelhas, pães sem glúten, sopa ──
+ 'Tofu':[76,8.1,4.8,1.9,0.3,120],'Leite de soja':[43,3.3,1.8,4.2,0.4,200],'Leite de amêndoas':[24,0.9,1.5,2.5,0.4,200],'Leite de aveia':[45,1.0,1.5,7.0,0.8,200],
+ 'Leite sem lactose':[45,3.0,1.5,4.6,0,200],'Iogurte de soja':[52,3.5,2.0,5.0,0.5,170],
+ 'Castanha de caju':[570,18.5,46.3,29.1,3.7,15],'Castanha-do-pará':[643,14.5,63.5,15.1,7.9,15],'Macadâmia':[718,7.9,75.8,13.8,8.6,15],
+ 'Nozes':[620,14.0,59.4,18.4,5.2,15],'Amêndoas':[579,21.2,49.9,21.6,12.5,15],'Chia':[486,16.5,30.7,42.1,34.4,10],'Linhaça':[495,14.1,32.3,43.3,33.5,10],
+ 'Gergelim':[573,17.7,49.7,23.4,11.8,10],'Amora':[43,1.4,0.5,9.6,5.3,100],'Frutas vermelhas':[46,1.0,0.4,10.0,4.0,100],
+ 'Pão sem glúten':[270,4.0,4.0,54.0,3.0,50],'Pão de forma sem glúten':[265,4.0,4.5,52.0,3.0,25],'Granola sem glúten':[400,9.0,12.0,66.0,7.0,10],
+ 'Sopa de legumes':[35,1.5,0.8,5.5,1.2,250],'Torrada':[380,11.0,4.0,72.0,5.0,15],'Suco de laranja natural':[45,0.7,0.2,10.4,0.2,200],
+ 'Gelatina zero':[10,2.0,0,0.5,0,100],'Suspiro':[380,2.0,0,93.0,0,10],'Mousse de whey':[90,12.0,2.0,6.0,0,120],'Whey com água':[27,5.5,0.4,0.6,0,300],
  'Vinagre':[18,0,0,0.9,0,10],'Creme de leite light':[130,3.0,8.0,8.5,0,20],'Leite condensado light':[257,7.0,4.5,49.0,0,20],
  'Azeite de coco':[862,0,100.0,0,0,10],'Mostarda dijon':[66,4.2,3.3,5.0,3.3,10],'Molho barbecue':[172,1.5,0.3,40.0,1.0,15]
 };
-function foodNut(name){return FOOD_NUT[name]||FOOD_NUT_CUSTOM[name]||[0,0,0,0,0,100];}
+function normAlim(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
+function _sing(w){return w.length>3&&w.endsWith('s')?w.slice(0,-1):w;}
+function _toks(s){return normAlim(s).split(' ').filter(Boolean).map(_sing);}
+const ALIAS_ALIM={'leite morno':'Leite desnatado','ovos mexidos':'Ovo mexido','ovo mexido':'Ovo mexido','clara de ovo pasteurizada':'Clara de ovo','frango desfiado':'Peito de frango','frango grelhado':'Frango grelhado','sopa de legumes com azeite':'Sopa de legumes','pao frances sem miolo':'Pão francês','queijo cottage':'Cottage','torradas':'Torrada','ovo cozido':'Ovo cozido','carne bovina magra':'Patinho moído','feijao cozido':'Feijão carioca','feijao':'Feijão carioca','feijao carioca cozido':'Feijão carioca','arroz':'Arroz branco','frango':'Frango grelhado','leite':'Leite desnatado','bebida vegetal':'Leite de soja'};
+// Acha o item da base mesmo com maiúscula/acento/plural diferente ou nome descritivo ("arroz branco cozido" -> "Arroz branco")
+function achaFoodKey(nome){
+  if(!nome)return null;
+  if(FOOD_NUT[nome])return nome;
+  if(FOOD_NUT_CUSTOM&&FOOD_NUT_CUSTOM[nome])return nome;
+  const qFull=normAlim(nome);if(!qFull)return null;
+  const chaves=Object.keys(FOOD_NUT).concat(Object.keys(FOOD_NUT_CUSTOM||{}));
+  const tokFull=qFull.split(' ').map(_sing).join(' ');
+  for(const k of chaves){if(_toks(k).join(' ')===tokFull)return k;}
+  const al=ALIAS_ALIM[qFull];if(al&&(FOOD_NUT[al]||(FOOD_NUT_CUSTOM&&FOOD_NUT_CUSTOM[al])))return al;
+  // tira qualificadores que não mudam o alimento ("geleia sem açúcar", "requeijão light", "iogurte zero")
+  const qClean=qFull.replace(/\b(sem|com pouco) (acucar|sal|gordura|lactose)\b/g,' ').replace(/\b(light|diet|zero|integral|desnatado light)\b/g,' ').replace(/\s+/g,' ').trim()||qFull;
+  const alc=ALIAS_ALIM[qClean];if(alc&&(FOOD_NUT[alc]||(FOOD_NUT_CUSTOM&&FOOD_NUT_CUSTOM[alc])))return alc;
+  const qt=qClean.split(' ').map(_sing),qs=' '+qt.join(' ')+' ';
+  let contida=null,contidaLen=0,melhor=null,melhorSc=0;
+  for(const k of chaves){
+    const kt=_toks(k);if(!kt.length)continue;
+    const ks=kt.join(' ');
+    if(qs.includes(' '+ks+' ')&&ks.length>contidaLen){contida=k;contidaLen=ks.length;}
+    if(kt[0]!==qt[0])continue;
+    const ov=kt.filter(t=>qt.includes(t)).length;
+    const sc=ov*2+1;
+    if(sc>melhorSc||(sc===melhorSc&&melhor&&k.length<melhor.length)){melhor=k;melhorSc=sc;}
+  }
+  return contida||melhor||null;
+}
+function foodNut(name){const k=achaFoodKey(name);return k?(FOOD_NUT[k]||FOOD_NUT_CUSTOM[k]):[0,0,0,0,0,100];}
 let FOOD_NUT_CUSTOM={};
 try{FOOD_NUT_CUSTOM=JSON.parse(localStorage.getItem('bm_food_custom')||'{}');}catch(e){FOOD_NUT_CUSTOM={};}
 function salvarFoodCustom(){try{localStorage.setItem('bm_food_custom',JSON.stringify(FOOD_NUT_CUSTOM));}catch(e){}}
@@ -1520,7 +1529,22 @@ async function estimarAlimentoIA(i,j,k){
   const rowsAntes=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
   const nome=(rowsAntes[k].alimento||'').trim();
   if(!nome){showToast('⚠️ Digite o nome do alimento antes de estimar','#e67e22');return;}
-  if(FOOD_NUT[nome]||FOOD_NUT_CUSTOM[nome]){showToast('ℹ️ Esse item já está na base — o peso já deveria calcular sozinho no Refresh.');return;}
+  // salada/legumes/verduras = consumo livre (padrão da casa): não pesa, não abre ingredientes
+  if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr/i.test(nome)){
+    const rowsL=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
+    rowsL[k]={tipo:'texto',valor:'01 prato raso de servir cheio de '+nome.toLowerCase()+' (consumo livre — temperar só com limão, ervas, sal até 1 g e pimenta-do-reino)'};
+    dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rowsL);dietEditado=true;renderDietMealRows();
+    showToast('🥗 Salada/legumes = consumo livre, sem peso. Já deixei como "01 prato raso de servir cheio".');return;
+  }
+  // item que já está na base: não precisa de IA — só preenche a porção padrão (e o Refresh ajusta depois)
+  const chaveBase=achaFoodKey(nome);
+  if(chaveBase){
+    const rowsB=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
+    rowsB[k].alimento=chaveBase;
+    if(!rowsB[k].gramas||parseFloat(rowsB[k].gramas)===0)rowsB[k].gramas=String(foodNut(chaveBase)[5]||100);
+    dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rowsB);dietEditado=true;dietPesosStale=true;renderDietMealRows();
+    showToast('✅ "'+chaveBase+'" já está na base — coloquei a porção padrão ('+rowsB[k].gramas+(ehLiquido(chaveBase)?' ml':' g')+'). Clique em Refresh pra ajustar à meta da refeição.');return;
+  }
   showToast('🤖 Estimando "'+nome+'"...');
   try{
     const r=await fetch('/.netlify/functions/estimar-alimento',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
@@ -4062,7 +4086,7 @@ function iniciarGeracaoDieta(dataOverride){
     const ents=avaliacoesDe(chavePaciente(d));
     if(ents.length>1)ajusteInfo=calcularComparativoEvolucao(ents);
   }
-  dietWizCtx={d,modelo:'normal',regras:{},
+  dietWizCtx={d,modelo:'normal',regras:{},prefs:prefsCarregar(d)||prefsPadrao(d),qIdx:0,
     kcal:ajusteInfo?ajusteInfo.sugestao.kcal:base.kcal,
     pP:ajusteInfo?ajusteInfo.sugestao.pP:base.pP,
     gP:ajusteInfo?ajusteInfo.sugestao.gP:base.gP,
@@ -4070,7 +4094,7 @@ function iniciarGeracaoDieta(dataOverride){
     ajusteInfo};
   dietWizRenderModelos();
   renderDwAjusteInfo();
-  document.getElementById('dwStepChoice').style.display='none';
+  document.getElementById('dwStepQ').style.display='none';
   document.getElementById('dwStep0').style.display='block';
   document.getElementById('dwStep1').style.display='none';
   document.getElementById('dwStep2').style.display='none';
@@ -4090,11 +4114,6 @@ function renderDwAjusteInfo(){
     '<div style="margin-top:10px" class="ex-scroll">'+aj.metabHtml+'</div>'+
     '<div style="font-size:11px;color:var(--mu);margin-top:6px">A meta de calorias e proteína abaixo já veio ajustada com base nisso — você pode mudar à vontade no próximo passo.</div>';
 }
-function dietEscolherAutomatico(){
-  document.getElementById('dwStepChoice').style.display='none';
-  dietWizRenderStep1();
-  document.getElementById('dwStep1').style.display='block';
-}
 function distKeyFromRefeicao(nome){
   if(/café/i.test(nome))return'cafe';
   if(/lanche.*manh/i.test(nome))return'lancheM';
@@ -4103,18 +4122,6 @@ function distKeyFromRefeicao(nome){
   if(/jantar/i.test(nome))return'jantar';
   if(/ceia/i.test(nome))return'ceia';
   return'almoco';
-}
-function dietEscolherManual(){
-  fecharDietWizard();
-  const PLAN_MANUAL=[
-    {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:['']},
-    {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:['']},
-    {refeicao:'🍽 Almoço',horario:'12h–13h',opcoes:['']},
-    {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:['']},
-    {refeicao:'🌙 Jantar',horario:'19h–20h',opcoes:['']},
-    {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:['']}
-  ];
-  abrirEditorDieta(dietWizCtx.d,{kcal:dietWizCtx.kcal,pP:dietWizCtx.pP,gP:dietWizCtx.gP,fibG:dietWizCtx.fibG,modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,incluirSup:true,incluirEAA:false,incluirFarm:false,fecho:'atual',manual:true,planManual:PLAN_MANUAL});
 }
 function dietWizRenderModelos(){
   const grid=document.getElementById('dwModeloGrid');
@@ -4145,15 +4152,11 @@ function dietWizProximo0(){
   dietWizCtx.gP=(aj&&dietWizCtx.modelo==='normal')?aj.sugestao.gP:base.gP;
   dietWizCtx.fibG=base.fibG;
   document.getElementById('dwStep0').style.display='none';
-  document.getElementById('dwStepChoice').style.display='block';
+  dwQAbrir(0);
 }
 function dietWizVoltar0(){
   document.getElementById('dwStep0').style.display='block';
   document.getElementById('dwStep1').style.display='none';
-}
-function dietWizVoltarChoice(){
-  document.getElementById('dwStepChoice').style.display='none';
-  document.getElementById('dwStep0').style.display='block';
 }
 function dietWizRenderStep1(){
   const g=id=>document.getElementById(id);
@@ -4224,8 +4227,7 @@ function dietWizProximo(){
   dietWizAtualizar();
   if(!dietWizCtx.valido){showToast('⚠️ Ajuste as porcentagens: a soma não pode passar de 100%','#e67e22');return;}
   const rl=document.getElementById('dwRefLivre');
-  const lm=document.getElementById('dwLancheManha');
-  const lt=document.getElementById('dwLancheTarde');
+
   if(!document.getElementById('dwDistCalInputs').children.length)dietWizRenderDistInputs('cal');
   if(!document.getElementById('dwDistFatInputs').children.length)dietWizRenderDistInputs('fat');
   const distCal=dietWizColetarDist('cal');
@@ -4235,8 +4237,9 @@ function dietWizProximo(){
   if(Math.abs(somaCal-100)>0.5||Math.abs(somaFat-100)>0.5){showToast('⚠️ A distribuição de calorias e de gordura por refeição deve somar 100% cada','#e67e22');return;}
   dietWizCtx.regras=dietWizCtx.regras||{};
   dietWizCtx.regras.refeicaoLivre=rl?rl.value:'';
-  dietWizCtx.regras.lancheManha=lm?lm.value:'';
-  dietWizCtx.regras.lancheTarde=lt?lt.value:'';
+  const it=(dietWizCtx.prefs&&dietWizCtx.prefs.interm)||{};
+  dietWizCtx.regras.lancheManha=it.modo==='preparos'?(it.manha||''):'';
+  dietWizCtx.regras.lancheTarde=it.modo==='preparos'?(it.tarde||''):'';
   dietWizCtx.regras.distCal=distCal;
   dietWizCtx.regras.distFat=distFat;
   document.getElementById('dwStep1').style.display='none';
@@ -4270,11 +4273,21 @@ function dietWizRenderStep3(){
   if(obsEl)obsEl.value='';
 }
 function fecharDietWizard(){document.getElementById('dietWizardOverlay').style.display='none';}
-function dietWizGerar(){
+async function dietWizGerar(){
   const f=document.querySelector('input[name="dwFecho"]:checked');
   const obsEl=document.getElementById('dwObsImportante');
+  const ctx=dietWizCtx;
+  prefsSalvar(ctx.d,ctx.prefs);
+  ctx.regras=ctx.regras||{};
+  if(ctx.prefs.semGluten)ctx.regras.semGluten=true;
   fecharDietWizard();
-  abrirEditorDieta(dietWizCtx.d,{kcal:dietWizCtx.kcal,pP:dietWizCtx.pP,gP:dietWizCtx.gP,fibG:dietWizCtx.fibG,modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,incluirSup:dietWizCtx.incluirSup,incluirEAA:dietWizCtx.incluirEAA,incluirFarm:dietWizCtx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():''});
+  let prefsIA={lanches:[]};
+  const it=ctx.prefs.interm||{};
+  if((it.escritosM||it.escritosT||it.ia!==false)){
+    showToast('⏳ A IA está montando os lanches com as suas respostas…');
+    try{prefsIA=await buscarLanchesIA(ctx);}catch(e){showToast('ℹ️ A IA não respondeu agora — usei os lanches padrão. Você pode ajustar na prévia.','#e67e22');}
+  }
+  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA});
 }
 
 // ── DIET WORD ──
@@ -4307,7 +4320,7 @@ function abrirEditorDieta(dataOverride,ov){
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
-  dietPesosLocked={};dietPesosStale=!!(ov&&ov.manual);
+  dietPesosLocked={};dietPesosStale=false;
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
   let restaurado=false;
   try{
@@ -4410,9 +4423,9 @@ const DIET_FOODS_FLAT=Object.values(FOODS).flat();
 function capFirst(s){s=String(s||'');return s.length?s.charAt(0).toUpperCase()+s.slice(1):s;}
 // ── Identifica bebidas/líquidos pra trocar o rótulo de "g" pra "ml" — cobre a lista fixa e nomes digitados/estimados por IA ──
 function ehLiquido(nome){
-  const n=(nome||'').toLowerCase();
+  const n=(nome||'').toLowerCase().replace(/\([^)]*\)/g,' ');
   if(/creme de leite|doce de leite|leite condensado|leite em p[óo]|\bp[óo]\b/.test(n))return false; // derivados que não são bebida
-  return /(?<![\p{L}])(água|leite|suco|chá|café|caldo|kefir|vitamina de fruta)(?![\p{L}])|refrigerante|isot[ôo]nico|achocolatado|cerveja/u.test(n);
+  return /(?<![\p{L}])(água|leite|suco|chá|café|caldo|kefir|bebida|energético|vitamina de fruta)(?![\p{L}])|refrigerante|isot[ôo]nico|achocolatado|cerveja/u.test(n);
 }
 // ── Lista, sem repetir, os alimentos que realmente entraram no cardápio final — usado pra pedir substituições sob medida por IA ──
 function itensUnicosDoPlan(plan){
@@ -4472,7 +4485,7 @@ function renderDietMealRows(){
       <div class="diet-row-top">
         <input class="di" style="width:170px" value="${m.refeicao}" placeholder="Nome da refeição" oninput="dietPlanEdit[${i}].refeicao=this.value;dietEditado=true">
         <input class="di" style="width:110px" value="${m.horario}" placeholder="Horário" oninput="dietPlanEdit[${i}].horario=this.value;dietEditado=true">
-        ${(!dietOv||!dietOv.manual)&&isRefeicaoGrande(m.refeicao)?`<span style="font-size:11.5px;color:var(--gd);font-weight:700;padding:4px 8px;background:var(--gp);border-radius:6px;border:1px solid var(--br)">🍰 Sobremesa incluída</span>`:''}
+        ${m.sobremesa==='sim'?`<span style="font-size:11.5px;color:var(--gd);font-weight:700;padding:4px 8px;background:var(--gp);border-radius:6px;border:1px solid var(--br)">🍰 Sobremesa incluída</span>`:''}
         <button class="rf" onclick="removeMealRowDiet(${i})">✕ refeição</button>
       </div>
       ${ops}
@@ -4495,36 +4508,49 @@ function dietOpcaoRowEdit(i,j,k,campo,val){
   dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rows);
   dietEditado=true;
 }
-function distribuirPesosPlano(){
+function distribuirPesosPlano(silencioso){
   const kcalTotal=(dietOv&&dietOv.kcal)||1900;
+  const somaDist=dietPlanEdit.reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0)||100;
   let algumAlimento=false;
   dietPlanEdit.forEach((m,i)=>{
     const distKey=distKeyFromRefeicao(m.refeicao);
-    const mealKcal=kcalTotal*((DIST_BASE[distKey]||20)/100);
+    const mealKcal=kcalTotal*((DIST_BASE[distKey]||20)/somaDist); // refeições removidas redistribuem o total entre as que ficaram
     m.opcoes=m.opcoes.map((o,j)=>{
+      // receita completa (lanche natural, shake, panqueca…): as proporções entre os ingredientes já foram calculadas — o Refresh não mexe
+      if(/^(Lanche|Shake|Tapioca|Panqueca|Wrap|Mingau|Bowl|Pré|Pós|Salada)[^+]{0,50} — /i.test(o))return o;
       const rows=parseOpcaoStr(o);
-      const comFood=rows.filter(r=>r.tipo==='item'&&r.alimento&&(FOOD_NUT[r.alimento]||FOOD_NUT_CUSTOM[r.alimento]));
+      const comFood=rows.filter(r=>r.tipo==='item'&&r.alimento&&achaFoodKey(r.alimento));
       if(!comFood.length)return o;
       algumAlimento=true;
-      const travados=comFood.filter(r=>dietPesosLocked[i+'_'+j+'_'+r.alimento]);
-      const livres=comFood.filter(r=>!dietPesosLocked[i+'_'+j+'_'+r.alimento]);
+      const ehFixo=r=>/azeite|oleo|manteiga|margarina|maionese|acucar|\bmel\b/.test(normAlim(r.alimento));
+      const travados=comFood.filter(r=>dietPesosLocked[i+'_'+j+'_'+r.alimento]||ehFixo(r));
+      const livres=comFood.filter(r=>!dietPesosLocked[i+'_'+j+'_'+r.alimento]&&!ehFixo(r));
+      travados.forEach(r=>{if(!(parseFloat(r.gramas)>0))r.gramas=String(foodNut(r.alimento)[5]||10);});
       const kcalTravado=travados.reduce((s,r)=>s+foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100,0);
-      const restante=Math.max(0,mealKcal-kcalTravado);
-      if(livres.length){
-        const kcalPorItem=restante/livres.length;
-        livres.forEach(r=>{
-          const kcal100=foodNut(r.alimento)[0];
-          r.gramas=String(kcal100>0?Math.max(5,Math.round((kcalPorItem/kcal100*100)/5)*5):100);
+      const kcalSobremesa=/Sobremesa/i.test(o)?100:0;
+      const restante=Math.max(0,mealKcal-kcalTravado-kcalSobremesa);
+      // itens quase sem caloria (café, chá, bebida zero, temperos) não entram na divisão: ficam na porção padrão
+      const calorico=livres.filter(r=>foodNut(r.alimento)[0]>=25);
+      livres.filter(r=>foodNut(r.alimento)[0]<25).forEach(r=>{r.gramas=String(foodNut(r.alimento)[5]||100);});
+      // as calorias da refeição são divididas proporcionalmente à porção padrão de cada alimento (não igualmente),
+      // então arroz, feijão e frango mantêm a proporção normal de um prato e nada dispara pra centenas de gramas
+      const porKcal=calorico.map(r=>{const n=foodNut(r.alimento);return n[0]*(n[5]||100)/100;});
+      const somaPorc=porKcal.reduce((a,b)=>a+b,0);
+      if(calorico.length&&somaPorc>0){
+        const esc=Math.min(1.5,Math.max(0.5,restante/somaPorc)); // teto de 1,5x a porção padrão: nunca sai quantidade absurda
+        calorico.forEach(r=>{
+          const n=foodNut(r.alimento),porc=n[5]||100;
+          r.gramas=String(Math.max(5,Math.round(porc*esc/5)*5));
         });
       }
       return serializeOpcaoRows(rows);
     });
   });
-  if(!algumAlimento){showToast('⚠️ Adicione ao menos um alimento da lista antes de recalcular','#e67e22');return;}
+  if(!algumAlimento){if(!silencioso)showToast('⚠️ Adicione ao menos um alimento da lista antes de recalcular','#e67e22');return;}
   dietEditado=true;
   dietPesosStale=false;
   renderDietMealRows();
-  showToast('✅ Pesos recalculados — revise e ajuste se precisar','#27ae60');
+  if(!silencioso)showToast('✅ Pesos recalculados — revise e ajuste se precisar','#27ae60');
 }
 function dietTemAlimentoSemPeso(){
   return dietPlanEdit.some(m=>m.opcoes.some(o=>parseOpcaoStr(o).some(r=>r.tipo==='item'&&r.alimento&&(!r.gramas||parseFloat(r.gramas)<=0))));
@@ -4683,7 +4709,8 @@ function renderDietFarmRows(){
 function addFarmRowDiet(){dietFarmEdit.push({item:'',dose:'',frequencia:'',tempoUso:'',obs:''});renderDietFarmRows();}
 function removeFarmRowDiet(i){dietFarmEdit.splice(i,1);renderDietFarmRows();}
 function confirmarGerarDieta(){
-  if(dietTemAlimentoSemPeso()||dietPesosStale){showToast('⚠️ Ainda tem alteração sem recalcular — clique em "🔄 Refresh" antes de gerar','#e67e22');return;}
+  if(dietTemAlimentoSemPeso()){if(!confirm('Tem alimento sem peso preenchido. Gerar o documento assim mesmo?'))return;}
+  else if(dietPesosStale){if(!confirm('Você alterou alimentos depois do último cálculo — os pesos podem não bater a meta de cada refeição. Gerar assim mesmo? (Ou cancele e clique em Refresh.)'))return;}
   document.getElementById('dietEditorOverlay').style.display='none';
   gerarDietaDoc(dietDataCache,dietPlanEdit,dietIncluirSup?dietSupEdit:[],dietIncluirEAA?dietEAAEdit:[],dietIncluirFarm?dietFarmEdit:[]);
   registrarDietaNaAval(dietDataCache);
@@ -4715,12 +4742,615 @@ function calcDietaBase(d,ov,cas){
   const hasDis=dn.includes('DISLIPI');
   const hasObe=imc(d)>=30;
   const regras=Object.assign({},(ov&&ov.regras)||{},regrasPorAlergia(d));
-  const PLAN=(ov&&ov.manual&&ov.planManual)?JSON.parse(JSON.stringify(ov.planManual)):aplicarPipocaLanche(aplicarSobremesaFixa(buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,!!cas)),modelo,regras);
+  const prefs=(ov&&ov.prefs)||null;
+  if(prefs&&prefs.semGluten)regras.semGluten=true;
+  let PLAN=buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,false); // sempre em gramas
+  PLAN=prefs?aplicarPreferencias(aplicarPipocaLanche(PLAN,modelo,regras),prefs,d,ov,kcal,regras):aplicarPipocaLanche(aplicarSobremesaFixa(PLAN),modelo,regras);
   const SUP=incluirSup?buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj):[];
   const EAA=incluirEAA?buildEAATable(d):[];
   const FARM=incluirFarm?buildFarmTable(d):[];
-  return{peso,altura,idade,sexo,dn,obj,kcal,cP,pP,gP,carbG,protG,fatG,fibG,incluirSup,incluirEAA,incluirFarm,modelo,regras,hasDM,hasHAS,hasDis,hasObe,PLAN,SUP,EAA,FARM,tmbCalc};
+  return{peso,altura,idade,sexo,dn,obj,kcal,cP,pP,gP,carbG,protG,fatG,fibG,incluirSup,incluirEAA,incluirFarm,modelo,regras,prefs,hasDM,hasHAS,hasDis,hasObe,PLAN,SUP,EAA,FARM,tmbCalc};
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// QUESTIONÁRIO DE PREFERÊNCIAS → PERSONALIZAÇÃO DO CARDÁPIO (modo único: Automático + prévia editável)
+// ═══════════════════════════════════════════════════════════════════════════════
+const AVERSOES_CAT=[
+  {k:'visceras',rot:'Fígado e vísceras',re:/\b(figado|visceras?|bucho|coracao|moela|rins?|miolo)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
+  {k:'peixe',rot:'Peixe',chip:'Peixe (filé, grelhado)',re:/\b(peixe|tilapia|salmao|merluza|bacalhau|pescada)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
+  {k:'sardinha_atum',rot:'Sardinha e atum',chip:'Sardinha e atum (lata)',re:/\b(sardinha|atum)\b/,subs:['frango desfiado','ovo cozido','cottage']},
+  {k:'frutos_mar',rot:'Frutos do mar',re:/\b(camarao|frutos do mar|lula|polvo|marisco|mariscos)\b/,subs:['frango grelhado','peixe grelhado']},
+  {k:'ovo',rot:'Ovo',re:/\b(ovo|ovos|omelete|gema|clara)\b/,subs:['queijo muçarela','peito de peru','cottage']},
+  {k:'suina',rot:'Carne suína',re:/\b(suino|suina|porco|lombo|bisteca|linguica|bacon)\b/,subs:['frango grelhado','peito de peru']},
+  {k:'bovina',rot:'Carne bovina',re:/\b(bovina|bife|patinho|alcatra|mignon|carne moida|costela|acem)\b/,subs:['frango grelhado','peixe grelhado','ovo cozido']},
+  {k:'frango',rot:'Frango',re:/\bfrango\b/,subs:['peixe grelhado','carne bovina magra','ovo cozido']},
+  {k:'feijao',rot:'Feijão',re:/\bfeijao\b/,remover:true},
+  {k:'laticinios',rot:'Queijo, iogurte e requeijão',re:/\b(queijo|iogurte|requeijao|cottage|ricota)\b/,subs:['peito de peru','ovo cozido','frango desfiado']},
+  {k:'castanhas',rot:'Castanhas e nozes',re:/\b(castanha|castanhas|nozes|amendoa|amendoas|macadamia)\b/,remover:true},
+  {k:'banana',rot:'Banana',re:/\bbanana\b/,fruta:true},{k:'mamao',rot:'Mamão',re:/\bmamao\b/,fruta:true},
+  {k:'melao',rot:'Melão e melancia',re:/\b(melao|melancia)\b/,fruta:true},{k:'abacaxi',rot:'Abacaxi',re:/\babacaxi\b/,fruta:true},
+  {k:'cebola',rot:'Cebola',txt:true},{k:'coentro',rot:'Coentro e ervas frescas',txt:true},{k:'pimentao',rot:'Pimentão',txt:true},
+  {k:'folhas_amargas',rot:'Folhas amargas (couve, rúcula, agrião)',txt:true},{k:'cogumelo',rot:'Cogumelo',txt:true},
+  {k:'quiabo',rot:'Quiabo',txt:true},{k:'beterraba',rot:'Beterraba',txt:true},{k:'berinjela',rot:'Berinjela',txt:true}
+];
+// exclusões que vêm sozinhas do cadastro (Histórico): não perguntam nada
+const ALERGIA_EXCL={
+  GLUTEN:{rot:'Glúten',re:/\b(aveia|granola|torrada|torradas|macarrao|biscoito|cerveja)\b/,subs:['goma de tapioca'],semGluten:true},
+  OVO:{k:'ovo'},LEITE:{rot:'Proteína do leite',k:'laticinios',leite:'vegetal'},LACTOSE:{rot:'Lactose',leite:'semlactose'},
+  SOJA:{rot:'Soja',re:/\b(soja|tofu|pts)\b/,subs:['grao de bico','ovo cozido']},
+  FRUTOS_MAR:{k:'frutos_mar'},AMENDOIM:{rot:'Amendoim',re:/\bamendoim\b/,remover:true},
+  FRUTOSE:{rot:'Frutose',re:/\b(mel|geleia|suco)\b/,remover:true}
+};
+const SOBREMESA_OPCOES=['1 bombom (Sonho de Valsa ou Ouro Branco)','fruta com leite condensado (100 g de fruta + 20 g de leite condensado)','gelatina zero com calda de whey (100 g de gelatina zero + 15 g de whey diluído)','gelatina zero com 20 g de leite condensado','picolé de fruta (1 unidade)','1 suspiro','mousse de whey (120 g)','chocolate 70% (15 g)','iogurte natural com frutas vermelhas','sorvete de creme (1 bola, 60 g)'];
+const FRUTAS_CHIPS=['Abacate','Frutas vermelhas','Morango','Mirtilo (blueberry)','Amora','Banana','Maçã','Pera','Manga','Uva','Kiwi','Mamão','Melão','Melancia','Abacaxi','Laranja','Tangerina','Goiaba','Figo'];
+const NUTS_CHIPS=['Castanha de caju','Castanha-do-pará','Macadâmia','Nozes','Amêndoas','Chia','Linhaça','Gergelim'];
+const LEG_LEVES=['Alface','Rúcula','Agrião','Couve','Espinafre','Repolho','Brócolis','Couve-flor','Abobrinha','Berinjela','Pepino','Tomate','Chuchu','Vagem','Pimentão','Cogumelo','Aspargos','Quiabo'];
+const LEG_AMIL=['Batata','Batata-doce','Mandioca','Inhame','Milho','Ervilha','Beterraba','Cenoura','Abóbora'];
+const LANCHE_TIPOS=['Lanche natural','Shake','Tapioca ou crepioca','Panqueca','Wrap','Mingau','Bowl de iogurte','Pré-treino','Pós-treino','Salada de frutas proteica'];
+const NUT_KEYS=['castanha de caju','castanha do para','macadamia','nozes','amendoas','chia','linhaca','gergelim'];
+
+function prefsPadrao(d){
+  return{
+    nRef:6,nOp:3,
+    aversoes:{ativo:false,marcados:[],texto:''},
+    leite:{usa:true,tipo:'desnatado'},
+    semGluten:false,
+    frutas:{ativo:false,marcados:[],texto:''},
+    legumes:{ativo:false,marcados:[],texto:''},
+    bebidas:{agua:true,gas:true,cha:true,cafe:true,refriZero:true,sucoZero:true,isotonico:false,energetico:false,alcool:'nao',adocante:'sucralose',mlDia:''},
+    sobremesa:{ativo:true,marcados:[],texto:'',diferentes:false},
+    interm:{modo:'padrao',manha:'',tarde:'',escritosM:'',escritosT:'',ia:true,tipos:['Lanche natural','Shake']}
+  };
+}
+// leitura do paciente: o QFA (Questionário de Frequência Alimentar) marca "Nunca" → já sugere como aversão
+function aversoesSugeridasQFA(d){
+  const f=(d&&d.freqTable)||{},out=[];
+  const nunca=i=>f[i]===4;
+  if(nunca(5))out.push('bovina');if(nunca(4))out.push('feijao');if(nunca(7))out.push('laticinios');if(nunca(8))out.push('ovo');
+  return out;
+}
+const PREFS_KEY='bm_diet_prefs_';
+function prefsChave(d){return PREFS_KEY+String((d&&(d.id||d.nome))||'');}
+function prefsSalvar(d,p){try{localStorage.setItem(prefsChave(d),JSON.stringify(p));}catch(e){}}
+function prefsCarregar(d){try{const r=JSON.parse(localStorage.getItem(prefsChave(d))||'null');if(r&&r.aversoes)return Object.assign(prefsPadrao(d),r);}catch(e){}return null;}
+
+function _escRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+// separa o texto livre em "não come X" e "diminuir Y"
+function parseTextoLivre(txt){
+  const excl=[],red=[];
+  String(txt||'').split(/[\n;,]+/).map(s=>s.trim()).filter(Boolean).forEach(p0=>{
+    const p=normAlim(p0);
+    let m=p.match(/^(diminuir|reduzir|menos|menor quantidade de|pouco)\s+(?:de\s+|do\s+|da\s+)?(.+)$/);
+    if(m){red.push({n:m[2],raw:p0.replace(/^(diminuir|reduzir|menos|menor quantidade de|pouco)\s+(?:de\s+|do\s+|da\s+)?/i,'')});return;}
+    m=p.match(/^(?:nao (?:come|gosta de|quer|aceita|como|gosto de)|sem|evitar|tirar|retirar|excluir|nao incluir|nao usar)\s+(?:de\s+|do\s+|da\s+)?(.+)$/);
+    excl.push({n:m?m[1]:p,raw:p0.replace(/^(n[aã]o (?:come|gosta de|quer|aceita|como|gosto de)|sem|evitar|tirar|retirar|excluir|n[aã]o incluir|n[aã]o usar)\s+(?:de\s+|do\s+|da\s+)?/i,'')});
+  });
+  return{excl,red};
+}
+function _defDeTexto(alvoObj){
+  const alvo=alvoObj.n;
+  const cat=AVERSOES_CAT.find(d=>d.re&&d.re.test(alvo))||AVERSOES_CAT.find(d=>normAlim(d.rot).split(' ').some(t=>t.length>3&&t===_sing(alvo)));
+  if(cat)return cat;
+  const t=_sing(alvo.split(' ')[0]);
+  return{k:'txt_'+alvo,rot:alvoObj.raw||alvo,re:new RegExp('\\b'+_escRe(t)+'s?\\b'),generico:true};
+}
+// junta o que veio do cadastro (automático), das marcações e do texto livre
+function exclusoesAtivas(d,prefs,regras){
+  const ex={defs:[],rotsAuto:[],rotsUser:[],rotsModelo:[],reducoes:[],reducoesRot:[],leiteForcado:null,semGluten:!!(prefs&&prefs.semGluten),laticinioProibido:false,semCarne:false,textoOnly:[]};
+  const add=(def,auto)=>{if(!def||ex.defs.some(x=>x.k===def.k))return;ex.defs.push(def);(auto?ex.rotsAuto:ex.rotsUser).push(def.rot);if(def.txt)ex.textoOnly.push(def.rot);};
+  ((d&&d.alergias)||[]).forEach(a=>{
+    const e=ALERGIA_EXCL[a];if(!e)return;
+    if(e.semGluten)ex.semGluten=true;
+    if(e.leite)ex.leiteForcado=e.leite;
+    if(a==='LEITE')ex.laticinioProibido=true;
+    if(e.k)add(AVERSOES_CAT.find(x=>x.k===e.k),true);
+    else if(e.re)add({k:'al_'+a,rot:e.rot,re:e.re,subs:e.subs,remover:e.remover},true);
+  });
+  if(regras){ // exclusões que já são do próprio modelo de dieta (vegana, paleo…)
+    const addM=k=>{const df=AVERSOES_CAT.find(x=>x.k===k);if(df&&!ex.defs.some(x=>x.k===k)){ex.defs.push(df);ex.rotsModelo.push(df.rot);}};
+    if(regras.semLaticinio){ex.laticinioProibido=true;addM('laticinios');}
+    if(regras.semCarne)ex.semCarne=true;
+    if(regras.semOvo)addM('ovo');
+    if(regras.semLeguminosa)addM('feijao');
+  }
+  const av=(prefs&&prefs.aversoes)||{};
+  if(av.ativo){
+    (av.marcados||[]).forEach(k=>add(AVERSOES_CAT.find(x=>x.k===k),false));
+    const pt=parseTextoLivre(av.texto);
+    pt.excl.forEach(a=>add(_defDeTexto(a),false));
+    ex.reducoes=pt.red.map(r=>r.n);ex.reducoesRot=pt.red.map(r=>r.raw);
+  }
+  return ex;
+}
+function _round5(v){return Math.max(5,Math.round(v/5)*5);}
+function escalarOpcao(str,f){
+  return String(str).replace(/(\d+(?:[.,]\d+)?)\s*(g|ml) de (?!sal\b)/g,(m,n,u)=>{const v=parseFloat(n.replace(',','.'));if(v<=6)return m;return _round5(v*f)+' '+u+' de ';});
+}
+const REFEICOES_POR_N={3:['cafe','almoco','jantar'],4:['cafe','almoco','lancheT','jantar'],5:['cafe','lancheM','almoco','lancheT','jantar'],6:['cafe','lancheM','almoco','lancheT','jantar','ceia']};
+// 3, 4 ou 5 refeições: tira as que sobram e reparte as calorias entre as que ficam
+function selecionarRefeicoes(plan,n){
+  const chaves=REFEICOES_POR_N[n]||REFEICOES_POR_N[6];
+  const ficam=plan.filter(m=>chaves.includes(distKeyFromRefeicao(m.refeicao)));
+  if(ficam.length===plan.length||!ficam.length)return plan;
+  const soma=ficam.reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0);
+  const f=Math.min(1.45,100/soma);
+  return ficam.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>escalarOpcao(o,f))}));
+}
+function _gramasEquiv(rAntigo,novoNome){
+  const g=parseFloat(rAntigo.gramas)||0;
+  const kA=foodNut(rAntigo.alimento)[0],kN=foodNut(novoNome)[0];
+  if(g>0&&kA>0&&kN>0)return String(Math.min(Math.max(10,_round5(g*kA/kN)),Math.round(g*1.6+20)));
+  return String(g||foodNut(novoNome)[5]||100);
+}
+function _ehFruta(alim){const n=normAlim(alim);return (FOODS.Frutas||[]).some(f=>normAlim(f)===n)||(FOODS.Frutas||[]).some(f=>normAlim(f)===normAlim(achaFoodKey(alim)||''));}
+const FRUTAS_ROTA=['maçã','pera','laranja','mamão','morango','kiwi','abacaxi','melão','uva','manga','goiaba'];
+function _frutaAlternativa(ex,usadas){
+  const bloqueia=nm=>ex.defs.some(d=>d.re&&d.re.test(normAlim(nm)));
+  const lista=FRUTAS_ROTA.filter(f=>!bloqueia(f));
+  return lista[(usadas.n++)%Math.max(1,lista.length)]||'maçã';
+}
+function _subsPara(def,ex){
+  const animal=/\b(frango|peixe|carne|bovina|peru|presunto|atum|sardinha|camarao|salmao|tilapia|ovo|ovos|queijo|iogurte natural|cottage|ricota)\b/;
+  const bloqueado=nm=>ex.defs.some(d=>d.re&&d.re.test(normAlim(nm)))||(ex.semCarne&&animal.test(normAlim(nm)));
+  let cands=(def.subs&&def.subs.length)?def.subs:['frango grelhado','peixe grelhado','ovo cozido','peito de peru'];
+  if(ex.semCarne)cands=['tofu grelhado','grão-de-bico cozido','lentilha cozida','iogurte de soja'];
+  return cands.find(c=>!bloqueado(c))||null;
+}
+function aplicarExclusoes(plan,ex){
+  if(!ex.defs.length)return plan;
+  const usadas={n:0};
+  return plan.map(m=>{
+    const orig=m.opcoes||[];
+    let novas=orig.map(o=>{
+      const rows=parseOpcaoStr(o);
+      const saida=[];
+      rows.forEach(r=>{
+        if(r.tipo!=='item'){saida.push(r);return;}
+        const nm=normAlim(r.alimento);
+        const def=ex.defs.find(d=>d.re&&d.re.test(nm)&&!(d.k==='al_GLUTEN'&&/sem gluten/.test(nm))&&!(d.k==='laticinios'&&/soja|coco|vegetal|amendoa|aveia/.test(nm)));
+        if(!def){saida.push(r);return;}
+        if(def.fruta){saida.push(Object.assign({},r,{alimento:_frutaAlternativa(ex,usadas),gramas:String(r.gramas||100),medida:''}));return;}
+        if(def.remover){return;}
+        const alvo=_ehFruta(r.alimento)?_frutaAlternativa(ex,usadas):_subsPara(def,ex);
+        if(!alvo){return;}
+        saida.push(Object.assign({},r,{alimento:alvo,gramas:_gramasEquiv(r,alvo),medida:''}));
+      });
+      // se o feijão saiu, a observação sobre o preparo dele também sai
+      const semFeijao=ex.defs.some(d=>d.k==='feijao');
+      const limpa=semFeijao?saida.filter(r=>!(r.tipo==='texto'&&/Sem bacon, linguiça, toucinho/.test(r.valor||''))):saida;
+      return limpa.some(r=>r.tipo==='item'||(r.tipo==='texto'&&r.valor))?serializeOpcaoRows(limpa):'';
+    }).filter(Boolean);
+    // remove opções repetidas que surgiram das trocas
+    novas=novas.filter((o,i)=>novas.indexOf(o)===i);
+    return Object.assign({},m,{opcoes:novas.length?novas:orig});
+  });
+}
+const LEITE_NOME={integral:'leite integral',semi:'leite semidesnatado',desnatado:'leite desnatado',vegetal:'leite de soja',aveia:'leite de aveia',semlactose:'leite sem lactose'};
+function nomeLeite(prefs,ex){
+  if(ex.laticinioProibido){const soja=((ex.defs||[]).some(d=>d.k==='al_SOJA'));return soja?'leite de aveia':'leite de soja';}
+  if(ex.leiteForcado==='semlactose')return 'leite sem lactose';
+  if(!prefs||!prefs.leite||!prefs.leite.usa)return null;
+  return LEITE_NOME[prefs.leite.tipo]||'leite desnatado';
+}
+// leite, café/chá e adoçante nos textos das refeições
+function ajustarTextoBebidas(o,prefs,ex){
+  let s=String(o);
+  const nome=nomeLeite(prefs,ex);
+  const iog=ex.laticinioProibido?'iogurte de soja':'iogurte natural';
+  s=s.replace(/café com \d+ ml de leite desnatado/gi,m=>nome?m.replace(/leite desnatado/i,nome):'café');
+  s=s.replace(/(\d+(?:[.,]\d+)?) ml de (leite desnatado|leite morno|bebida vegetal \(soja\/coco\) sem açúcar)/gi,(m,n)=>nome?n+' ml de '+nome:n+' g de '+iog);
+  const b=(prefs&&prefs.bebidas)||{};
+  if(b.cafe===false)s=s.replace(/café com (\d+ ml de [^(+]*)/gi,'$1').replace(/(?<![\p{L}])café(?![\p{L}])/giu,'chá mate');
+  if(b.cha===false)s=s.replace(/chá (preto|mate)/gi,b.cafe===false?'água com limão':'café').replace(/chá de (camomila|hortelã)/gi,'água morna');
+  const ad=b.adocante||'sucralose';
+  if(ad==='nenhum')s=s.replace(/\s*\((?:sem açúcar, )?ou adoçar com sucralose\)/gi,m=>/sem açúcar/i.test(m)?' (sem açúcar)':'').replace(/,? ?ou adoçar com sucralose/gi,'');
+  else if(ad!=='sucralose')s=s.replace(/sucralose/gi,ad);
+  return s;
+}
+// nozes/castanhas entram sem aumentar as calorias: os outros itens da opção diminuem na mesma medida
+function _kcalOpcao(rows){return rows.reduce((s,r)=>r.tipo==='item'?s+foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100:s,0);}
+function _inserirNeutro(opStr,nome,gramas){
+  const rows=parseOpcaoStr(opStr);
+  if(rows.some(r=>r.tipo==='item'&&normAlim(r.alimento)===normAlim(nome)))return opStr;
+  const antes=_kcalOpcao(rows);
+  const kNovo=foodNut(nome)[0]*gramas/100;
+  const itens=rows.filter(r=>r.tipo==='item'&&foodNut(r.alimento)[0]>=25);
+  if(antes>kNovo*1.5&&itens.length){
+    const f=Math.max(0.7,(antes-kNovo)/antes);
+    itens.forEach(r=>{r.gramas=String(_round5((parseFloat(r.gramas)||0)*f));});
+  }
+  rows.push({tipo:'item',alimento:nome,gramas:String(gramas),medida:''});
+  return serializeOpcaoRows(rows);
+}
+function _nomeChip(s){return String(s).replace(/ \(blueberry\)/,'').toLowerCase();}
+function aplicarInclusoes(plan,prefs,ex){
+  const fr=(prefs&&prefs.frutas)||{};if(!fr.ativo)return plan;
+  const pt=String(fr.texto||'').split(/[\n;,]+/).map(s=>s.trim()).filter(Boolean);
+  const todos=(fr.marcados||[]).concat(pt);
+  const frutas=[],nuts=[];
+  todos.forEach(n=>{
+    const k=achaFoodKey(n);if(!k)return;
+    const nk=normAlim(k);
+    if(NUT_KEYS.includes(nk))nuts.push(k);else if(_ehFruta(k)||['abacate','frutas vermelhas'].includes(nk))frutas.push(k);
+  });
+  let iF=0,iN=0;
+  return plan.map(m=>{
+    const key=distKeyFromRefeicao(m.refeicao);
+    const ops=(m.opcoes||[]).map(o=>{
+      let rows=parseOpcaoStr(o);
+      if(frutas.length)rows=rows.map(r=>{
+        if(r.tipo!=='item'||!_ehFruta(r.alimento))return r;
+        const nova=frutas[(iF++)%frutas.length];
+        return Object.assign({},r,{alimento:nova.toLowerCase(),gramas:_gramasEquiv(r,nova),medida:''});
+      });
+      return serializeOpcaoRows(rows);
+    });
+    let final=ops;
+    if(nuts.length&&/lancheM|lancheT|ceia/.test(key)){
+      final=ops.map((o,idx)=>{
+        if(idx>1||/Receitas Fit|pipoca|Pipoca/.test(o))return o;
+        const nut=nuts[(iN++)%nuts.length];
+        return _inserirNeutro(o,nut.toLowerCase(),15);
+      });
+    }
+    return Object.assign({},m,{opcoes:final});
+  });
+}
+function listaSobremesa(prefs){
+  const s=(prefs&&prefs.sobremesa)||{};
+  const marc=(s.marcados||[]).map(x=>x);
+  const txt=String(s.texto||'').split(/[\n;]+/).map(t=>t.trim()).filter(Boolean);
+  return marc.concat(txt);
+}
+function textoSobremesa(prefs,refeicaoNome,idxGrande){
+  const s=(prefs&&prefs.sobremesa)||{};
+  const lista=listaSobremesa(prefs);
+  if(!lista.length)return SOBREMESA_TXT;
+  if(s.diferentes&&lista.length>=2)return 'Sobremesa (~100 kcal): '+lista[idxGrande%lista.length];
+  return 'Sobremesa (escolha 1, ~100 kcal): '+lista.join(', ou ');
+}
+function aplicarSobremesaPrefs(plan,prefs){
+  let n=0;
+  (plan||[]).forEach(m=>{
+    if(!isRefeicaoGrande(m.refeicao))return;
+    m.opcoes=(m.opcoes||[]).map(o=>String(o).replace(/\s*\+\s*Sobremesa[^+]*$/i,''));
+    if(prefs&&prefs.sobremesa&&prefs.sobremesa.ativo===false){m.sobremesa='nao';return;}
+    m.sobremesa='sim';
+    const txt=textoSobremesa(prefs,m.refeicao,n++);
+    m.opcoes=m.opcoes.map(o=>o+' + '+txt);
+  });
+  return plan;
+}
+// lanches: escritos pelo profissional + sugestões da IA (rotulados) entram antes das opções padrão
+function kcalDaRefeicao(kcalDia,key,prefs,regras){
+  const dist=Object.assign({},DIST_PRESETS.padrao,(regras&&regras.distCal)||{});
+  const chaves=REFEICOES_POR_N[(prefs&&prefs.nRef)||6]||REFEICOES_POR_N[6];
+  const soma=chaves.reduce((s,k)=>s+(dist[k]!=null?dist[k]:DIST_BASE[k]),0)||100;
+  return kcalDia*((dist[key]!=null?dist[key]:DIST_BASE[key])/soma);
+}
+function serializarLancheIA(l,kcalAlvo){
+  const itens=(l.itens||[]).filter(i=>i&&i.nome&&i.gramas>0);
+  if(!itens.length)return '';
+  const rot=(l.tipo||'Lanche')+' — '+(l.titulo||'');
+  return rot+' + '+itens.map(i=>_round5(i.gramas)+' '+(ehLiquido(i.nome)?'ml':'g')+' de '+i.nome.toLowerCase()).join(' + '); // gramas já vêm ajustadas à meta do lanche
+}
+function aplicarIntermediarios(plan,prefs,ov,kcalDia,regras,ex){
+  const ia=(ov&&ov.prefsIA&&ov.prefsIA.lanches)||[];
+  const it=(prefs&&prefs.interm)||{};
+  return plan.map(m=>{
+    if(!/lanche/i.test(m.refeicao))return m;
+    const key=distKeyFromRefeicao(m.refeicao);
+    const para=key==='lancheM'?'M':'T';
+    const kAlvo=kcalDaRefeicao(kcalDia,key,prefs,regras);
+    let meus=ia.filter(l=>l.origem==='escrito'&&(l.para===para||l.para==='A')).map(l=>serializarLancheIA(l,kAlvo)).filter(Boolean);
+    let extras=ia.filter(l=>l.origem==='ia'&&(l.para===para||l.para==='A')).map(l=>serializarLancheIA(l,kAlvo)).filter(Boolean);
+    if(ex){
+      meus=meus.map(o=>ajustarTextoBebidas(o,prefs,ex)); // o que o profissional escreveu é respeitado; só acerta leite e adoçante
+      extras=extras.map(o=>ajustarTextoBebidas(o,prefs,ex)); // sugestões da IA passam por todas as exclusões
+      if(ex.defs.length&&extras.length)extras=aplicarExclusoes([{refeicao:m.refeicao,opcoes:extras}],ex)[0].opcoes;
+    }
+    let base=(m.opcoes||[]).filter(o=>!/Receitas Fit|Pipoca de milho/i.test(o));
+    const fim=(m.opcoes||[]).filter(o=>/Receitas Fit|Pipoca de milho/i.test(o));
+    if(it.modo==='preparos'&&(meus.length||extras.length))base=base.slice(0,1); // com preparos escritos, o padrão vira só uma opção de reserva
+    // ordem: o que você escreveu, 1ª sugestão da IA, 1 opção padrão, depois o resto — assim, mesmo com 2 opções por refeição, aparece IA e padrão
+    const ordem=[].concat(meus,extras.slice(0,1),base.slice(0,1),extras.slice(1),base.slice(1),fim);
+    return Object.assign({},m,{opcoes:ordem});
+  });
+}
+function aplicarReducoes(plan,ex){
+  if(!ex.reducoes.length)return plan;
+  const alvos=ex.reducoes.map(r=>_sing(r.split(' ')[0]));
+  return plan.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>{
+    const rows=parseOpcaoStr(o);
+    rows.forEach(r=>{
+      if(r.tipo!=='item')return;
+      const ws=normAlim(r.alimento).split(' ').map(_sing);
+      if(alvos.some(a=>ws.includes(a)))r.gramas=String(_round5((parseFloat(r.gramas)||0)*0.7));
+    });
+    return serializeOpcaoRows(rows);
+  })}));
+}
+function aplicarPreferencias(plan,prefs,d,ov,kcalDia,regras){
+  if(!prefs)return plan;
+  const ex=exclusoesAtivas(d,prefs,regras);
+  let p=JSON.parse(JSON.stringify(plan));
+  p=selecionarRefeicoes(p,prefs.nRef||6);
+  p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>ajustarTextoBebidas(o,prefs,ex))}));
+  p=aplicarExclusoes(p,ex);
+  p=aplicarInclusoes(p,prefs,ex);
+  p=aplicarIntermediarios(p,prefs,ov,kcalDia,regras,ex);
+  p=aplicarSobremesaPrefs(p,prefs);
+  p=aplicarReducoes(p,ex);
+  const nOp=prefs.nOp||3;
+  p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).slice(0,Math.max(1,nOp))}));
+  return p;
+}
+
+// ═══════════════ TELAS DO QUESTIONÁRIO (uma pergunta por tela, com Voltar e Pular) ═══════════════
+const DWQ_TOTAL=12;
+function _chk(v,marc,rot){return `<label class="cons-ck"><input type="checkbox" data-v="${escH(v)}" ${marc.includes(v)?'checked':''}><span>${escH(rot||v)}</span></label>`;}
+function _radio(name,v,marcado,rot){return `<label class="cons-ck"><input type="radio" name="${name}" value="${v}" ${marcado?'checked':''}><span>${rot}</span></label>`;}
+function _lidosChk(id){return Array.from(document.querySelectorAll('#'+id+' input[type=checkbox]:checked')).map(i=>i.dataset.v);}
+function _valRadio(name){const e=document.querySelector('input[name="'+name+'"]:checked');return e?e.value:'';}
+function dwQToggle(id,mostrar){const e=document.getElementById(id);if(e)e.style.display=mostrar?'block':'none';}
+function _alergiasReg(){return ((dietWizCtx&&dietWizCtx.d&&dietWizCtx.d.alergias)||[]).filter(a=>ALERGIA_EXCL[a]);}
+const DWQ_TELAS=[
+  {titulo:'Rotina do dia',sub:'Quantas refeições por dia e quantas opções de escolha em cada uma.',
+   render:p=>`<div class="fg"><label class="fl">Refeições por dia</label><div class="cons-grid">${[3,4,5,6].map(n=>_radio('dwqNRef',n,p.nRef===n,n+' refeições'+(n===6?' (café, lanche, almoço, lanche, jantar, ceia)':n===5?' (sem ceia)':n===4?' (café, almoço, lanche da tarde, jantar)':' (café, almoço, jantar)'))).join('')}</div></div>
+     <div class="fg" style="margin-top:14px"><label class="fl">Opções de escolha por refeição</label><div class="cons-grid">${[1,2,3].map(n=>_radio('dwqNOp',n,p.nOp===n,n+(n===1?' opção (cardápio fechado)':' opções'))).join('')}</div></div>`,
+   coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||3;},
+   padrao:p=>{p.nRef=6;p.nOp=3;}},
+  {titulo:'O que o Bodymate não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
+   render:p=>{
+     const auto=_alergiasReg().map(a=>ALERGIA_EXCL[a].rot||AVERSOES_CAT.find(x=>x.k===ALERGIA_EXCL[a].k).rot);
+     const sug=(!p.aversoes.ativo&&!(p.aversoes.marcados||[]).length)?aversoesSugeridasQFA(dietWizCtx.d):[];
+     const marc=(p.aversoes.marcados&&p.aversoes.marcados.length)?p.aversoes.marcados:sug;
+     const ativo=p.aversoes.ativo||sug.length>0;
+     return `${auto.length?`<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Excluído automaticamente pelo cadastro: <b>${escH(auto.join(', '))}</b></div>`:''}
+     ${sug.length?`<div style="font-size:12px;color:var(--gd);margin-bottom:8px">💡 O QFA (Questionário de Frequência Alimentar) marca "Nunca" pra alguns grupos — já deixei pré-marcados abaixo.</div>`:''}
+     <div class="cons-grid">${_radio('dwqAv','N',!ativo,'Não — sem exclusões (usar o padrão)')}${_radio('dwqAv','S',ativo,'Sim — tem algo a excluir ou diminuir')}</div>
+     <div id="dwqAvBox" style="display:${ativo?'block':'none'};margin-top:12px">
+       <div class="cons-grid" id="dwqAvChips">${AVERSOES_CAT.map(a=>_chk(a.k,marc,a.chip||a.rot)).join('')}</div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever outros ou pedir para diminuir</label><textarea id="dwqAvTxt" class="fc" rows="2" placeholder="Ex.: não come coentro, sem mandioca, diminuir arroz, reduzir pão">${escH(p.aversoes.texto||'')}</textarea></div>
+     </div>`;},
+   bind:()=>{document.querySelectorAll('input[name=dwqAv]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqAvBox',_valRadio('dwqAv')==='S')));},
+   coletar:p=>{p.aversoes.ativo=_valRadio('dwqAv')==='S';p.aversoes.marcados=p.aversoes.ativo?_lidosChk('dwqAvChips'):[];p.aversoes.texto=p.aversoes.ativo?document.getElementById('dwqAvTxt').value.trim():'';},
+   padrao:p=>{p.aversoes={ativo:false,marcados:[],texto:''};}},
+  {titulo:'Leite e glúten',sub:'O que já está no cadastro entra sozinho — só pergunto o que falta.',
+   render:p=>{
+     const al=(dietWizCtx.d.alergias||[]);
+     const pvl=al.includes('LEITE'),lac=al.includes('LACTOSE'),glu=al.includes('GLUTEN');
+     let h='';
+     if(pvl)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Alergia à proteína do leite no cadastro: uso <b>leite vegetal</b> e nenhum laticínio, automático.</div>';
+     else if(lac)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Intolerância à lactose no cadastro: uso <b>leite sem lactose</b>, automático.</div>';
+     else h+=`<div class="fg"><label class="fl">Vai usar leite?</label><div class="cons-grid">${_radio('dwqLeite','S',p.leite.usa,'Sim')}${_radio('dwqLeite','N',!p.leite.usa,'Não')}</div></div>
+       <div id="dwqLeiteTipo" style="display:${p.leite.usa?'block':'none'};margin-top:10px"><label class="fl">Qual?</label><div class="cons-grid">${[['desnatado','Desnatado'],['semi','Semidesnatado'],['integral','Integral'],['vegetal','Vegetal (soja)'],['aveia','Vegetal (aveia)']].map(([v,r])=>_radio('dwqLeiteT',v,p.leite.tipo===v,r)).join('')}</div></div>`;
+     h+=glu?'<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-top:14px">✅ Glúten no cadastro (alergia/doença celíaca): cardápio <b>sem glúten</b>, automático.</div>'
+       :`<div class="fg" style="margin-top:14px"><label class="fl">Priorizar alimentos sem glúten?</label><div class="cons-grid">${_radio('dwqGlu','S',p.semGluten,'Sim')}${_radio('dwqGlu','N',!p.semGluten,'Não')}</div></div>`;
+     return h;},
+   bind:()=>{document.querySelectorAll('input[name=dwqLeite]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLeiteTipo',_valRadio('dwqLeite')==='S')));},
+   coletar:p=>{
+     const al=(dietWizCtx.d.alergias||[]);
+     if(!al.includes('LEITE')&&!al.includes('LACTOSE')){p.leite.usa=_valRadio('dwqLeite')!=='N';if(p.leite.usa)p.leite.tipo=_valRadio('dwqLeiteT')||p.leite.tipo||'desnatado';}
+     if(!al.includes('GLUTEN'))p.semGluten=_valRadio('dwqGlu')==='S';},
+   padrao:p=>{p.leite={usa:true,tipo:'desnatado'};p.semGluten=false;}},
+  {titulo:'Frutas e oleaginosas específicas',sub:'Só se o Bodymate pediu algo. Se não, uso o padrão da casa.',
+   render:p=>`<div class="cons-grid">${_radio('dwqFr','N',!p.frutas.ativo,'Não — usar o padrão')}${_radio('dwqFr','S',p.frutas.ativo,'Sim — incluir o que ele informou')}</div>
+     <div id="dwqFrBox" style="display:${p.frutas.ativo?'block':'none'};margin-top:12px">
+       <label class="fl">Frutas</label><div class="cons-grid" id="dwqFrChips">${FRUTAS_CHIPS.map(f=>_chk(f,p.frutas.marcados)).join('')}</div>
+       <label class="fl" style="margin-top:12px">Oleaginosas e sementes</label><div class="cons-grid" id="dwqNutChips">${NUTS_CHIPS.map(f=>_chk(f,p.frutas.marcados)).join('')}</div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever outros</label><textarea id="dwqFrTxt" class="fc" rows="2" placeholder="Ex.: pitaya, ameixa fresca, pistache">${escH(p.frutas.texto||'')}</textarea></div>
+     </div>`,
+   bind:()=>{document.querySelectorAll('input[name=dwqFr]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqFrBox',_valRadio('dwqFr')==='S')));},
+   coletar:p=>{p.frutas.ativo=_valRadio('dwqFr')==='S';p.frutas.marcados=p.frutas.ativo?_lidosChk('dwqFrChips').concat(_lidosChk('dwqNutChips')):[];p.frutas.texto=p.frutas.ativo?document.getElementById('dwqFrTxt').value.trim():'';},
+   padrao:p=>{p.frutas={ativo:false,marcados:[],texto:''};}},
+  {titulo:'Legumes e verduras',sub:'No Word o paciente lê dois grupos: os leves (à vontade, em prato) e os com amido (pesados, como o arroz).',
+   render:p=>`<div class="cons-grid">${_radio('dwqLg','N',!p.legumes.ativo,'Não — usar o padrão')}${_radio('dwqLg','S',p.legumes.ativo,'Sim — o Bodymate informou preferências')}</div>
+     <div id="dwqLgBox" style="display:${p.legumes.ativo?'block':'none'};margin-top:12px">
+       <label class="fl">Legumes e verduras leves (consumo livre)</label><div class="cons-grid" id="dwqLgL">${LEG_LEVES.map(f=>_chk(f,p.legumes.marcados)).join('')}</div>
+       <label class="fl" style="margin-top:12px">Legumes e raízes com amido (contam como carboidrato, em gramas)</label><div class="cons-grid" id="dwqLgA">${LEG_AMIL.map(f=>_chk(f,p.legumes.marcados)).join('')}</div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever outros</label><textarea id="dwqLgTxt" class="fc" rows="2" placeholder="Ex.: gosta muito de abobrinha, não gosta de couve">${escH(p.legumes.texto||'')}</textarea></div>
+     </div>`,
+   bind:()=>{document.querySelectorAll('input[name=dwqLg]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLgBox',_valRadio('dwqLg')==='S')));},
+   coletar:p=>{p.legumes.ativo=_valRadio('dwqLg')==='S';p.legumes.marcados=p.legumes.ativo?_lidosChk('dwqLgL').concat(_lidosChk('dwqLgA')):[];p.legumes.texto=p.legumes.ativo?document.getElementById('dwqLgTxt').value.trim():'';},
+   padrao:p=>{p.legumes={ativo:false,marcados:[],texto:''};}},
+  {titulo:'Bebidas',sub:'O que o Bodymate está autorizado a beber. Sai no bloco de bebidas do Word, sempre em ml.',
+   render:p=>{const b=p.bebidas;
+     const item=(id,rot,v)=>`<label class="cons-ck"><input type="checkbox" id="${id}" ${v?'checked':''}><span>${rot}</span></label>`;
+     return `<div class="cons-grid">${item('dwqBAgua','Água',b.agua)}${item('dwqBGas','Água com gás',b.gas)}${item('dwqBCha','Chás sem açúcar',b.cha)}${item('dwqBCafe','Café',b.cafe)}${item('dwqBRefri','Refrigerante zero',b.refriZero)}${item('dwqBSuco','Suco zero (pó/diet)',b.sucoZero)}${item('dwqBIso','Isotônico (treino longo)',b.isotonico)}${item('dwqBEner','Energético zero',b.energetico)}</div>
+     <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:14px">
+       <div class="fg"><label class="fl">Álcool</label><select class="di" id="dwqBAlc"><option value="nao" ${b.alcool==='nao'?'selected':''}>Não incluir</option><option value="ocasional" ${b.alcool==='ocasional'?'selected':''}>Ocasional (até 1x/semana)</option><option value="moderado" ${b.alcool==='moderado'?'selected':''}>Moderado (até 2x/semana)</option></select></div>
+       <div class="fg"><label class="fl">Adoçante</label><select class="di" id="dwqBAd">${[['sucralose','Sucralose'],['stevia','Stevia'],['xilitol','Xilitol'],['eritritol','Eritritol'],['nenhum','Sem adoçante']].map(([v,r])=>`<option value="${v}" ${b.adocante===v?'selected':''}>${r}</option>`).join('')}</select></div>
+       <div class="fg"><label class="fl">Meta de água (ml/dia)</label><input class="di" id="dwqBMl" type="number" step="100" style="width:110px" value="${b.mlDia||''}" placeholder="${metaAguaMl(null,dietWizCtx.d)}"></div>
+     </div>`;},
+   coletar:p=>{const g=id=>document.getElementById(id);p.bebidas={agua:g('dwqBAgua').checked,gas:g('dwqBGas').checked,cha:g('dwqBCha').checked,cafe:g('dwqBCafe').checked,refriZero:g('dwqBRefri').checked,sucoZero:g('dwqBSuco').checked,isotonico:g('dwqBIso').checked,energetico:g('dwqBEner').checked,alcool:g('dwqBAlc').value,adocante:g('dwqBAd').value,mlDia:g('dwqBMl').value.trim()};},
+   padrao:p=>{p.bebidas=prefsPadrao().bebidas;}},
+  {titulo:'Sobremesa',sub:'Se entra ou não, e quais. Aparece no almoço e no jantar e no bloco de sobremesas do Word.',
+   render:p=>`<div class="cons-grid">${_radio('dwqSb','S',p.sobremesa.ativo,'Sim')}${_radio('dwqSb','N',!p.sobremesa.ativo,'Não — sem sobremesa')}</div>
+     <div id="dwqSbBox" style="display:${p.sobremesa.ativo?'block':'none'};margin-top:12px">
+       <label class="fl">Opções (marque as que vai usar; sem marcar, uso o padrão da casa)</label><div class="cons-grid" id="dwqSbChips">${SOBREMESA_OPCOES.map(f=>_chk(f,p.sobremesa.marcados)).join('')}</div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever a que vai usar (uma por linha)</label><textarea id="dwqSbTxt" class="fc" rows="2" placeholder="Ex.: gelatina zero com calda de whey">${escH(p.sobremesa.texto||'')}</textarea></div>
+       <label class="cons-ck" style="margin-top:10px"><input type="checkbox" id="dwqSbDif" ${p.sobremesa.diferentes?'checked':''}><span>Usar uma sobremesa diferente em cada refeição (almoço e jantar)</span></label>
+     </div>`,
+   bind:()=>{document.querySelectorAll('input[name=dwqSb]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqSbBox',_valRadio('dwqSb')==='S')));},
+   coletar:p=>{p.sobremesa.ativo=_valRadio('dwqSb')!=='N';p.sobremesa.marcados=p.sobremesa.ativo?_lidosChk('dwqSbChips'):[];p.sobremesa.texto=p.sobremesa.ativo?document.getElementById('dwqSbTxt').value.trim():'';p.sobremesa.diferentes=p.sobremesa.ativo&&document.getElementById('dwqSbDif').checked;},
+   padrao:p=>{p.sobremesa={ativo:true,marcados:[],texto:'',diferentes:false};}},
+  {titulo:'Lanches intermediários',sub:'Usar os padrões ou os preparos que você escrever. A IA ainda sugere lanches naturais, shakes e outros, dentro das respostas anteriores.',
+   render:p=>{const i=p.interm;
+     const selT=(id,v)=>`<select class="di" id="${id}" style="max-width:420px"><option value="">Nenhum (usar as opções abaixo)</option>${Object.keys(LANCHE_TEMPLATES).map(k=>`<option value="${k}" ${v===k?'selected':''}>${LANCHE_TEMPLATES[k].nome}</option>`).join('')}</select>`;
+     return `<div class="cons-grid">${_radio('dwqIt','padrao',i.modo!=='preparos','Usar os padrões')}${_radio('dwqIt','preparos',i.modo==='preparos','Usar preparos — os que eu escrever')}</div>
+     <div id="dwqItBox" style="display:${i.modo==='preparos'?'block':'none'};margin-top:12px">
+       <div class="fg"><label class="fl">Lanche da manhã — modelo pronto</label>${selT('dwqItM',i.manha)}</div>
+       <div class="fg" style="margin-top:8px"><label class="fl">Lanche da manhã — escrever preparos (um por linha)</label><textarea id="dwqItEM" class="fc" rows="2" placeholder="Ex.: panqueca de aveia com ovo e banana">${escH(i.escritosM||'')}</textarea></div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Lanche da tarde — modelo pronto</label>${selT('dwqItT',i.tarde)}</div>
+       <div class="fg" style="margin-top:8px"><label class="fl">Lanche da tarde — escrever preparos (um por linha)</label><textarea id="dwqItET" class="fc" rows="2" placeholder="Ex.: shake de whey com banana e aveia">${escH(i.escritosT||'')}</textarea></div>
+     </div>
+     <label class="cons-ck" style="margin-top:14px"><input type="checkbox" id="dwqItIA" ${i.ia!==false?'checked':''}><span>🤖 IA sugere lanches extras (com ingredientes em gramas e modo de preparo)</span></label>
+     <div id="dwqItTipos" class="cons-grid" style="margin-top:8px">${LANCHE_TIPOS.map(t=>_chk(t,i.tipos||[])).join('')}</div>`;},
+   bind:()=>{document.querySelectorAll('input[name=dwqIt]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqItBox',_valRadio('dwqIt')==='preparos')));},
+   coletar:p=>{const g=id=>document.getElementById(id);p.interm={modo:_valRadio('dwqIt')==='preparos'?'preparos':'padrao',manha:g('dwqItM')?g('dwqItM').value:'',tarde:g('dwqItT')?g('dwqItT').value:'',escritosM:g('dwqItEM')?g('dwqItEM').value.trim():'',escritosT:g('dwqItET')?g('dwqItET').value.trim():'',ia:g('dwqItIA').checked,tipos:_lidosChk('dwqItTipos')};},
+   padrao:p=>{p.interm=prefsPadrao().interm;}}
+];
+function dwQAbrir(i){
+  dietWizCtx.qIdx=i;
+  const t=DWQ_TELAS[i];
+  ['dwStep0','dwStep1','dwStep2','dwStep3'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  document.getElementById('dwStepQ').style.display='block';
+  document.getElementById('dwQTitulo').textContent='🍽️ '+(i+2)+'/'+DWQ_TOTAL+' — '+t.titulo;
+  document.getElementById('dwQSub').textContent=t.sub;
+  document.getElementById('dwQBarIn').style.width=Math.round((i+1)/DWQ_TELAS.length*100)+'%';
+  document.getElementById('dwQCorpo').innerHTML=t.render(dietWizCtx.prefs);
+  if(t.bind)t.bind();
+}
+function dwQColetar(){const t=DWQ_TELAS[dietWizCtx.qIdx];try{t.coletar(dietWizCtx.prefs);}catch(e){}prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);}
+function dwQProximo(){
+  dwQColetar();
+  if(dietWizCtx.qIdx<DWQ_TELAS.length-1){dwQAbrir(dietWizCtx.qIdx+1);return;}
+  document.getElementById('dwStepQ').style.display='none';
+  dietWizRenderStep1();
+  document.getElementById('dwStep1').style.display='block';
+}
+function dwQVoltar(){
+  dwQColetar();
+  if(dietWizCtx.qIdx>0){dwQAbrir(dietWizCtx.qIdx-1);return;}
+  document.getElementById('dwStepQ').style.display='none';
+  document.getElementById('dwStep0').style.display='block';
+}
+function dwQPular(){const t=DWQ_TELAS[dietWizCtx.qIdx];t.padrao(dietWizCtx.prefs);prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);dwQProximo2();}
+function dwQProximo2(){ // avança sem recoletar (depois de "Pular")
+  if(dietWizCtx.qIdx<DWQ_TELAS.length-1){dwQAbrir(dietWizCtx.qIdx+1);return;}
+  document.getElementById('dwStepQ').style.display='none';dietWizRenderStep1();document.getElementById('dwStep1').style.display='block';
+}
+function metaAguaMl(prefs,d){
+  const ml=prefs&&prefs.bebidas&&parseInt(prefs.bebidas.mlDia);
+  if(ml>0)return ml;
+  const peso=parseFloat(d&&d.peso)||70;
+  return Math.round(Math.max(3000,peso*40)/100)*100;
+}
+// ═══════════════ IA: lanches escritos + sugestões (natural, shake…) ═══════════════
+async function buscarLanchesIA(ctx){
+  const p=ctx.prefs,it=p.interm||{};
+  const escritos=[];
+  String(it.escritosM||'').split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(t=>escritos.push({para:'M',texto:t}));
+  String(it.escritosT||'').split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(t=>escritos.push({para:'T',texto:t}));
+  const querIA=it.ia!==false;
+  if(!escritos.length&&!querIA)return{lanches:[]};
+  const ex=exclusoesAtivas(ctx.d,p,ctx.regras);
+  const kM=Math.round(kcalDaRefeicao(ctx.kcal,'lancheM',p,ctx.regras)),kT=Math.round(kcalDaRefeicao(ctx.kcal,'lancheT',p,ctx.regras));
+  const body={escritos,quantidade:querIA?4:0,tipos:(it.tipos&&it.tipos.length)?it.tipos:['Lanche natural','Shake'],kcalM:kM,kcalT:kT,
+    restricoes:ex.defs.map(d=>d.rot),semGluten:ex.semGluten,leite:nomeLeite(p,ex)||'nenhum',
+    objetivo:(ctx.d.objetivo||''),modelo:ctx.modelo,doencas:(ctx.d.doencas||[]).join(', '),
+    gostos:[p.frutas.ativo?(p.frutas.marcados.join(', ')+' '+p.frutas.texto):'',].join(' ').trim(),
+    adocante:(p.bebidas&&p.bebidas.adocante)||'sucralose'};
+  const r=await fetch('/.netlify/functions/sugerir-lanches',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await r.json();
+  if(!r.ok||!Array.isArray(data.lanches))throw new Error(data.erro||'sem resposta');
+  const lanches=data.lanches.map(l=>{
+    const itens=(l.itens||[]).map(i=>{
+      const k=achaFoodKey(i.nome);
+      const base=k?(FOOD_NUT[k]||FOOD_NUT_CUSTOM[k]):null;
+      if(!base)FOOD_NUT_CUSTOM[i.nome]=[i.kcal,i.prot,i.fat,i.carb,i.fiber,i.gramas||100];
+      const nut=base||FOOD_NUT_CUSTOM[i.nome];
+      return{nome:k||i.nome,gramas:i.gramas,kcal:nut[0],prot:nut[1],fat:nut[2],carb:nut[3],fiber:nut[4]};
+    });
+    const alvo=(l.para==='M')?kM:kT;
+    const kc=itens.reduce((s,i)=>s+i.kcal*i.gramas/100,0);
+    const f=kc>0&&alvo>0?Math.min(1.5,Math.max(0.5,alvo/kc)):1;
+    itens.forEach(i=>{i.gramas=_round5(i.gramas*f);});
+    return Object.assign({},l,{itens,kcalAprox:Math.round(itens.reduce((s,i)=>s+i.kcal*i.gramas/100,0))});
+  });
+  salvarFoodCustom();
+  return{lanches};
+}
+
+// ═══════════════ TEXTOS DO WORD QUE DEPENDEM DAS RESPOSTAS ═══════════════
+function textoBebidasLinhas(prefs,d){
+  const b=(prefs&&prefs.bebidas)||prefsPadrao().bebidas;
+  const ml=metaAguaMl(prefs,d);
+  const ad=b.adocante==='nenhum'?'sem adoçante':'adoçante à sua escolha ('+b.adocante+', em gotas)';
+  const L=[];
+  L.push('Água: meta de '+ml+' ml por dia ('+(Math.round(ml/300*10)/10).toString().replace('.',',')+' copos de 300 ml), distribuída ao longo do dia'+(b.gas?'; pode ser com gás':'')+'.');
+  if(b.cha)L.push('Chás sem açúcar (camomila, hortelã, erva-doce, mate, chá preto, chá verde): liberados, '+ad+'.');
+  if(b.cafe)L.push('Café: até 4 xícaras pequenas (50 ml cada) por dia, sem açúcar, '+ad+'.');
+  if(b.refriZero)L.push('Refrigerante zero: autorizado, até 350 ml (1 lata) por dia.');
+  if(b.sucoZero)L.push('Suco zero açúcar (pó ou diet): autorizado, até 200 ml (1 copo) por vez.');
+  if(b.isotonico)L.push('Isotônico: somente em treino acima de 1 hora, até 500 ml.');
+  if(b.energetico)L.push('Energético zero: até 250 ml (1 lata) por dia, evitando depois das 16 h.');
+  L.push(b.alcool==='nao'?'Bebidas alcoólicas: não estão incluídas neste plano.':b.alcool==='ocasional'?'Bebidas alcoólicas: ocasionais, no máximo 1 vez por semana e 1 dose, fora dos dias de treino pesado.':'Bebidas alcoólicas: com moderação, no máximo 2 vezes por semana e 1 a 2 doses.');
+  L.push('Evite sempre as versões com açúcar.');
+  return L;
+}
+function textoLegumes(prefs,d){
+  const dn=(d&&d.doencas)||[],obj=String((d&&d.objetivo)||'').toLowerCase();
+  const lg=(prefs&&prefs.legumes)||{ativo:false,marcados:[],texto:''};
+  const gostaL=lg.ativo?lg.marcados.filter(x=>LEG_LEVES.includes(x)):[];
+  const gostaA=lg.ativo?lg.marcados.filter(x=>LEG_AMIL.includes(x)):[];
+  const out=[];
+  out.push({tit:'Grupo 1 — Legumes e verduras leves',txt:'Folhas, brócolis, couve-flor, abobrinha, berinjela, pepino, tomate, vagem, chuchu e parecidos. Você pode comer bastante, sem pesar. A medida é: salada e folhas = 01 prato raso de servir cheio; legumes cozidos no vapor ou na água = 01 prato de sobremesa cheio.'+(gostaL.length?' Os que você mais gosta: '+gostaL.join(', ').toLowerCase()+'.':'')});
+  let g2='Batata, batata-doce, mandioca, inhame, milho, ervilha, beterraba, cenoura e abóbora têm amido: funcionam como o arroz. Eles entram na refeição pesados em gramas, no lugar do arroz e não em cima dele. Exemplo: se comer batata-doce, diminua o arroz na mesma refeição.';
+  if(gostaA.length)g2+=' Os que você mais gosta: '+gostaA.join(', ').toLowerCase()+'.';
+  if(dn.includes('DM1')||dn.includes('DM2'))g2+=' Por causa do diabetes, use só a quantidade em gramas indicada no cardápio.';
+  else if(obj.includes('perda'))g2+=' Como o objetivo é emagrecer, mantenha este grupo só na quantidade indicada no cardápio.';
+  out.push({tit:'Grupo 2 — Legumes e raízes com amido',txt:g2});
+  if(lg.ativo&&lg.texto)out.push({tit:'Observação',txt:lg.texto});
+  return out;
+}
+function textoRestricoes(ex,prefs){
+  const L=[];
+  if(ex.rotsAuto.length)L.push('Não incluído por alergia ou intolerância registrada no seu cadastro: '+ex.rotsAuto.join(', ')+'.');
+  if(ex.rotsModelo.length)L.push('Fora do modelo de dieta escolhido: '+ex.rotsModelo.join(', ')+'.');
+  const us=ex.rotsUser.filter(r=>!ex.rotsAuto.includes(r)&&!ex.rotsModelo.includes(r));
+  if(us.length)L.push('Não incluído porque você não come ou não gosta: '+us.join(', ')+'.');
+  if(ex.reducoes.length)L.push('Quantidade reduzida a pedido: '+(ex.reducoesRot||ex.reducoes).join(', ')+'.');
+  if(ex.semGluten&&!ex.rotsAuto.includes('Glúten'))L.push('Alimentos sem glúten priorizados.');
+  if(ex.leiteForcado==='semlactose')L.push('Lactose: o leite comum foi trocado por leite sem lactose.');
+  else if(ex.leiteForcado==='vegetal')L.push('Proteína do leite: sem leite e derivados; usamos bebida vegetal.');
+  else if(prefs&&prefs.leite&&!prefs.leite.usa)L.push('Leite: não incluído neste plano.');
+  return L;
+}
+function lanchesIADoPlan(plan,prefsIA){
+  const ls=(prefsIA&&prefsIA.lanches)||[],out=[];
+  ls.forEach(l=>{
+    if(!l.titulo)return;
+    let achou=null;
+    (plan||[]).forEach(m=>(m.opcoes||[]).forEach(o=>{if(!achou&&String(o).includes(l.titulo))achou=o;}));
+    if(!achou)return;
+    const itens=parseOpcaoStr(achou).filter(r=>r.tipo==='item'&&r.alimento).map(r=>r.gramas+(ehLiquido(r.alimento)?' ml':' g')+' de '+r.alimento.toLowerCase());
+    if(itens.length)out.push(Object.assign({},l,{itensTxt:itens}));
+  });
+  return out;
+}
+// tira do texto fixo do Word os termos que o paciente não come (cebola, pimentão, quiabo, o que foi escrito…)
+const TERMOS_TXT={cebola:['cebola em pó','cebola'],pimentao:['pimentão'],quiabo:['quiabo'],berinjela:['berinjela'],beterraba:['beterraba'],cogumelo:['cogumelos','cogumelo'],coentro:['coentro'],folhas_amargas:['couve-de-bruxelas','couve','rúcula','agrião','acelga']};
+function tirarTermos(txt,ex){
+  let s=String(txt||'');
+  const termos=[];
+  (ex.defs||[]).forEach(d=>{if(TERMOS_TXT[d.k])termos.push(...TERMOS_TXT[d.k]);else if(d.generico&&d.rot)termos.push(d.rot);});
+  termos.forEach(t=>{
+    const e=_escRe(t);
+    s=s.replace(new RegExp(',\\s*'+e+'(?![\\p{L}-])','giu'),'').replace(new RegExp('(?<![\\p{L}-])'+e+',\\s*','giu'),'');
+  });
+  return s;
+}
+function receitasFiltradas(lista,ex){
+  return lista.filter(r=>!ex.defs.some(d=>d.re&&d.re.test(normAlim(r.titulo)))).map(r=>Object.assign({},r,{ingredientes:tirarTermos(r.ingredientes,ex),modo:tirarTermos(r.modo,ex)}));
+}
+// a lista genérica de substituições também respeita alergias, aversões e o leite escolhido
+function filtrarSubstGenericas(grupos,ex,prefs){
+  const leite=nomeLeite(prefs,ex);
+  const bloqueia=t=>ex.defs.some(d=>d.re&&d.re.test(normAlim(t)));
+  return grupos.map(g=>{
+    if(!/ = /.test(g.itens))return g;
+    let partes=g.itens.split(' = ');
+    partes=partes.map(p=>{
+      if(/leite desnatado/i.test(p)){return leite?p.replace(/leite desnatado/i,leite):null;}
+      return p;
+    }).filter(p=>p&&!bloqueia(p));
+    if(ex.semGluten)partes=partes.filter(p=>!/aveia|macarr|torrada|granola/i.test(p));
+    return partes.length?Object.assign({},g,{itens:partes.join(' = ')}):null;
+  }).filter(Boolean);
+}
+function frutasLiberadasFiltradas(ex){return buildFrutasLiberadas().filter(f=>!ex.defs.some(d=>d.re&&d.re.test(normAlim(f))));}
 
 function gerarDieta(){iniciarGeracaoDieta();}
 
@@ -4737,6 +5367,8 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     const EAA=eaaOverride||base.EAA||[];
     const FARM=farmOverride||base.FARM||[];
     const fecho=(dietOv&&dietOv.fecho)||'atual';
+    const prefsW=(dietOv&&dietOv.prefs)||base.prefs||null;
+    const exW=exclusoesAtivas(d,prefsW,base.regras);
 
     const bdr={style:BorderStyle.SINGLE,size:1,color:'E8DCB8'};
     const bdrAll={top:bdr,bottom:bdr,left:bdr,right:bdr};
@@ -4771,7 +5403,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             }else{
               const nomeOk=r.alimento&&r.alimento.trim();
               const nome=nomeOk?capFirst(r.alimento):'⚠ alimento não definido — revisar';
-              const peso=(r.gramas||'0')+' g'+(r.medida?' ('+r.medida+')':'');
+              const peso=(r.gramas||'0')+(ehLiquido(r.alimento)?' ml':' g')+(r.medida?' ('+r.medida+')':'');
               children.push(new Paragraph({
                 tabStops:[{type:TabStopType.RIGHT,position:tabPos}],
                 children:[new TextRun({text:nome,size:18}),new TextRun({text:'\t'+peso,size:18})],
@@ -4830,7 +5462,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
         ?new TableCell({borders:hdrBdrAll,shading:{fill:fillOrColor,type:ShadingType.CLEAR},margins:{top:50,bottom:50,left:100,right:100},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:15})]})]})
         :new TableCell({borders:bdrAll,shading:{fill:fillOrColor,type:ShadingType.CLEAR},margins:{top:40,bottom:40,left:100,right:100},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:13})]})]});
     }
-    const substRows=buildSubstituicoes(dietCas).map(s=>new TableRow({children:[
+    const substRows=filtrarSubstGenericas(buildSubstituicoes(false),exW,prefsW).map(s=>new TableRow({children:[
       dCellSm(s.grupo,'F7F3E8',2340,false),
       dCellSm(s.itens,'FFFFFF',7020,false),
     ]}));
@@ -4840,7 +5472,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     try{
       const itensUsados=itensUnicosDoPlan(PLAN);
       if(itensUsados.length){
-        const rSub=await fetch('/.netlify/functions/sugerir-substituicoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados})});
+        const rSub=await fetch('/.netlify/functions/sugerir-substituicoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados,restricoes:exW.defs.map(x=>x.rot),semGluten:exW.semGluten,leite:nomeLeite(prefsW,exW)||'nenhum',objetivo:d.objetivo||'',doencas:(d.doencas||[]).join(', ')})});
         const dataSub=await rSub.json();
         if(rSub.ok&&Array.isArray(dataSub.substituicoes)&&dataSub.substituicoes.length){
           const rowsIA=dataSub.substituicoes.map(s=>new TableRow({children:[
@@ -4863,13 +5495,15 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       }
     }catch(e){substIABlocks=[];}
 
-    const receitasBlocks=buildReceitas(fatG,hasHAS,dietCas).flatMap(r=>[
+    const receitasBlocks=receitasFiltradas(buildReceitas(fatG,hasHAS,false),exW).flatMap(r=>[
       H2(r.titulo),
       new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
       new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
     ]);
 
-    const receitasFitBlocks=buildReceitasFit().flatMap(r=>[
+    const adoc=(prefsW&&prefsW.bebidas&&prefsW.bebidas.adocante)||'sucralose';
+    const trocaAd=s=>adoc==='sucralose'?s:(adoc==='nenhum'?String(s).replace(/\s*·?\s*Sucralose a gosto/gi,''):String(s).replace(/sucralose/gi,adoc));
+    const receitasFitBlocks=buildReceitasFit().map(r=>Object.assign({},r,{ingredientes:trocaAd(r.ingredientes),modo:trocaAd(r.modo)})).flatMap(r=>[
       H2(r.titulo),
       new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
       new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
@@ -5057,11 +5691,12 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new Paragraph({spacing:{after:200}}),
           HR(),
           H2('HIDRATAÇÃO'),
-          P(`Meta diária: ${d.peso?Math.max(3,Math.round(parseFloat(d.peso)*0.04*10)/10):3.0}L de água (${d.peso?Math.round(Math.max(3,parseFloat(d.peso)*0.04)*1000/300):10} copos de 300mL). Distribua ao longo do dia — pode beber inclusive durante as refeições, sem restrição. Pode associar bebidas zero açúcar em geral.`),
+          P('Meta diária: '+(metaAguaMl(prefsW,d)/1000).toString().replace('.',',')+' L de água ('+Math.round(metaAguaMl(prefsW,d)/300)+' copos de 300 ml). Distribua ao longo do dia — pode beber inclusive durante as refeições, sem restrição.'),
           H2('ALIMENTOS A LIMITAR OU EVITAR'),
           P(buildEvitar(hasDM,hasHAS,hasDis).join(' · ')),
           H2('BEBIDAS PERMITIDAS'),
-          P('Água, chás sem açúcar e, com moderação, refrigerantes e outras bebidas zero açúcar/diet — ajudam na adesão ao plano. Evite as versões com açúcar.'),
+          ...textoBebidasLinhas(prefsW,d).map(t=>P('• '+t)),
+          ...(textoRestricoes(exW,prefsW).length?[H2('O QUE NÃO ENTROU NO SEU PLANO'),...textoRestricoes(exW,prefsW).map(t=>P(t))]:[]),
           new Paragraph({spacing:{after:200}}),
           HR(),
           ...((dietOv&&dietOv.obsImportante)?[
@@ -5108,9 +5743,11 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ]}),
           new Paragraph({spacing:{after:200}}),
           HR()]:[]),
+          ...((prefsW&&prefsW.sobremesa&&prefsW.sobremesa.ativo!==false)?[H2('SOBREMESAS — PRIORIDADE'),
+            P(listaSobremesa(prefsW).length?('Suas sobremesas neste plano: '+listaSobremesa(prefsW).join('; ')+'. Uso ocasional, na porção indicada, sem repetir todos os dias.'):'Gelatina zero (consumo livre), 20 g de leite condensado ou 1 bombom: uso ocasional, 2 a 3 vezes por semana.'),new Paragraph({spacing:{after:120}})]:[]),
           H1('FRUTAS LIBERADAS — CONSUMO LIVRE'),
           new Paragraph({children:[new TextRun({text:'Menor teor de amido/açúcar — pode repetir a fruta à vontade, respeitando a saciedade.',size:18,color:'8A7F5C'})],spacing:{after:100}}),
-          P(buildFrutasLiberadas().join(' · ')),
+          P(frutasLiberadasFiltradas(exW).join(' · ')),
           new Paragraph({spacing:{after:200}}),
           HR(),
           ...substIABlocks,
@@ -5124,8 +5761,20 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           HR(),
           H1('SALADA E LEGUMES — PADRÃO DE PREPARO'),
           new Paragraph({children:[new TextRun({text:'1) Salada/Hortaliças — consumir primeiro: ',bold:true,size:18,color:'161616'}),new TextRun({text:'01 prato raso de servir cheio, temperado com ervas desidratadas a gosto, sal (1 g — sachê padrão), suco de limão ou vinagre, e pimenta-do-reino (opcional). Sem molhos industrializados — apenas versões naturais ou molho tabasco.',size:18})],spacing:{after:100}}),
-          new Paragraph({children:[new TextRun({text:'2) Legumes: ',bold:true,size:18,color:'161616'}),new TextRun({text:'apenas os cultivados acima da terra, com baixo ou zero amido (ex.: brócolis, couve-flor, abobrinha, berinjela, pimentão, vagem, chuchu, couve, espinafre, rúcula, acelga, repolho, couve-de-bruxelas, quiabo, pepino, tomate) — 01 prato de sobremesa cheio, preferencialmente no vapor ou refogados. O azeite já calculado para a refeição deve ser dividido entre o preparo da proteína e dos legumes — não some quantidade extra. Tempero: alho, cebola, ervas, suco de limão, sal (1 g na hora de servir), pimenta ou tabasco.',size:18})],spacing:{after:200}}),
+          new Paragraph({children:[new TextRun({text:'2) Legumes: ',bold:true,size:18,color:'161616'}),new TextRun({text:tirarTermos('apenas os cultivados acima da terra, com baixo ou zero amido (ex.: brócolis, couve-flor, abobrinha, berinjela, pimentão, vagem, chuchu, couve, espinafre, rúcula, acelga, repolho, couve-de-bruxelas, quiabo, pepino, tomate) — 01 prato de sobremesa cheio, preferencialmente no vapor ou refogados. O azeite já calculado para a refeição deve ser dividido entre o preparo da proteína e dos legumes — não some quantidade extra. Tempero: alho, cebola, ervas, suco de limão, sal (1 g na hora de servir), pimenta ou tabasco.',exW),size:18})],spacing:{after:200}}),
+          H2('COMO USAR OS LEGUMES: DOIS GRUPOS'),
+          ...textoLegumes(prefsW,d).flatMap(t=>[new Paragraph({children:[new TextRun({text:t.tit+': ',bold:true,size:18,color:'161616'}),new TextRun({text:t.txt,size:18})],spacing:{after:100}})]),
           HR(),
+          ...(()=>{
+            const ls=lanchesIADoPlan(PLAN,dietOv&&dietOv.prefsIA);
+            if(!ls.length)return[];
+            return[H1('LANCHES INTERMEDIÁRIOS — INGREDIENTES E MODO DE PREPARO'),
+              new Paragraph({children:[new TextRun({text:'Cada lanche já aparece no cardápio com o nome abaixo. Pesos em gramas (líquidos em ml).',size:18,color:'8A7F5C'})],spacing:{after:100}}),
+              ...ls.flatMap(l=>[H2(l.tipo+' — '+l.titulo),
+                new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.itensTxt.join(' · '),size:18})],spacing:{after:60}}),
+                new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.preparo||'Misture os ingredientes e sirva.',size:18})],spacing:{after:140}})]),
+              HR()];
+          })(),
           H1('ALGUMAS RECEITAS — MODO DE PREPARO'),
           new Paragraph({children:[new TextRun({text:'Quantidade de azeite calculada proporcionalmente à sua meta diária de gordura. Sal: no máximo 1 g por porção (1 sachê padrão Cisne), salvo orientação diferente abaixo.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           ...receitasBlocks,
