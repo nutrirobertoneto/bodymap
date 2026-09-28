@@ -5472,7 +5472,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     try{
       const itensUsados=itensUnicosDoPlan(PLAN);
       if(itensUsados.length){
-        const rSub=await fetch('/.netlify/functions/sugerir-substituicoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados,restricoes:exW.defs.map(x=>x.rot),semGluten:exW.semGluten,leite:nomeLeite(prefsW,exW)||'nenhum',objetivo:d.objetivo||'',doencas:(d.doencas||[]).join(', ')})});
+        const rSub=await fetch('/.netlify/functions/sugerir-trocas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados,restricoes:exW.defs.map(x=>x.rot),semGluten:exW.semGluten,leite:nomeLeite(prefsW,exW)||'nenhum',objetivo:d.objetivo||'',doencas:(d.doencas||[]).join(', ')})});
         const dataSub=await rSub.json();
         if(rSub.ok&&Array.isArray(dataSub.substituicoes)&&dataSub.substituicoes.length){
           const rowsIA=dataSub.substituicoes.map(s=>new TableRow({children:[
