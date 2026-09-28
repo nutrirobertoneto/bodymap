@@ -4305,10 +4305,11 @@ function dietToggleCaseiras(){
 }
 const DIET_DK='bm_diet_draft';
 function dietChavePaciente(d){return String((d&&(d.id||d.nome))||'');}
+function dietDKp(d){return DIET_DK+'_'+dietChavePaciente(d);}
 function salvarRascunhoDieta(){
   if(!dietPlanEdit||!dietPlanEdit.length||!dietDataCache)return;
   try{
-    localStorage.setItem(DIET_DK,JSON.stringify({
+    localStorage.setItem(dietDKp(dietDataCache),JSON.stringify({
       chave:dietChavePaciente(dietDataCache),savedAt:new Date().toISOString(),
       dietPlanEdit,dietSupEdit,dietEAAEdit,dietFarmEdit,dietOv,dietCas,
       dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale
@@ -4325,10 +4326,10 @@ function _abrirEditorDietaInterno(dataOverride,ov){
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
   let restaurado=false;
   try{
-    const raw=localStorage.getItem(DIET_DK);
+    const raw=localStorage.getItem(dietDKp(d))||localStorage.getItem(DIET_DK);
     if(raw){
       const rasc=JSON.parse(raw);
-      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei uma dieta não salva desse Bodymate, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'. Continuar de onde parou em vez de gerar do zero?')){
+      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei a última dieta desse Bodymate, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'.\n\nOK = abrir essa dieta para ajustar.\nCancelar = montar uma nova do zero (a antiga continua guardada até você mexer na nova).')){
         dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
         dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
         dietPesosLocked=rasc.dietPesosLocked||{};dietPesosStale=!!rasc.dietPesosStale;
@@ -5800,8 +5801,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     const a=document.createElement('a');
     a.href=url;a.download=`PlanoAlimentar_${(d.nome||'Bodymate').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-    limparRascunhoDieta();
-    showToast('✅ PLANNER baixado com sucesso!');
+    showToast('✅ PLANNER baixado com sucesso! A dieta continua guardada para ajustes.');
   }catch(e){console.error(e);showToast('❌ Erro ao gerar: '+e.message,'#c0392b');}
 }
 
