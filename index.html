@@ -893,6 +893,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 
 <div class="pw-overlay" id="dietEditorOverlay" style="display:none">
   <div class="diet-editor-box">
+    <div id="dietBarraTopo" style="position:sticky;top:-28px;z-index:5;background:#fff;margin:-28px -30px 12px;padding:12px 30px;border-bottom:1px solid var(--br);display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center">
+      <button class="btn bs" style="padding:8px 14px;font-size:12.5px" onclick="corrigirRespostasDieta()">↩️ Corrigir respostas</button>
+      <button class="btn bs" style="padding:8px 14px;font-size:12.5px" onclick="salvarDietaManual()">💾 Salvar</button>
+      <button class="pw-cancel" onclick="cancelarDietEditor()">Cancelar</button>
+      <button class="btn bp" style="padding:8px 16px;font-size:12.5px" onclick="confirmarGerarDieta()">✅ Gerar PLANNER</button>
+    </div>
     <h2 style="font-size:19px;margin-bottom:2px">🍽️ Revisar PLANNER</h2>
     <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Prévia pronta com as suas respostas. Ajuste nomes, quantidades e refeições se precisar, depois gere o Word.</p>
     <div id="dietResumoLinha" style="font-size:12.5px;font-weight:600;color:var(--gd);margin-bottom:10px"></div>
@@ -1537,7 +1543,8 @@ async function estimarAlimentoIA(i,j,k){
     showToast('🥗 Salada/legumes = consumo livre, sem peso. Já deixei como "01 prato raso de servir cheio".');return;
   }
   // item que já está na base: não precisa de IA — só preenche a porção padrão (e o Refresh ajusta depois)
-  const chaveBase=achaFoodKey(nome);
+  const composto=/\b(panqueca|panquecas|bolo|torta|omelete|crepioca|sanduiche|sanduíche|wrap|pizza|hamburguer|hambúrguer|vitamina|shake|mingau|pudim|mousse|strogonoff|lasanha|risoto|sopa|caldo|bowl|receita|pao de queijo|pão de queijo)\b/i.test(nome)||/\s(com|e)\s/i.test(nome);
+  const chaveBase=composto?null:achaFoodKey(nome);
   if(chaveBase){
     const rowsB=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
     rowsB[k].alimento=chaveBase;
@@ -4319,6 +4326,7 @@ function salvarRascunhoDieta(){
 function limparRascunhoDieta(){try{localStorage.removeItem(DIET_DK);}catch(e){}}
 function _arr(x){return Array.isArray(x)?x:(x?String(x).split(/[,;|]+/).map(t=>t.trim()).filter(Boolean):[]);}
 function _abrirEditorDietaInterno(dataOverride,ov){
+  const ovNovo=ov;
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
@@ -4349,6 +4357,20 @@ function _abrirEditorDietaInterno(dataOverride,ov){
     dietEAAEdit=JSON.parse(JSON.stringify(base.EAA));
     dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
   }
+  // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
+  if(restaurado&&ovNovo&&ovNovo.incluirSup!==undefined){
+    dietIncluirSup=ovNovo.incluirSup!==false;dietIncluirEAA=!!ovNovo.incluirEAA;dietIncluirFarm=!!ovNovo.incluirFarm;
+    try{
+      if(dietIncluirSup&&!(dietSupEdit||[]).length)dietSupEdit=buildSupplementTable(d,base.hasDM,base.hasHAS,base.hasDis,base.hasObe,base.obj);
+      if(dietIncluirEAA&&!(dietEAAEdit||[]).length)dietEAAEdit=buildEAATable(d);
+      if(dietIncluirFarm&&!(dietFarmEdit||[]).length)dietFarmEdit=buildFarmTable(d);
+    }catch(e){console.error(e);}
+  }
+  // seção marcada e sem sugestão automática: abre uma linha em branco para preencher
+  let semSugestao=false;
+  if(dietIncluirSup&&!(dietSupEdit||[]).length){dietSupEdit=[{item:'',dose:'',horario:'',rec:''}];semSugestao=true;}
+  if(dietIncluirEAA&&!(dietEAAEdit||[]).length)dietEAAEdit=[{item:'',dose:'',fracionamento:'',obs:''}];
+  if(dietIncluirFarm&&!(dietFarmEdit||[]).length)dietFarmEdit=[{item:'',dose:'',frequencia:'',tempoUso:'',obs:''}];
   renderDietMealRows();
   try{renderDietSupRows();}catch(e){console.error(e);}
   try{renderDietEAARows();}catch(e){console.error(e);}
@@ -4361,10 +4383,19 @@ function _abrirEditorDietaInterno(dataOverride,ov){
   const farmSec=document.getElementById('dietFarmSection');if(farmSec)farmSec.style.display=dietIncluirFarm?'block':'none';
   document.getElementById('dietEditorOverlay').style.display='flex';
   try{verificarConflitosDieta();}catch(e){console.error(e);}
+  if(semSugestao)showToast('ℹ️ Nenhum suplemento sugerido automaticamente para este paciente. Role até "Suplementação, Vitaminas e Minerais" e preencha a linha em branco.','#e67e22');
 }
 function abrirEditorDieta(dataOverride,ov){
   try{_abrirEditorDietaInterno(dataOverride,ov);}
   catch(e){console.error(e);showToast('❌ Não consegui montar a prévia da dieta: '+(e&&e.message||e)+' — me mande este texto.','#c0392b');}
+}
+function salvarDietaManual(){salvarRascunhoDieta();showToast('💾 Dieta salva. Ela continua guardada para ajustes depois.');}
+function corrigirRespostasDieta(){
+  salvarRascunhoDieta();
+  const d=dietDataCache;
+  cancelarDietEditor();
+  if(d)iniciarGeracaoDieta(d);
+  showToast('↩️ Suas respostas estão preenchidas. Corrija o que precisar e monte de novo. A dieta atual continua salva.');
 }
 function cancelarDietEditor(){document.getElementById('dietEditorOverlay').style.display='none';}
 
@@ -4762,7 +4793,7 @@ function calcDietaBase(d,ov,cas){
 // QUESTIONÁRIO DE PREFERÊNCIAS → PERSONALIZAÇÃO DO CARDÁPIO (modo único: Automático + prévia editável)
 // ═══════════════════════════════════════════════════════════════════════════════
 const AVERSOES_CAT=[
-  {k:'visceras',rot:'Fígado e vísceras',re:/\b(figado|visceras?|bucho|coracao|moela|rins?|miolo)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
+  {k:'visceras',rot:'Fígado e vísceras',re:/\b(figado|visceras?|bucho|coracao|moela|rins?|(?<!sem )miolo)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
   {k:'peixe',rot:'Peixe',chip:'Peixe (filé, grelhado)',re:/\b(peixe|tilapia|salmao|merluza|bacalhau|pescada)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
   {k:'sardinha_atum',rot:'Sardinha e atum',chip:'Sardinha e atum (lata)',re:/\b(sardinha|atum)\b/,subs:['frango desfiado','ovo cozido','cottage']},
   {k:'frutos_mar',rot:'Frutos do mar',re:/\b(camarao|frutos do mar|lula|polvo|marisco|mariscos)\b/,subs:['frango grelhado','peixe grelhado']},
@@ -4898,7 +4929,9 @@ function _frutaAlternativa(ex,usadas){
 function _subsPara(def,ex){
   const animal=/\b(frango|peixe|carne|bovina|peru|presunto|atum|sardinha|camarao|salmao|tilapia|ovo|ovos|queijo|iogurte natural|cottage|ricota)\b/;
   const bloqueado=nm=>ex.defs.some(d=>d.re&&d.re.test(normAlim(nm)))||(ex.semCarne&&animal.test(normAlim(nm)));
-  let cands=(def.subs&&def.subs.length)?def.subs:['frango grelhado','peixe grelhado','ovo cozido','peito de peru'];
+  const _rot=normAlim((def.rot||'')+' '+(def.k||''));
+  const _ehPao=/\b(pao|paes|torrada|torradas|biscoito|biscoitos|bolacha|bolachas|cuscuz|tapioca)\b/.test(_rot);
+  let cands=(def.subs&&def.subs.length)?def.subs:(_ehPao?['Tapioca','Cuscuz','Aveia','Batata doce','Mandioca','Banana']:['frango grelhado','peixe grelhado','ovo cozido','peito de peru']);
   if(ex.semCarne)cands=['tofu grelhado','grão-de-bico cozido','lentilha cozida','iogurte de soja'];
   return cands.find(c=>!bloqueado(c))||null;
 }
@@ -5278,8 +5311,8 @@ function textoBebidasLinhas(prefs,d){
   L.push('Água: meta de '+ml+' ml por dia ('+(Math.round(ml/300*10)/10).toString().replace('.',',')+' copos de 300 ml), distribuída ao longo do dia'+(b.gas?'; pode ser com gás':'')+'.');
   if(b.cha)L.push('Chás sem açúcar (camomila, hortelã, erva-doce, mate, chá preto, chá verde): liberados, '+ad+'.');
   if(b.cafe)L.push('Café: até 4 xícaras pequenas (50 ml cada) por dia, sem açúcar, '+ad+'.');
-  if(b.refriZero)L.push('Refrigerante zero: autorizado, até 350 ml (1 lata) por dia.');
-  if(b.sucoZero)L.push('Suco zero açúcar (pó ou diet): autorizado, até 200 ml (1 copo) por vez.');
+  if(b.refriZero)L.push('Refrigerante zero: consumo livre, inclusive durante as refeições.');
+  if(b.sucoZero)L.push('Sucos: evite sucos naturais e industrializados em geral, mesmo os zero açúcar. Se for inevitável, consuma até 200 ml (1 copo).');
   if(b.isotonico)L.push('Isotônico: somente em treino acima de 1 hora, até 500 ml.');
   if(b.energetico)L.push('Energético zero: até 250 ml (1 lata) por dia, evitando depois das 16 h.');
   L.push(b.alcool==='nao'?'Bebidas alcoólicas: não estão incluídas neste plano.':b.alcool==='ocasional'?'Bebidas alcoólicas: ocasionais, no máximo 1 vez por semana e 1 dose, fora dos dias de treino pesado.':'Bebidas alcoólicas: com moderação, no máximo 2 vezes por semana e 1 a 2 doses.');
