@@ -3900,7 +3900,7 @@ function renderRel(d){
   const cafV=getCAFValue(d);
   const get=Math.round(tmbCalc.bmr*cafV);
   const risks=[];
-  const dn=d.doencas||[];
+  const dn=_arr(d.doencas);
   if(imc&&imc>=30)risks.push({t:'Obesidade (IMC≥30)',c:'cr'});
   else if(imc&&imc>=25)risks.push({t:'Sobrepeso (IMC≥25)',c:'co2'});
   if(dn.includes('HAS'))risks.push({t:'Hipertensão arterial',c:'cr'});
@@ -4053,7 +4053,7 @@ function buildExamePlanoAcao(d){
 // ── Calcula a lista de fatores de risco (mesma lógica do relatório em tela), em texto puro ──
 function buildRisksPlain(d){
   const imc=d.imcVal?parseFloat(d.imcVal):null;
-  const dn=d.doencas||[];
+  const dn=_arr(d.doencas);
   const gordPct=gorduraPctFromData(d);
   const gordCl=gordPct!==null?classGordura(gordPct,d.sexo||'M'):null;
   const preensao=preensaoFromData(d);
@@ -4316,7 +4316,8 @@ function salvarRascunhoDieta(){
   }catch(e){}
 }
 function limparRascunhoDieta(){try{localStorage.removeItem(DIET_DK);}catch(e){}}
-function abrirEditorDieta(dataOverride,ov){
+function _arr(x){return Array.isArray(x)?x:(x?String(x).split(/[,;|]+/).map(t=>t.trim()).filter(Boolean):[]);}
+function _abrirEditorDietaInterno(dataOverride,ov){
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
@@ -4348,17 +4349,21 @@ function abrirEditorDieta(dataOverride,ov){
     dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
   }
   renderDietMealRows();
-  renderDietSupRows();
-  renderDietEAARows();
-  renderDietFarmRows();
-  verificarInteracoesSup();
+  try{renderDietSupRows();}catch(e){console.error(e);}
+  try{renderDietEAARows();}catch(e){console.error(e);}
+  try{renderDietFarmRows();}catch(e){console.error(e);}
+  try{verificarInteracoesSup();}catch(e){console.error(e);}
   const secOn=document.getElementById('dietSupSection'),secOff=document.getElementById('dietSupOffMsg');
   if(secOn)secOn.style.display=dietIncluirSup?'block':'none';
   if(secOff)secOff.style.display=dietIncluirSup?'none':'block';
   const eaaSec=document.getElementById('dietEAASection');if(eaaSec)eaaSec.style.display=dietIncluirEAA?'block':'none';
   const farmSec=document.getElementById('dietFarmSection');if(farmSec)farmSec.style.display=dietIncluirFarm?'block':'none';
-  verificarConflitosDieta();
   document.getElementById('dietEditorOverlay').style.display='flex';
+  try{verificarConflitosDieta();}catch(e){console.error(e);}
+}
+function abrirEditorDieta(dataOverride,ov){
+  try{_abrirEditorDietaInterno(dataOverride,ov);}
+  catch(e){console.error(e);showToast('❌ Não consegui montar a prévia da dieta: '+(e&&e.message||e)+' — me mande este texto.','#c0392b');}
 }
 function cancelarDietEditor(){document.getElementById('dietEditorOverlay').style.display='none';}
 
@@ -4397,12 +4402,12 @@ function verificarConflitosDieta(){
   const textoSup=(dietSupEdit||[]).map(s=>[s.item,s.dose,s.horario,s.rec].join(' ')).join(' ').toLowerCase();
   const texto=textoDieta+' '+textoSup;
   const achados=[];
-  (d.alergias||[]).forEach(cod=>{
+  _arr(d.alergias).forEach(cod=>{
     const a=ALERGIA_TERMOS[cod];if(!a)return;
     const bateu=a.termos.filter(t=>texto.includes(t));
     if(bateu.length)achados.push('Bodymate relatou alergia/intolerância a '+a.rot+' — a dieta ou os suplementos contêm: '+bateu.join(', ')+'.');
   });
-  (d.doencas||[]).forEach(cod=>{
+  _arr(d.doencas).forEach(cod=>{
     const dd=DOENCA_TERMOS[cod];if(!dd)return;
     const bateu=dd.termos.filter(t=>texto.includes(t));
     if(bateu.length)achados.push('Bodymate com '+dd.rot+' — '+dd.aviso+': '+bateu.join(', ')+'.');
@@ -4410,7 +4415,7 @@ function verificarConflitosDieta(){
   const modeloAtual=(dietOv&&dietOv.modelo)||'normal';
   if(modeloAtual==='vegana')achados.push('Dieta vegana: vitamina B12 não tem fonte alimentar vegetal confiável — avalie suplementação.');
   if(modeloAtual==='ceto'){
-    const dn=d.doencas||[];
+    const dn=_arr(d.doencas);
     if(dn.includes('RENAL')||dn.includes('HEPAT')||dn.includes('DM1'))achados.push('Cetogênica com doença renal, hepática ou diabetes tipo 1 registrada no Histórico — reavalie a indicação deste modelo para este Bodymate.');
   }
   if(!achados.length){box.style.display='none';box.innerHTML='';return;}
@@ -4838,7 +4843,7 @@ function _defDeTexto(alvoObj){
 function exclusoesAtivas(d,prefs,regras){
   const ex={defs:[],rotsAuto:[],rotsUser:[],rotsModelo:[],reducoes:[],reducoesRot:[],leiteForcado:null,semGluten:!!(prefs&&prefs.semGluten),laticinioProibido:false,semCarne:false,textoOnly:[]};
   const add=(def,auto)=>{if(!def||ex.defs.some(x=>x.k===def.k))return;ex.defs.push(def);(auto?ex.rotsAuto:ex.rotsUser).push(def.rot);if(def.txt)ex.textoOnly.push(def.rot);};
-  ((d&&d.alergias)||[]).forEach(a=>{
+  _arr(d&&d.alergias).forEach(a=>{
     const e=ALERGIA_EXCL[a];if(!e)return;
     if(e.semGluten)ex.semGluten=true;
     if(e.leite)ex.leiteForcado=e.leite;
@@ -5093,7 +5098,7 @@ function _radio(name,v,marcado,rot){return `<label class="cons-ck"><input type="
 function _lidosChk(id){return Array.from(document.querySelectorAll('#'+id+' input[type=checkbox]:checked')).map(i=>i.dataset.v);}
 function _valRadio(name){const e=document.querySelector('input[name="'+name+'"]:checked');return e?e.value:'';}
 function dwQToggle(id,mostrar){const e=document.getElementById(id);if(e)e.style.display=mostrar?'block':'none';}
-function _alergiasReg(){return ((dietWizCtx&&dietWizCtx.d&&dietWizCtx.d.alergias)||[]).filter(a=>ALERGIA_EXCL[a]);}
+function _alergiasReg(){return _arr(dietWizCtx&&dietWizCtx.d&&dietWizCtx.d.alergias).filter(a=>ALERGIA_EXCL[a]);}
 const DWQ_TELAS=[
   {titulo:'Rotina do dia',sub:'Quantas refeições por dia e quantas opções de escolha em cada uma.',
    render:p=>`<div class="fg"><label class="fl">Refeições por dia</label><div class="cons-grid">${[3,4,5,6].map(n=>_radio('dwqNRef',n,p.nRef===n,n+' refeições'+(n===6?' (café, lanche, almoço, lanche, jantar, ceia)':n===5?' (sem ceia)':n===4?' (café, almoço, lanche da tarde, jantar)':' (café, almoço, jantar)'))).join('')}</div></div>
@@ -5118,7 +5123,7 @@ const DWQ_TELAS=[
    padrao:p=>{p.aversoes={ativo:false,marcados:[],texto:''};}},
   {titulo:'Leite e glúten',sub:'O que já está no cadastro entra sozinho — só pergunto o que falta.',
    render:p=>{
-     const al=(dietWizCtx.d.alergias||[]);
+     const al=_arr(dietWizCtx.d.alergias);
      const pvl=al.includes('LEITE'),lac=al.includes('LACTOSE'),glu=al.includes('GLUTEN');
      let h='';
      if(pvl)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Alergia à proteína do leite no cadastro: uso <b>leite vegetal</b> e nenhum laticínio, automático.</div>';
@@ -5130,7 +5135,7 @@ const DWQ_TELAS=[
      return h;},
    bind:()=>{document.querySelectorAll('input[name=dwqLeite]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLeiteTipo',_valRadio('dwqLeite')==='S')));},
    coletar:p=>{
-     const al=(dietWizCtx.d.alergias||[]);
+     const al=_arr(dietWizCtx.d.alergias);
      if(!al.includes('LEITE')&&!al.includes('LACTOSE')){p.leite.usa=_valRadio('dwqLeite')!=='N';if(p.leite.usa)p.leite.tipo=_valRadio('dwqLeiteT')||p.leite.tipo||'desnatado';}
      if(!al.includes('GLUTEN'))p.semGluten=_valRadio('dwqGlu')==='S';},
    padrao:p=>{p.leite={usa:true,tipo:'desnatado'};p.semGluten=false;}},
@@ -5239,7 +5244,7 @@ async function buscarLanchesIA(ctx){
   const kM=Math.round(kcalDaRefeicao(ctx.kcal,'lancheM',p,ctx.regras)),kT=Math.round(kcalDaRefeicao(ctx.kcal,'lancheT',p,ctx.regras));
   const body={escritos,quantidade:querIA?4:0,tipos:(it.tipos&&it.tipos.length)?it.tipos:['Lanche natural','Shake'],kcalM:kM,kcalT:kT,
     restricoes:ex.defs.map(d=>d.rot),semGluten:ex.semGluten,leite:nomeLeite(p,ex)||'nenhum',
-    objetivo:(ctx.d.objetivo||''),modelo:ctx.modelo,doencas:(ctx.d.doencas||[]).join(', '),
+    objetivo:(ctx.d.objetivo||''),modelo:ctx.modelo,doencas:_arr(ctx.d.doencas).join(', '),
     gostos:[p.frutas.ativo?(p.frutas.marcados.join(', ')+' '+p.frutas.texto):'',].join(' ').trim(),
     adocante:(p.bebidas&&p.bebidas.adocante)||'sucralose'};
   const r=await fetch('/.netlify/functions/sugerir-lanches',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
@@ -5472,7 +5477,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     try{
       const itensUsados=itensUnicosDoPlan(PLAN);
       if(itensUsados.length){
-        const rSub=await fetch('/.netlify/functions/sugerir-trocas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados,restricoes:exW.defs.map(x=>x.rot),semGluten:exW.semGluten,leite:nomeLeite(prefsW,exW)||'nenhum',objetivo:d.objetivo||'',doencas:(d.doencas||[]).join(', ')})});
+        const rSub=await fetch('/.netlify/functions/sugerir-trocas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({itens:itensUsados,restricoes:exW.defs.map(x=>x.rot),semGluten:exW.semGluten,leite:nomeLeite(prefsW,exW)||'nenhum',objetivo:d.objetivo||'',doencas:_arr(d.doencas).join(', ')})});
         const dataSub=await rSub.json();
         if(rSub.ok&&Array.isArray(dataSub.substituicoes)&&dataSub.substituicoes.length){
           const rowsIA=dataSub.substituicoes.map(s=>new TableRow({children:[
