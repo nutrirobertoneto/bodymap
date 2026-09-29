@@ -2,15 +2,17 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>BodyMap</title>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{--gd:#161616;--gm:#3a3a3a;--gl:#e8b923;--gp:#fbf3dd;--teal:#6b6b6b;--blue:#4a4a4a;--amb:#e0932e;--red:#c0392b;--bg:#f2f1ee;--card:#fff;--tx:#1a1a1a;--mu:#6b6b66;--br:#e5e1d5;--r:14px;--rs:8px;--gold:#e8b923;--goldd:#c79a12}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
-.app-header{background:linear-gradient(135deg,var(--gd) 0%,var(--gm) 60%,var(--teal) 100%);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;min-height:100dvh;overflow-x:hidden}
+.app-header{background:linear-gradient(135deg,var(--gd) 0%,var(--gm) 60%,var(--teal) 100%);color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) 28px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
 .brand{display:flex;align-items:center;gap:14px}
 .brand-icon{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid rgba(255,255,255,0.2)}
 .brand h1{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;letter-spacing:0.3px}
@@ -20,7 +22,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .pbar{height:3px;background:rgba(255,255,255,0.15)}
 .pbfill{height:100%;background:linear-gradient(90deg,#a8f5c8,#fff);transition:width .4s ease;width:12.5%}
 .layout{display:flex;align-items:flex-start;max-width:1180px;margin:0 auto}
-.tabs-wrap{background:#fff;border-right:2px solid var(--br);position:sticky;top:83px;z-index:90;width:220px;flex-shrink:0;align-self:flex-start;max-height:calc(100vh - 83px);overflow-y:auto;scrollbar-width:none}
+.tabs-wrap{background:#fff;border-right:2px solid var(--br);position:sticky;top:83px;z-index:90;width:220px;flex-shrink:0;align-self:flex-start;max-height:calc(100dvh - 83px);overflow-y:auto;scrollbar-width:none}
 .tabs-wrap::-webkit-scrollbar{display:none}
 .tabs{display:flex;flex-direction:column;padding:16px 10px;gap:3px}
 .tab{padding:12px 14px;font-size:12.5px;font-weight:500;color:var(--mu);cursor:pointer;border-left:3px solid transparent;border-radius:8px;transition:all .2s;white-space:normal;display:flex;align-items:center;gap:8px;user-select:none}
@@ -45,7 +47,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 @media(max-width:640px){.fg2,.fg3{grid-template-columns:1fr}}
 .fl{font-size:11.5px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
 .fl span{color:var(--red)}
-.fc{padding:10px 14px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--tx);background:#fff;transition:border-color .2s,box-shadow .2s;outline:none;width:100%}
+.fc{padding:10px 14px;border:1.5px solid var(--br);border-radius:var(--rs);font-size:16px;font-family:'DM Sans',sans-serif;color:var(--tx);background:#fff;transition:border-color .2s,box-shadow .2s;outline:none;width:100%}
 .fc:focus{border-color:var(--gm);box-shadow:0 0 0 3px rgba(26,122,72,.1)}
 .fc:disabled{background:#f8faf9;color:var(--mu)}
 select.fc{cursor:pointer}
@@ -203,7 +205,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 .app-header{border-bottom:1px solid rgba(232,185,35,.5)}
 .pbar{background:rgba(232,185,35,.18)}
 .pbfill{background:linear-gradient(90deg,#c79a12,#e8b923)}
-.tabs-wrap{margin:20px 0 0 12px;border:1px solid rgba(232,185,35,.35);border-radius:var(--r);max-height:calc(100vh - 103px);box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.tabs-wrap{margin:20px 0 0 12px;border:1px solid rgba(232,185,35,.35);border-radius:var(--r);max-height:calc(100dvh - 103px);box-shadow:0 6px 28px rgba(0,0,0,.45)}
 .card{border:1px solid rgba(232,185,35,.35);box-shadow:0 6px 28px rgba(0,0,0,.45)}
 .nav-btns{background:rgba(255,255,255,.96);padding:14px 18px;border-radius:var(--r);border-top:none;margin-top:4px}
 @media(max-width:820px){.tabs-wrap{margin:0;border-radius:0;border-left:none;border-right:none;max-height:none}}
@@ -257,7 +259,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 .folha .f-linha{border-top:1px solid #000;margin-top:34px;padding-top:4px}
 .folha .f-carimbo{border:1px dashed #555;height:88px;margin-top:10px;display:flex;align-items:flex-end;justify-content:center;font-size:10.5px;color:#444;padding-bottom:4px}
 #pedidoPrint{display:none}
-@media(max-width:600px){.app-header{padding:10px 12px;gap:8px;flex-wrap:wrap}.brand img{max-height:36px;width:auto}.hactions{gap:6px;flex-wrap:wrap}.hbtn{padding:6px 10px;font-size:11px}}
+@media(max-width:600px){.app-header{padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;gap:8px;flex-wrap:wrap}.brand img{max-height:36px;width:auto}.hactions{gap:6px;flex-wrap:wrap}.hbtn{padding:6px 10px;font-size:11px}}
 @media print{
   body.imp-pedido>*:not(#pedidoPrint){display:none!important}
   body.imp-pedido #pedidoPrint{display:block!important}
@@ -1933,10 +1935,34 @@ function fmtData(iso){if(!iso)return '—';const t=String(iso).slice(0,10).split
 function kJs(key){return "decodeURIComponent('"+encodeURIComponent(key).replace(/'/g,'%27')+"')";}
 function baixarArquivo(nome,conteudo){const b=new Blob([conteudo],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=nome;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),2000);}
 // ── armazenamento no navegador (IndexedDB, sem o limite pequeno do localStorage) ──
-function idbAbrir(){if(_db)return Promise.resolve(_db);return new Promise((res,rej)=>{const r=indexedDB.open('bodymap',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv');};r.onsuccess=()=>{_db=r.result;res(_db);};r.onerror=()=>rej(r.error);});}
-async function idbGet(k){const db=await idbAbrir();return new Promise((res,rej)=>{const q=db.transaction('kv','readonly').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}
-async function idbSet(k,v){const db=await idbAbrir();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);});}
-async function idbDel(k){const db=await idbAbrir();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);});}
+function idbAbrir(){
+  if(_db)return Promise.resolve(_db);
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('bodymap',1);
+    r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv');};
+    r.onsuccess=()=>{
+      _db=r.result;
+      _db.onclose=()=>{_db=null;};
+      _db.onversionchange=()=>{try{_db.close();}catch(e){}_db=null;};
+      res(_db);
+    };
+    r.onerror=()=>rej(r.error);
+  });
+}
+async function idbComRetry(fn){
+  try{return await fn();}
+  catch(e){
+    const msg=String((e&&e.message)||(e&&e.name)||e);
+    if(/closing|InvalidStateError|TransactionInactiveError/i.test(msg)){
+      _db=null;
+      return await fn();
+    }
+    throw e;
+  }
+}
+async function idbGet(k){return idbComRetry(async()=>{const db=await idbAbrir();return new Promise((res,rej)=>{const q=db.transaction('kv','readonly').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});});}
+async function idbSet(k,v){return idbComRetry(async()=>{const db=await idbAbrir();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);});});}
+async function idbDel(k){return idbComRetry(async()=>{const db=await idbAbrir();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);});});}
 function storeInit(){
   if(storeReady)return storeReady;
   storeReady=(async()=>{
