@@ -906,7 +906,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div id="dietResumoLinha" style="font-size:12.5px;font-weight:600;color:var(--gd);margin-bottom:10px"></div>
     <div style="margin-bottom:14px">
       <button class="btn bp" onclick="distribuirPesosPlano()">🔄 Refresh (recalcular pesos)</button>
-      <span style="font-size:11px;color:var(--mu);margin-left:8px">Lê todos os alimentos da lista e recalcula o peso de todos (menos os que você digitou fora da base), pra bater a meta calórica de cada refeição.</span>
+      <span style="font-size:11px;color:var(--mu);margin-left:8px">Lê todos os alimentos da lista, estima por IA o peso de qualquer item que não esteja na base (ex.: receitas, pratos compostos) e recalcula tudo pra bater a meta calórica de cada refeição. Os nomes que você digitou nunca são alterados.</span>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -4533,7 +4533,7 @@ function renderDietMealRows(){
       const rows=parseOpcaoStr(o);
       const rowsHtml=rows.map((r,k)=>r.tipo==='texto'
         ?`<div class="med-row"><input class="di" style="flex:1" value="${escH(capFirst(r.valor))}" placeholder="Observação (ex: café sem açúcar)" oninput="dietOpcaoRowEdit(${i},${j},${k},'valor',this.value)"><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
-        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" title="Não achou na lista? Estima por IA (kcal/macros)" style="font-size:11px;padding:6px 8px;white-space:nowrap" onclick="estimarAlimentoIA(${i},${j},${k})">🤖</button><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
+        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
       ).join('');
       return `<div style="border:1px solid var(--br);border-radius:8px;padding:10px;margin-top:8px;background:var(--gp)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -4571,7 +4571,50 @@ function dietOpcaoRowEdit(i,j,k,campo,val){
   dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rows);
   dietEditado=true;
 }
-function distribuirPesosPlano(silencioso){
+async function expandirAlimentosDesconhecidos(){
+  let expandiu=false,falhou=0;
+  for(let i=0;i<dietPlanEdit.length;i++){
+    const m=dietPlanEdit[i];
+    for(let j=0;j<(m.opcoes||[]).length;j++){
+      let rows=parseOpcaoStr(m.opcoes[j]);
+      let mudouOpcao=false;
+      for(let k=rows.length-1;k>=0;k--){
+        const r=rows[k];
+        if(r.tipo!=='item'||!r.alimento||!r.alimento.trim())continue;
+        const nome=r.alimento.trim();
+        if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr/i.test(nome)){
+          rows[k]={tipo:'texto',valor:'01 prato raso de servir cheio de '+nome.toLowerCase()+' (consumo livre — temperar só com limão, ervas, sal até 1 g e pimenta-do-reino)'};
+          mudouOpcao=true;continue;
+        }
+        const composto=/\b(panqueca|panquecas|bolo|torta|omelete|crepioca|sanduiche|sanduíche|wrap|pizza|hamburguer|hambúrguer|vitamina|shake|mingau|pudim|mousse|strogonoff|lasanha|risoto|sopa|caldo|bowl|receita|pao de queijo|pão de queijo)\b/i.test(nome)||/\s(com|e)\s/i.test(nome);
+        if(!composto&&achaFoodKey(nome))continue;
+        try{
+          const resp=await fetch('/.netlify/functions/estimar-alimento',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome})});
+          const data=await resp.json();
+          if(resp.ok&&data.itens&&data.itens.length){
+            const novasLinhas=data.itens.map(it=>{
+              const nomeIt=it.nome;
+              const jaExiste=FOOD_NUT[nomeIt]||FOOD_NUT_CUSTOM[nomeIt];
+              if(!jaExiste){FOOD_NUT_CUSTOM[nomeIt]=[it.kcal,it.prot,it.fat,it.carb,it.fiber,it.gramas||100];adicionarOpcaoFoodList(nomeIt);}
+              return{tipo:'item',alimento:nomeIt,gramas:String(it.gramas),medida:''};
+            });
+            const ehPrincipal=/almoco|jantar/i.test(normAlim(m.refeicao||''));
+            const comTitulo=composto&&!ehPrincipal&&k===0;
+            if(comTitulo)rows.splice(k,1,{tipo:'texto',valor:capFirst(nome)+':'},...novasLinhas);
+            else rows.splice(k,1,...novasLinhas);
+            expandiu=true;mudouOpcao=true;
+          }else{falhou++;}
+        }catch(e){falhou++;}
+      }
+      if(mudouOpcao)m.opcoes[j]=serializeOpcaoRows(rows);
+    }
+  }
+  if(expandiu)salvarFoodCustom();
+  return{expandiu,falhou};
+}
+async function distribuirPesosPlano(silencioso){
+  if(!silencioso)showToast('🤖 Lendo os alimentos digitados e estimando o que não está na base...');
+  const{expandiu,falhou}=await expandirAlimentosDesconhecidos();
   const kcalTotal=(dietOv&&dietOv.kcal)||1900;
   const somaDist=dietPlanEdit.reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0)||100;
   let algumAlimento=false;
@@ -4613,7 +4656,12 @@ function distribuirPesosPlano(silencioso){
   dietEditado=true;
   dietPesosStale=false;
   renderDietMealRows();
-  if(!silencioso)showToast('✅ Pesos recalculados — revise e ajuste se precisar','#27ae60');
+  if(!silencioso){
+    let msg='✅ Pesos recalculados — revise e ajuste se precisar';
+    if(expandiu)msg+=' (alguns itens foram estimados por IA — confira antes de usar em outros pacientes)';
+    if(falhou)msg+=' · '+falhou+' item(ns) não foi possível estimar — confira o nome digitado';
+    showToast(msg,'#27ae60');
+  }
 }
 function dietTemAlimentoSemPeso(){
   return dietPlanEdit.some(m=>m.opcoes.some(o=>parseOpcaoStr(o).some(r=>r.tipo==='item'&&r.alimento&&(!r.gramas||parseFloat(r.gramas)<=0))));
@@ -4771,11 +4819,12 @@ function renderDietFarmRows(){
 }
 function addFarmRowDiet(){dietFarmEdit.push({item:'',dose:'',frequencia:'',tempoUso:'',obs:''});renderDietFarmRows();}
 function removeFarmRowDiet(i){dietFarmEdit.splice(i,1);renderDietFarmRows();}
-function confirmarGerarDieta(){
+async function confirmarGerarDieta(){
   if(dietTemAlimentoSemPeso()){if(!confirm('Tem alimento sem peso preenchido. Gerar o documento assim mesmo?'))return;}
   else if(dietPesosStale){if(!confirm('Você alterou alimentos depois do último cálculo — os pesos podem não bater a meta de cada refeição. Gerar assim mesmo? (Ou cancele e clique em Refresh.)'))return;}
   document.getElementById('dietEditorOverlay').style.display='none';
-  gerarDietaDoc(dietDataCache,dietPlanEdit,dietIncluirSup?dietSupEdit:[],dietIncluirEAA?dietEAAEdit:[],dietIncluirFarm?dietFarmEdit:[]);
+  mostrarProgressoWord(5,'Preparando o PLANNER...');
+  await gerarDietaDoc(dietDataCache,dietPlanEdit,dietIncluirSup?dietSupEdit:[],dietIncluirEAA?dietEAAEdit:[],dietIncluirFarm?dietFarmEdit:[]);
   registrarDietaNaAval(dietDataCache);
 }
 
@@ -4823,7 +4872,7 @@ const AVERSOES_CAT=[
   {k:'peixe',rot:'Peixe',chip:'Peixe (filé, grelhado)',re:/\b(peixe|tilapia|salmao|merluza|bacalhau|pescada)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
   {k:'sardinha_atum',rot:'Sardinha e atum',chip:'Sardinha e atum (lata)',re:/\b(sardinha|atum)\b/,subs:['frango desfiado','ovo cozido','cottage']},
   {k:'frutos_mar',rot:'Frutos do mar',re:/\b(camarao|frutos do mar|lula|polvo|marisco|mariscos)\b/,subs:['frango grelhado','peixe grelhado']},
-  {k:'ovo',rot:'Ovo',re:/\b(ovo|ovos|omelete|gema|clara)\b/,subs:['queijo muçarela','peito de peru','cottage']},
+  {k:'ovo',rot:'Ovo',re:/\b(ovo|ovos|omelete|gema|clara)\b/,subs:['queijo muçarela','queijo minas frescal','cottage','peito de peru']},
   {k:'suina',rot:'Carne suína',re:/\b(suino|suina|porco|lombo|bisteca|linguica|bacon)\b/,subs:['frango grelhado','peito de peru']},
   {k:'bovina',rot:'Carne bovina',re:/\b(bovina|bife|patinho|alcatra|mignon|carne moida|costela|acem)\b/,subs:['frango grelhado','peixe grelhado','ovo cozido']},
   {k:'frango',rot:'Frango',re:/\bfrango\b/,subs:['peixe grelhado','carne bovina magra','ovo cozido']},
@@ -4952,22 +5001,30 @@ function _frutaAlternativa(ex,usadas){
   const lista=FRUTAS_ROTA.filter(f=>!bloqueia(f));
   return lista[(usadas.n++)%Math.max(1,lista.length)]||'maçã';
 }
-function _subsPara(def,ex){
+const CAFE_PROIBE_RE=/\b(frango grelhado|frango desfiado|peixe grelhado|carne bovina( magra)?|carne suína|lombo)\b/i;
+const CAFE_POOL=['queijo muçarela','queijo minas frescal','ovo cozido','cottage','atum (lata, água)'];
+function _subsPara(def,ex,refeicao){
   const animal=/\b(frango|peixe|carne|bovina|peru|presunto|atum|sardinha|camarao|salmao|tilapia|ovo|ovos|queijo|iogurte natural|cottage|ricota)\b/;
   const bloqueado=nm=>ex.defs.some(d=>d.re&&d.re.test(normAlim(nm)))||(ex.semCarne&&animal.test(normAlim(nm)));
   const _rot=normAlim((def.rot||'')+' '+(def.k||''));
   const _ehPao=/\b(pao|paes|torrada|torradas|biscoito|biscoitos|bolacha|bolachas|cuscuz|tapioca)\b/.test(_rot);
-  let cands=(def.subs&&def.subs.length)?def.subs:(_ehPao?['Tapioca','Cuscuz','Aveia','Batata doce','Mandioca','Banana']:['frango grelhado','peixe grelhado','ovo cozido','peito de peru']);
+  const isCafe=/café da manhã/i.test(refeicao||'');
+  let cands=(def.subs&&def.subs.length)?def.subs.slice():(_ehPao?['Tapioca','Cuscuz','Aveia','Batata doce','Mandioca','Banana']:['ovo cozido','queijo muçarela','cottage','peito de peru','frango grelhado','peixe grelhado']);
+  if(isCafe&&!_ehPao){
+    cands=cands.filter(c=>!CAFE_PROIBE_RE.test(c)).concat(CAFE_POOL);
+  }
   if(ex.semCarne)cands=['tofu grelhado','grão-de-bico cozido','lentilha cozida','iogurte de soja'];
-  return cands.find(c=>!bloqueado(c))||null;
+  return cands.find(c=>!bloqueado(c))||(isCafe&&!_ehPao?CAFE_POOL.find(c=>!bloqueado(c))||null:null);
 }
 function aplicarExclusoes(plan,ex){
   if(!ex.defs.length)return plan;
   const usadas={n:0};
   return plan.map(m=>{
     const orig=m.opcoes||[];
+    const temDoce=rows_pre_check=>rows_pre_check.some(r=>r.tipo==='item'&&/geleia|\bmel\b|achocolatado/.test(normAlim(r.alimento||'')));
     let novas=orig.map(o=>{
       const rows=parseOpcaoStr(o);
+      const opcaoTemDoce=temDoce(rows);
       const saida=[];
       rows.forEach(r=>{
         if(r.tipo!=='item'){saida.push(r);return;}
@@ -4976,7 +5033,9 @@ function aplicarExclusoes(plan,ex){
         if(!def){saida.push(r);return;}
         if(def.fruta){saida.push(Object.assign({},r,{alimento:_frutaAlternativa(ex,usadas),gramas:String(r.gramas||100),medida:''}));return;}
         if(def.remover){return;}
-        const alvo=_ehFruta(r.alimento)?_frutaAlternativa(ex,usadas):_subsPara(def,ex);
+        // laticínio (queijo/requeijão) numa opção doce (com geleia/mel): remove em vez de trocar por embutido salgado — misturar geleia com peito de peru não faz sentido
+        if(def.k==='laticinios'&&opcaoTemDoce){return;}
+        const alvo=_ehFruta(r.alimento)?_frutaAlternativa(ex,usadas):_subsPara(def,ex,m.refeicao);
         if(!alvo){return;}
         saida.push(Object.assign({},r,{alimento:alvo,gramas:_gramasEquiv(r,alvo),medida:''}));
       });
@@ -5420,8 +5479,8 @@ function frutasLiberadasFiltradas(ex){return buildFrutasLiberadas().filter(f=>!e
 function gerarDieta(){iniciarGeracaoDieta();}
 
 async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride){
-  if(!window.docx){showToast('⚠️ Biblioteca Word não carregada. Verifique a internet.','#e67e22');return;}
-  showToast('⏳ Gerando plano alimentar...');
+  if(!window.docx){esconderProgressoWord();showToast('⚠️ Biblioteca Word não carregada. Verifique a internet.','#e67e22');return;}
+  mostrarProgressoWord(15,'Calculando metas e cardápio...');
   try{
     const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType,TabStopType}=window.docx;
 
@@ -5448,6 +5507,15 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     function hCell(txt,w=2340){return new TableCell({borders:hdrBdrAll,shading:{fill:'161616',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]});}
     function dCell(txt,fill='FDFBF3',w=2340){return new TableCell({borders:bdrAll,shading:{fill,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:18})],spacing:{after:0}})]});}
 
+    function _notaOvo(alimento,gramas,medida){
+      const a=normAlim(alimento||'');
+      if(!/\bovo(s)?\b/.test(a))return'';
+      if(medida&&/ovo|clara|gema/i.test(medida))return''; // a medida já traz a equivalência (ex.: "1 ovo inteiro")
+      const g=parseFloat(gramas)||0;
+      if(/\bclara(s)? de ovo\b/.test(a)){const n=Math.max(1,Math.round(g/33));return' (≈ '+n+' clara'+(n>1?'s':'')+')';}
+      if(/\bgema(s)? de ovo\b/.test(a)){const n=Math.max(1,Math.round(g/17));return' (≈ '+n+' gema'+(n>1?'s':'')+')';}
+      const n=Math.max(1,Math.round(g/50));return' (≈ '+n+' ovo'+(n>1?'s':'')+')';
+    }
     function optsCell(opts,w){
       const groups=(opts||[]).map(o=>parseOpcaoStr(o).filter(r=>r.tipo==='texto'?r.valor&&r.valor.trim():(r.alimento&&r.alimento.trim()))).filter(g=>g.length);
       const divBdr={style:BorderStyle.SINGLE,size:6,color:'C9A227'};
@@ -5464,10 +5532,11 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             const isLastRow=ri===rows.length-1;
             const bdrBtm=(isLastRow&&!isLastGroup)?{bottom:divBdr}:undefined;
             if(r.tipo==='texto'){
-              children.push(new Paragraph({children:[new TextRun({text:capFirst(r.valor),size:18})],spacing:{after:isLastRow?0:40},border:bdrBtm}));
+              const ehTitulo=ri===0&&/:$/.test(String(r.valor||'').trim());
+              children.push(new Paragraph({children:[new TextRun({text:capFirst(r.valor),size:18,bold:ehTitulo||undefined,color:ehTitulo?'8A6D00':undefined})],spacing:{after:isLastRow?0:(ehTitulo?60:40)},border:bdrBtm}));
             }else{
               const nomeOk=r.alimento&&r.alimento.trim();
-              const nome=nomeOk?capFirst(r.alimento):'⚠ alimento não definido — revisar';
+              const nome=nomeOk?capFirst(r.alimento)+_notaOvo(r.alimento,r.gramas,r.medida):'⚠ alimento não definido — revisar';
               const peso=(r.gramas||'0')+(ehLiquido(r.alimento)?' ml':' g')+(r.medida?' ('+r.medida+')':'');
               children.push(new Paragraph({
                 tabStops:[{type:TabStopType.RIGHT,position:tabPos}],
@@ -5631,11 +5700,13 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       const repZones=computeZones(id=>antroValFromData(d,id),sexo||'M');
       const repMarkers=buildAnthroMarkers(id=>antroValFromData(d,id));
       let mapaAntroImgs=[];
+      mostrarProgressoWord(45,'Desenhando o mapa antropométrico...');
       try{
         const svgFrente=extrairSvgMarkup(renderAnthroSvg('front',sexo||'M',repMarkers.front,repZones));
         const svgCostas=extrairSvgMarkup(renderAnthroSvg('back',sexo||'M',repMarkers.back,repZones));
         if(svgFrente&&svgCostas){
-          const[pngFrente,pngCostas]=await Promise.all([svgToPngBase64(svgFrente,260,368),svgToPngBase64(svgCostas,260,368)]);
+          const comLimite=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('tempo esgotado ao desenhar o mapa')),ms))]);
+          const[pngFrente,pngCostas]=await comLimite(Promise.all([svgToPngBase64(svgFrente,260,368),svgToPngBase64(svgCostas,260,368)]),12000);
           mapaAntroImgs=[
             H2('🗺️ Mapa Antropométrico'),
             new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[4680,4680],borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideHorizontal:{style:BorderStyle.NONE},insideVertical:{style:BorderStyle.NONE}},rows:[
@@ -5855,13 +5926,17 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       }]
     });
 
+    mostrarProgressoWord(85,'Montando o documento Word...');
     const blob=await Packer.toBlob(doc);
+    mostrarProgressoWord(97,'Preparando o download...');
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;a.download=`PlanoAlimentar_${(d.nome||'Bodymate').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    mostrarProgressoWord(100,'Pronto!');
+    setTimeout(esconderProgressoWord,500);
     showToast('✅ PLANNER baixado com sucesso! A dieta continua guardada para ajustes.');
-  }catch(e){console.error(e);showToast('❌ Erro ao gerar: '+e.message,'#c0392b');}
+  }catch(e){console.error(e);esconderProgressoWord();showToast('❌ Erro ao gerar: '+e.message,'#c0392b');}
 }
 
 function imc(d){const p=parseFloat(d.peso),h=parseFloat(d.altura);if(!p||!h)return 0;const hm=h/100;return p/(hm*hm);}
@@ -6317,6 +6392,17 @@ function showToast(msg,bg='#0d4f2e'){
   const b=document.getElementById('sb');
   const t=document.createElement('div');t.className='stoast';t.style.background=bg;t.textContent=msg;
   b.appendChild(t);setTimeout(()=>t.remove(),3200);
+}
+function mostrarProgressoWord(pct,texto){
+  const ov=document.getElementById('dietProgressOverlay');if(!ov)return;
+  ov.style.display='flex';
+  const b=document.getElementById('dietProgressBarra'),p=document.getElementById('dietProgressPct'),t=document.getElementById('dietProgressTexto');
+  if(b)b.style.width=Math.max(5,Math.min(100,pct))+'%';
+  if(p)p.textContent=Math.round(pct)+'%';
+  if(t&&texto)t.textContent=texto;
+}
+function esconderProgressoWord(){
+  const ov=document.getElementById('dietProgressOverlay');if(ov)ov.style.display='none';
 }
 </script>
 <script>
