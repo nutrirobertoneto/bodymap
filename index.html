@@ -276,9 +276,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <p style="margin-bottom:22px">Quem está acessando esta avaliação?</p>
     <div style="display:flex;flex-direction:column;gap:12px">
       <button class="btn bp" style="justify-content:center;padding:16px" onclick="openGatePw()">👨‍⚕️ Nutricionista</button>
-      <button class="btn bs" style="justify-content:center;padding:16px;flex-direction:column;gap:2px;line-height:1.3" onclick="enterAsPaciente()">🧑 Bodymate<span style="font-size:11px;font-weight:700;opacity:.8">(paciente/cliente)</span></button>
+      <button class="btn bs" style="justify-content:center;padding:16px;flex-direction:column;gap:2px;line-height:1.3" onclick="enterAsPaciente()">🧑 Paciente/Cliente<span style="font-size:11px;font-weight:700;opacity:.8">(paciente/cliente)</span></button>
     </div>
-    <p style="font-size:10.5px;color:var(--mu);margin-top:18px;margin-bottom:0">Bodymate: preenche identificação, DCA, frequência, atividade e hábitos. Medições e relatório ficam restritos ao profissional.</p>
+    <p style="font-size:10.5px;color:var(--mu);margin-top:18px;margin-bottom:0">Paciente/Cliente: preenche identificação, DCA, frequência, atividade e hábitos. Medições e relatório ficam restritos ao profissional.</p>
     <button class="btn bs" onclick="abrirVideoIntro('tutorial')" style="justify-content:center;padding:12px;margin-top:14px;width:100%">▶️ Como usar o BodyMap</button>
     <div style="display:flex;justify-content:center;margin-top:10px">
       <span onclick="abrirVideoIntro('nutri')" style="font-size:10px;font-weight:700;color:var(--mu);opacity:.6;cursor:pointer;letter-spacing:.2px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">▸ Conheça o nutricionista</span>
@@ -342,7 +342,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 <div class="sec active" id="s0">
   <div id="bannerNovaAval" style="display:none;background:var(--gp);border:1.5px solid var(--gl);border-radius:var(--rs);padding:12px 16px;font-size:13px;line-height:1.5;margin-bottom:16px"></div>
   <div class="card">
-    <div class="ch"><div class="chi ig">👤</div><div><h3>Dados Pessoais</h3><p>Identificação do Bodymate</p></div></div>
+    <div class="ch"><div class="chi ig">👤</div><div><h3>Dados Pessoais</h3><p>Identificação do Paciente/Cliente</p></div></div>
     <div class="cb">
       <div style="display:grid;gap:16px">
         <div class="fg"><label class="fl">Nome completo <span>*</span></label><input type="text" id="nome" class="fc" placeholder="Nome completo" oninput="autoSave()"></div>
@@ -456,7 +456,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div class="ibox"><div class="v" id="icN">—</div><div class="l">Índice Conicidade</div><div class="c" id="icCl">—</div></div>
         <div class="ibox"><div class="v" id="cpN">—</div><div class="l">Circunf. Pescoço</div><div class="c" id="cpCl">—</div></div>
       </div>
-      <p style="font-size:11px;color:var(--mu);margin-top:6px">Peso, altura, idade e sexo biológico são preenchidos na aba <b>Identificação</b> (o Bodymate também pode informar). Cintura, pescoço e quadril também ficam na aba <b>Identificação</b>, em destaque — o Bodymate consegue preencher essas três sozinho.</p>
+      <p style="font-size:11px;color:var(--mu);margin-top:6px">Peso, altura, idade e sexo biológico são preenchidos na aba <b>Identificação</b> (o Paciente/Cliente também pode informar). Cintura, pescoço e quadril também ficam na aba <b>Identificação</b>, em destaque — o Paciente/Cliente consegue preencher essas três sozinho.</p>
 
       <div class="div"></div>
       <div class="rstit" style="margin-bottom:10px">📐 Circunferências (cm) <span style="font-weight:400;font-size:11px;color:var(--mu);text-transform:none;letter-spacing:0">— usadas na estimativa de % gordura (método da Marinha dos EUA) e nos índices complementares</span></div>
@@ -734,18 +734,18 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div class="pw-icon">👨‍⚕️</div>
     <h2>O que você quer fazer?</h2>
     <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
-      <button class="btn bp" style="justify-content:center;padding:16px" onclick="landingNovoPaciente()">➕ Novo Bodymate</button>
-      <button class="btn bs" style="justify-content:center;padding:16px" onclick="landingCarregarConsultoria()">📥 Carregar consultoria online (arquivo do Bodymate)</button>
-      <button class="btn bs" style="justify-content:center;padding:16px" onclick="landingVerPacientes()">📋 Ver Bodymates / Backup</button>
+      <button class="btn bp" style="justify-content:center;padding:16px" onclick="landingNovoPaciente()">➕ Novo Paciente/Cliente</button>
+      <button class="btn bs" style="justify-content:center;padding:16px" onclick="landingCarregarConsultoria()">📥 Carregar consultoria online (arquivo do Paciente/Cliente)</button>
+      <button class="btn bs" style="justify-content:center;padding:16px" onclick="landingVerPacientes()">📋 Ver Pacientes/Clientes / Backup</button>
     </div>
   </div>
 </div>
 <div class="pw-overlay" id="bariatricaOverlay" style="display:none">
   <div class="diet-editor-box" style="width:600px">
     <h2 style="font-size:19px;margin-bottom:2px">🏥 Dieta Bariátrica — por fase</h2>
-    <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">Escolha a fase atual do Bodymate. Prazos são referência — ajuste pela evolução clínica real.</p>
+    <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">Escolha a fase atual do Paciente/Cliente. Prazos são referência — ajuste pela evolução clínica real.</p>
     <div class="cons-grid" id="bariFaseGrid"></div>
-    <div class="fg" style="margin-top:14px"><label class="fl">Observações específicas para esta fase (opcional)</label><textarea id="bariObs" class="fc" placeholder="Ex: Bodymate com boa tolerância, iniciar reintrodução de proteína sólida..."></textarea></div>
+    <div class="fg" style="margin-top:14px"><label class="fl">Observações específicas para esta fase (opcional)</label><textarea id="bariObs" class="fc" placeholder="Ex: Paciente/Cliente com boa tolerância, iniciar reintrodução de proteína sólida..."></textarea></div>
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
       <button class="pw-cancel" onclick="fecharBariatrica()">Cancelar</button>
       <button class="btn bp" onclick="bariatricaGerar()">📄 Gerar PLANNER Bariátrico</button>
@@ -754,7 +754,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 </div>
 <div class="pw-overlay" id="tpcOverlay" style="display:none">
   <div class="diet-editor-box" style="width:480px;text-align:center">
-    <h2 style="font-size:18px;margin-bottom:10px">💉 Bodymate em uso de EAA</h2>
+    <h2 style="font-size:18px;margin-bottom:10px">💉 Paciente/Cliente em uso de EAA</h2>
     <p style="font-size:13px;color:var(--mu);margin-bottom:18px">Nesta atualização, o que vai acontecer com o protocolo?</p>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button class="btn bp" onclick="tpcEscolher(\'tpc\')" style="padding:12px">Vai fazer TPC (Terapia Pós-Ciclo) agora</button>
@@ -875,11 +875,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     </div>
     <div id="dwStep3" style="display:none">
       <h2 style="font-size:19px;margin-bottom:2px">📄 12/12 — Fechamento do documento</h2>
-      <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">O que aparece no fechamento do Word, com a composição corporal do Bodymate?</p>
+      <p style="font-size:12.5px;color:var(--mu);margin-bottom:14px">O que aparece no fechamento do Word, com a composição corporal do Paciente/Cliente?</p>
       <div class="cons-grid" id="dwFechoGrid"></div>
       <div class="fg" style="margin-top:18px">
         <label class="fl">Observação importante para este PLANNER (opcional)</label>
-        <textarea id="dwObsImportante" class="fc" rows="3" placeholder="Ex.: Bodymate relatou algo novo, atenção especial a um alimento, ajuste pontual que não se encaixa nas outras perguntas..."></textarea>
+        <textarea id="dwObsImportante" class="fc" rows="3" placeholder="Ex.: Paciente/Cliente relatou algo novo, atenção especial a um alimento, ajuste pontual que não se encaixa nas outras perguntas..."></textarea>
         <p style="font-size:11px;color:var(--mu);margin-top:4px">Se preenchido, isso entra em destaque logo no início do documento Word.</p>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:20px">
@@ -1207,21 +1207,21 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div class="racard" onclick="relatorioComparativoGeral()">
           <div class="aci">📊</div>
           <h4>Comparativo Geral</h4>
-          <p>Evolução de todos os Bodymates lado a lado, respeitando o objetivo de cada um — valide seus métodos no conjunto</p>
+          <p>Evolução de todos os Pacientes/Clientes lado a lado, respeitando o objetivo de cada um — valide seus métodos no conjunto</p>
         </div>
       </div>
       <div class="plist-wrap">
         <div id="pastaBox" class="ex-ok" style="margin:0 0 14px;line-height:1.6"></div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-          <h4 style="font-size:13.5px;font-weight:600;color:var(--gd)">📋 Bodymates Cadastrados</h4>
+          <h4 style="font-size:13.5px;font-weight:600;color:var(--gd)">📋 Pacientes/Clientes Cadastrados</h4>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
             <span id="ptCount" style="font-size:12px;color:var(--mu)"></span>
             <button class="btn bs" style="padding:6px 12px;font-size:12px" onclick="fazerBackup()">💾 Backup agora</button>
-            <button class="btn bs" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('importFile').click()">📥 Importar Bodymate ou backup</button>
+            <button class="btn bs" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('importFile').click()">📥 Importar Paciente/Cliente ou backup</button>
             <input type="file" id="importFile" accept="application/json,.json,text/plain,.txt" style="display:none" onchange="importarArquivo(this.files[0]);this.value=''">
           </div>
         </div>
-        <div id="ptList"><div class="est"><div class="ei">📭</div>Nenhum Bodymate finalizado ainda.</div></div>
+        <div id="ptList"><div class="est"><div class="ei">📭</div>Nenhum Paciente/Cliente finalizado ainda.</div></div>
       </div>
       <div id="pacPage" style="display:none"></div>
     </div>
@@ -1272,8 +1272,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div class="ped-grid">
       <div>
         <div class="fg2" style="gap:10px;margin-bottom:12px">
-          <div class="fg"><label class="fl">Bodymate</label><input type="text" id="pedNome" class="fc" oninput="pedRender()"></div>
-          <div class="fg"><label class="fl">RG do Bodymate</label><input type="text" id="pedRg" class="fc" placeholder="Número do RG" oninput="pedRender()"></div>
+          <div class="fg"><label class="fl">Paciente/Cliente</label><input type="text" id="pedNome" class="fc" oninput="pedRender()"></div>
+          <div class="fg"><label class="fl">RG do Paciente/Cliente</label><input type="text" id="pedRg" class="fc" placeholder="Número do RG" oninput="pedRender()"></div>
           <div class="fg"><label class="fl">Data do pedido</label><input type="date" id="pedData" class="fc" oninput="pedRender()"></div>
           <div class="fg"><label class="fl">Sua qualificação (aparece abaixo do nome)</label><input type="text" id="pedQual" class="fc" placeholder="Em branco = não aparece" oninput="pedRender()"></div>
           <div class="fg"><label class="fl">Seu CRN</label><input type="text" id="pedCrn" class="fc" placeholder="Em branco = linha para escrever" oninput="pedRender()"></div>
@@ -1532,7 +1532,7 @@ function adicionarOpcaoFoodList(nome){
   const dl=document.getElementById('dietFoodList');
   if(dl&&![...dl.options].some(o=>o.value===nome)){const opt=document.createElement('option');opt.value=nome;dl.appendChild(opt);}
 }
-// ── Estima kcal/macros de um alimento/receita digitado que não está na base, via IA — quebra em ingredientes com peso de cada um, pra ficar claro pro Bodymate preparar ──
+// ── Estima kcal/macros de um alimento/receita digitado que não está na base, via IA — quebra em ingredientes com peso de cada um, pra ficar claro pro Paciente/Cliente preparar ──
 async function estimarAlimentoIA(i,j,k){
   const rowsAntes=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
   const nome=(rowsAntes[k].alimento||'').trim();
@@ -1697,7 +1697,7 @@ function termoHtml(){
 <p><b>6. Compartilhamento.</b> Seus dados não são vendidos. Só são compartilhados com os prestadores necessários ao serviço (hospedagem e, se autorizada, Inteligência Artificial), por determinação legal, ou com outro profissional de saúde se você pedir.</p>
 <p><b>7. Sigilo.</b> As informações estão protegidas pelo sigilo profissional.</p>
 <p><b>8. Seus direitos.</b> A qualquer momento, mediante pedido, você pode confirmar que seus dados são tratados, acessá-los, corrigi-los, pedir anonimização, bloqueio ou eliminação, pedir uma cópia, saber com quem foram compartilhados e revogar este consentimento. A revogação não afeta o que já foi feito com base nele, e a eliminação pode ser limitada por dever legal ou profissional de guarda.</p>
-<p><b>9. Menores de idade e pessoas incapazes.</b> Para menores de 18 anos, o consentimento deve ser dado por pai, mãe ou responsável legal, sempre no melhor interesse do Bodymate.</p>
+<p><b>9. Menores de idade e pessoas incapazes.</b> Para menores de 18 anos, o consentimento deve ser dado por pai, mãe ou responsável legal, sempre no melhor interesse do Paciente/Cliente.</p>
 <p><b>10. Autorizações separadas.</b> Você pode aceitar apenas parte: sem o aceite de fotos e exames, esses arquivos não são recebidos; sem o aceite de Inteligência Artificial, nada é enviado a serviços de IA. Recusar essas duas partes não impede o atendimento nutricional.</p>`;
 }
 function normNome(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();}
@@ -1718,7 +1718,7 @@ async function registrarConsentimento(){
   const g=id=>document.getElementById(id);
   const aviso=m=>showToast('⚠️ '+m,'#e67e22');
   const nome=(g('nome').value||'').trim();
-  if(nome.length<3){aviso('Preencha o nome do Bodymate no início da página');g('nome').focus();return;}
+  if(nome.length<3){aviso('Preencha o nome do Paciente/Cliente no início da página');g('nome').focus();return;}
   if(!g('consLi').checked){aviso('Marque que leu e concorda com o termo');return;}
   const texto=termoTextoPlano();
   const hash=await hashTexto(texto);
@@ -1752,7 +1752,7 @@ function verTermoRegistrado(){
 }
 function revogarConsentimento(){
   if(!consent)return;
-  if(!confirm('Revogar o consentimento?\n\nIsso remove desta ficha as fotos, os exames e as análises por IA. Os demais dados só saem se você usar "Limpar", e Bodymates já finalizados continuam na lista da aba Relatórios até você removê-los.'))return;
+  if(!confirm('Revogar o consentimento?\n\nIsso remove desta ficha as fotos, os exames e as análises por IA. Os demais dados só saem se você usar "Limpar", e Pacientes/Clientes já finalizados continuam na lista da aba Relatórios até você removê-los.'))return;
   consent=null;photoData={};exameIA=null;
   PHOTO_FIELDS.forEach(f=>renderPhotoPreview(f));
   document.querySelectorAll('#s7 input[type=file]').forEach(i=>{i.value='';});
@@ -1994,6 +1994,24 @@ function fichaTemConteudo(d){return ['nome','peso','altura','telefone','email','
 function fichaPendente(){const d=collectData();return fichaTemConteudo(d)&&assinaturaFicha(d)!==ultimoFinalizado;}
 function ordenarAval(a,b){return String(a.dataPreench||'').localeCompare(String(b.dataPreench||''))||String(a.savedAt||'').localeCompare(String(b.savedAt||''));}
 function avaliacoesDe(key){return PTS.filter(p=>chavePaciente(p)===key).sort(ordenarAval);}
+const FLAG_CICLO=[null,'g','y','r'];
+const FLAG_INFO={g:{emoji:'🟢',titulo:'Entregue'},y:{emoji:'🟡',titulo:'Em andamento'},r:{emoji:'🔴',titulo:'Atrasado'}};
+function getFlagBodymate(key){try{return(JSON.parse(localStorage.getItem('bm_flags')||'{}'))[key]||null;}catch(e){return null;}}
+function setFlagBodymate(key,cor){
+  try{
+    const m=JSON.parse(localStorage.getItem('bm_flags')||'{}');
+    if(cor)m[key]=cor;else delete m[key];
+    localStorage.setItem('bm_flags',JSON.stringify(m));
+  }catch(e){}
+  refreshPtList();
+}
+function cicloFlagBodymate(key,ev){
+  if(ev){ev.stopPropagation();}
+  const atual=getFlagBodymate(key);
+  const i=FLAG_CICLO.indexOf(atual);
+  const prox=FLAG_CICLO[(i+1)%FLAG_CICLO.length];
+  setFlagBodymate(key,prox);
+}
 function agruparPacientes(pts){
   const m=new Map();
   pts.forEach(p=>{const k=chavePaciente(p);if(!m.has(k))m.set(k,{key:k,nome:p.nome,dataNasc:p.dataNasc,entries:[]});m.get(k).entries.push(p);});
@@ -2032,18 +2050,18 @@ function renderPaciente(){
   const sub=[u.idade?u.idade+' anos':'',u.sexo==='F'?'Feminino':u.sexo==='M'?'Masculino':'',u.telefone||'',u.email||''].filter(Boolean).map(escH).join(' · ');
   pg.innerHTML=`<div class="card" style="margin-bottom:0"><div class="ch"><div class="chi ig">👤</div><div style="flex:1"><h3>${escH(u.nome)}</h3><p>${sub}</p></div></div><div class="cb">
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
-      <button class="btn bp" style="padding:9px 16px;font-size:13px" onclick="evoluirPaciente(${K})">➕ Evoluir Bodymate (novo protocolo)</button>
+      <button class="btn bp" style="padding:9px 16px;font-size:13px" onclick="evoluirPaciente(${K})">➕ Evoluir Paciente/Cliente (novo protocolo)</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioAval('${u.id}')">📄 Último relatório</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="dietaAval('${u.id}')">🥗 PLANNER</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="abrirPedido(${K})">🩸 Pedido de exames</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioEvolucao(${K})">📈 Relatório de evolução</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioPrevistoReal(${K})">🎯 Previsto × Real</button>
-      <button class="btn bs" style="padding:9px 16px;font-size:13px;color:var(--red)" onclick="excluirPaciente(${K})">🗑 Excluir Bodymate</button>
+      <button class="btn bs" style="padding:9px 16px;font-size:13px;color:var(--red)" onclick="excluirPaciente(${K})">🗑 Excluir Paciente/Cliente</button>
     </div>
     <div class="rstit">📅 Avaliações (${ents.length})</div>
     <div class="ex-scroll"><table class="ft"><thead><tr><th>Data</th><th>Peso (kg)</th><th>IMC</th><th>% Gordura</th><th>Cintura (cm)</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>
     <div class="rstit" style="margin-top:20px">📈 Evolução</div>
-    ${ents.length>1?'':'<div style="font-size:12px;color:var(--mu)">Com uma avaliação só aparecem os pontos iniciais. Use <b>Evoluir Bodymate</b> para registrar a próxima e ver a linha de evolução.</div>'}
+    ${ents.length>1?'':'<div style="font-size:12px;color:var(--mu)">Com uma avaliação só aparecem os pontos iniciais. Use <b>Evoluir Paciente/Cliente</b> para registrar a próxima e ver a linha de evolução.</div>'}
     ${evolucaoHtml(ents)}
     <div class="nav-btns" style="margin-top:16px"><button class="btn bs" onclick="fecharPaciente()">← Voltar à lista</button><div></div></div>
   </div></div>`;
@@ -2061,7 +2079,7 @@ async function excluirAvaliacao(id){
 }
 async function excluirPaciente(key){
   const ents=avaliacoesDe(key);if(!ents.length)return;
-  if(!confirm('Excluir o Bodymate '+ents[0].nome+' com TODAS as '+ents.length+' avaliações?\n\nO arquivo dele na pasta conectada também será apagado. Não dá para desfazer.'))return;
+  if(!confirm('Excluir o Paciente/Cliente '+ents[0].nome+' com TODAS as '+ents.length+' avaliações?\n\nO arquivo dele na pasta conectada também será apagado. Não dá para desfazer.'))return;
   await gravarPts(PTS.filter(p=>chavePaciente(p)!==key));
   pastaSalvarPaciente(key);
   fecharPaciente();
@@ -2126,7 +2144,7 @@ function verificarRecuperacao(){
   if(!REC||REC.role!==userRole)return false;
   const cur=sessionStorage.getItem(DK);
   if(cur){try{if(fichaTemConteudo(JSON.parse(cur)))return false;}catch(e){}}
-  document.getElementById('recTxt').innerHTML='Ficha de <b>'+escH((REC.data&&REC.data.nome)||'Bodymate sem nome')+'</b>, salva em '+escH(new Date(REC.savedAt).toLocaleString('pt-BR'))+'.<br>Deseja continuar de onde parou?';
+  document.getElementById('recTxt').innerHTML='Ficha de <b>'+escH((REC.data&&REC.data.nome)||'Paciente/Cliente sem nome')+'</b>, salva em '+escH(new Date(REC.savedAt).toLocaleString('pt-BR'))+'.<br>Deseja continuar de onde parou?';
   document.getElementById('recOverlay').style.display='flex';
   return true;
 }
@@ -2234,7 +2252,7 @@ async function importarArquivo(file){
   await storeInit();
   if(j&&j.tipo==='bodymap-backup'&&Array.isArray(j.pacientes))return importarLote(j.pacientes,'backup');
   if(j&&j.tipo==='bodymap-paciente'&&Array.isArray(j.avaliacoes))return importarLote(j.avaliacoes,'arquivo do paciente');
-  if(!j||!j.nome){showToast('⚠️ Arquivo inválido — sem nome de Bodymate','#e67e22');return;}
+  if(!j||!j.nome){showToast('⚠️ Arquivo inválido — sem nome de Paciente/Cliente','#e67e22');return;}
   const entry={...j,id:Date.now()};
   const m=mesclarPts(PTS,[entry]);
   await gravarPts(m.lista);
@@ -2243,7 +2261,7 @@ async function importarArquivo(file){
 }
 async function fazerBackup(){
   await storeInit();
-  if(!PTS.length){showToast('⚠️ Não há Bodymates para salvar no backup','#e67e22');return;}
+  if(!PTS.length){showToast('⚠️ Não há Pacientes/Clientes para salvar no backup','#e67e22');return;}
   const conteudo=JSON.stringify({tipo:'bodymap-backup',versao:1,criadoEm:new Date().toISOString(),pacientes:PTS},null,2);
   const nome='BodyMap_Backup_'+hojeISO()+'.json';
   try{
@@ -2262,7 +2280,7 @@ function verificarBackupMensal(){
   const ult=localStorage.getItem(LBK);
   const dias=ult?Math.floor((Date.now()-new Date(ult).getTime())/86400000):null;
   if(dias!==null&&dias<30)return;
-  document.getElementById('bkTxt').textContent=dias===null?'Você ainda não fez nenhum backup dos Bodymates.':'Seu último backup foi há '+dias+' dias.';
+  document.getElementById('bkTxt').textContent=dias===null?'Você ainda não fez nenhum backup dos Pacientes/Clientes.':'Seu último backup foi há '+dias+' dias.';
   document.getElementById('bkOverlay').style.display='flex';
 }
 async function bkAgora(){document.getElementById('bkOverlay').style.display='none';await fazerBackup();}
@@ -2339,14 +2357,14 @@ async function pastaSincronizarTudo(mostrar){
   const ub=await pastaUltimoBackup();
   if(ub&&ub>(localStorage.getItem(LBK)||'').slice(0,10))localStorage.setItem(LBK,ub+'T00:00:00.000Z');
   refreshPtList();
-  if(mostrar)showToast('✅ Pasta conectada: '+m.add+' avaliação(ões) trazida(s) da pasta, '+escritos+' Bodymate(s) gravado(s)');
+  if(mostrar)showToast('✅ Pasta conectada: '+m.add+' avaliação(ões) trazida(s) da pasta, '+escritos+' Paciente/Cliente(s) gravado(s)');
 }
 function renderPastaStatus(){
   const b=document.getElementById('pastaBox');if(!b)return;
   const ub=(localStorage.getItem(LBK)||'').slice(0,10);
   const bk=ub?'Último backup: '+fmtData(ub)+'.':'Nenhum backup feito ainda.';
-  if(!fsaOk()){b.innerHTML='📁 Gravação em pasta indisponível neste navegador (use Chrome ou Edge no computador). Os Bodymates ficam salvos no navegador; use o botão <b>Backup agora</b>. '+bk;return;}
-  if(!pastaHandle){b.innerHTML='📁 <b>Nenhuma pasta conectada.</b> Escolha uma pasta do computador e cada Bodymate será gravado nela automaticamente. <button class="btn bp" style="padding:6px 12px;font-size:12px;margin-left:6px" onclick="pastaConectar()">Escolher pasta</button><br>'+bk;return;}
+  if(!fsaOk()){b.innerHTML='📁 Gravação em pasta indisponível neste navegador (use Chrome ou Edge no computador). Os Pacientes/Clientes ficam salvos no navegador; use o botão <b>Backup agora</b>. '+bk;return;}
+  if(!pastaHandle){b.innerHTML='📁 <b>Nenhuma pasta conectada.</b> Escolha uma pasta do computador e cada Paciente/Cliente será gravado nela automaticamente. <button class="btn bp" style="padding:6px 12px;font-size:12px;margin-left:6px" onclick="pastaConectar()">Escolher pasta</button><br>'+bk;return;}
   if(pastaEstado!=='ok'){b.innerHTML='⚠️ Pasta <b>'+escH(pastaHandle.name||'')+'</b> desconectada (o Chrome pede permissão a cada visita). <button class="btn bp" style="padding:6px 12px;font-size:12px;margin-left:6px" onclick="pastaReconectar()">Reconectar pasta</button> <button class="btn bs" style="padding:6px 12px;font-size:12px" onclick="pastaConectar()">Trocar pasta</button><br>'+bk;return;}
   b.innerHTML='✅ <b>Gravando na pasta:</b> '+escH(pastaHandle.name||'')+'. '+bk+' <button class="btn bs" style="padding:6px 12px;font-size:12px;margin-left:6px" onclick="pastaConectar()">Trocar pasta</button>';
 }
@@ -2438,7 +2456,7 @@ const KCAL_POR_KG_GORDURA=7700; // referência padrão da literatura (1 kg de go
 function relatorioPrevistoReal(key){
   const ents=avaliacoesDe(key);if(!ents.length)return;
   const comDieta=ents.filter(e=>e.dieta&&e.dieta.kcal&&e.dieta.get);
-  if(!comDieta.length){showToast('⚠️ Esse Bodymate ainda não tem nenhuma dieta gerada pelo sistema para comparar','#e67e22');return;}
+  if(!comDieta.length){showToast('⚠️ Esse Paciente/Cliente ainda não tem nenhuma dieta gerada pelo sistema para comparar','#e67e22');return;}
   const dEnt=comDieta[comDieta.length-1];
   const u=ents[ents.length-1];
   const mD=metricasAval(dEnt),mU=metricasAval(u);
@@ -2520,7 +2538,7 @@ function relatorioComparativoGeral(filtroRot){
     const dias=diasEntre(ents[0].dataPreench,ents[ents.length-1].dataPreench);
     return{nome:ents[ents.length-1].nome,cls,score,dPeso,dGord,dias,nAval:ents.length};
   }).filter(Boolean);
-  if(!grupos.length){showToast('⚠️ Nenhum Bodymate com 2 ou mais avaliações ainda para comparar','#e67e22');return;}
+  if(!grupos.length){showToast('⚠️ Nenhum Paciente/Cliente com 2 ou mais avaliações ainda para comparar','#e67e22');return;}
   const rotulos=['Todos',...new Set(grupos.map(g=>g.cls.rot))];
   const filtro=filtroRot||'Todos';
   const visiveis=grupos.filter(g=>filtro==='Todos'||g.cls.rot===filtro).sort((a,b)=>(b.score??-999)-(a.score??-999));
@@ -2544,16 +2562,16 @@ function relatorioComparativoGeral(filtroRot){
   const now=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   const html=
     '<div class="rpt-hdr"><div class="rpt-logo"><img src="'+LOGO_URI+'" alt="logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover"><div><h2>Comparativo Geral de Evolução</h2><p>'+escH(now)+'</p></div></div>'+
-    '<div style="text-align:right;font-size:12px;color:var(--mu)"><div style="font-weight:700;font-size:16px;color:var(--gd)">'+grupos.length+' Bodymate(s) com evolução</div></div></div>'+
+    '<div style="text-align:right;font-size:12px;color:var(--mu)"><div style="font-weight:700;font-size:16px;color:var(--gd)">'+grupos.length+' Paciente/Cliente(s) com evolução</div></div></div>'+
     '<div class="rsec"><div class="rstit">🔎 Filtrar por objetivo</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'+
       rotulos.map(r=>'<button class="btn '+(r===filtro?'bp':'bs')+'" style="padding:6px 14px;font-size:12px" onclick="relatorioComparativoGeral('+JSON.stringify(r)+')">'+escH(r)+'</button>').join('')+
     '</div></div>'+
     '<div class="rsec"><div class="rstit">📊 Progresso normalizado (sempre na direção do objetivo individual — barra maior = mais perto da meta)</div>'+
-      (comScore.length?comScore.map(barra).join(''):'<div style="font-size:12px;color:var(--mu)">Nenhum Bodymate com objetivo comparável neste filtro.</div>')+
+      (comScore.length?comScore.map(barra).join(''):'<div style="font-size:12px;color:var(--mu)">Nenhum Paciente/Cliente com objetivo comparável neste filtro.</div>')+
     '</div>'+
     (semScore.length?'<div class="rsec"><div class="rstit">📋 Sem meta de peso/gordura definida (acompanhamento qualitativo)</div>'+semScore.map(g=>'<div style="font-size:12.5px;margin-bottom:6px"><b>'+escH(g.nome)+'</b> — '+escH(g.cls.rot)+' · Peso: '+fmtDelta(g.dPeso,1,'kg')+' em '+g.dias+' dias</div>').join('')+'</div>':'')+
-    '<div class="rsec"><div class="rstit">📝 Leitura por Bodymate</div><ul style="font-size:12.5px;line-height:1.7;padding-left:18px">'+narrativa+'</ul></div>'+
-    '<div style="margin-top:10px;padding:10px 16px;background:var(--gp);border-radius:var(--rs);font-size:10.5px;color:var(--mu);border:1px solid var(--br)">O progresso é calculado na direção do objetivo cadastrado de cada Bodymate — perda de peso conta como progresso em Emagrecimento, ganho conta em Hipertrofia/Ganho de peso, estabilidade conta em Manutenção, e redução de % de gordura conta em Definição muscular. Objetivos sem meta numérica de peso (performance, reeducação alimentar etc.) aparecem à parte, sem barra de progresso.</div>';
+    '<div class="rsec"><div class="rstit">📝 Leitura por Paciente/Cliente</div><ul style="font-size:12.5px;line-height:1.7;padding-left:18px">'+narrativa+'</ul></div>'+
+    '<div style="margin-top:10px;padding:10px 16px;background:var(--gp);border-radius:var(--rs);font-size:10.5px;color:var(--mu);border:1px solid var(--br)">O progresso é calculado na direção do objetivo cadastrado de cada Paciente/Cliente — perda de peso conta como progresso em Emagrecimento, ganho conta em Hipertrofia/Ganho de peso, estabilidade conta em Manutenção, e redução de % de gordura conta em Definição muscular. Objetivos sem meta numérica de peso (performance, reeducação alimentar etc.) aparecem à parte, sem barra de progresso.</div>';
   document.getElementById('rptArea').innerHTML=html;
   document.querySelector('.rap').style.display='none';
   document.querySelector('.plist-wrap').style.display='none';
@@ -2776,7 +2794,7 @@ function pedFolhaHtml(){
   const lista=itens.length?'<ol'+(itens.length>12?' class="duas"':'')+'>'+itens.map(t=>'<li>'+escH(t)+'</li>').join('')+'</ol>':'<div style="color:#777;font-style:italic;margin-top:8px">(nenhum exame selecionado)</div>';
   return '<div class="f-logo"><img src="data:image/png;base64,'+RN_LOGO_B64+'" alt="logo"></div>'+
     '<h2>SOLICITAÇÃO DE EXAMES LABORATORIAIS</h2>'+
-    '<div class="f-pac"><div><b>Bodymate:</b> '+(g('pedNome')?escH(g('pedNome')):linha)+'</div><div><b>RG:</b> '+(g('pedRg')?escH(g('pedRg')):'________________')+'</div></div>'+
+    '<div class="f-pac"><div><b>Paciente/Cliente:</b> '+(g('pedNome')?escH(g('pedNome')):linha)+'</div><div><b>RG:</b> '+(g('pedRg')?escH(g('pedRg')):'________________')+'</div></div>'+
     '<div><b>Solicito a realização dos seguintes exames:</b></div>'+lista+
     '<div class="f-rod">'+
       '<div><div><b>Data:</b> '+escH(dataF)+'</div><div class="f-linha">Assinatura</div>'+
@@ -2853,7 +2871,7 @@ async function gerarBariatricaDoc(d,fase,obsExtra){
           ...logoRow,
           new Paragraph({children:[new TextRun({text:'PLANNER',bold:true,size:64,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:120}}),
           new Paragraph({children:[new TextRun({text:'NUTRIÇÃO - SUPLEMENTAÇÃO - FÁRMACOS - ERGOGÊNICOS',size:20,color:'8A7F5C'})],alignment:AlignmentType.CENTER,spacing:{after:800}}),
-          new Paragraph({children:[new TextRun({text:(d.nome||'Bodymate').toUpperCase(),bold:true,size:32,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:80}}),
+          new Paragraph({children:[new TextRun({text:(d.nome||'Paciente/Cliente').toUpperCase(),bold:true,size:32,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:80}}),
           ...(d.objetivo?[new Paragraph({children:[new TextRun({text:(d.objetivo==='Outro (especificar)'?(d.objOutroTxt||'Outro'):d.objetivo),size:20,color:'8A7F5C'})],alignment:AlignmentType.CENTER,spacing:{after:100}})]:[]),
           new Paragraph({children:[new TextRun({text:now,size:22,color:'7F8C8D'})],alignment:AlignmentType.CENTER,spacing:{after:1400}}),
           new Paragraph({children:[],pageBreakBefore:true}),
@@ -2873,14 +2891,14 @@ async function gerarBariatricaDoc(d,fase,obsExtra){
           ...(obsExtra?[H1('OBSERVAÇÕES DO PROFISSIONAL PARA ESTA FASE'),P(obsExtra)]:[]),
           new Paragraph({spacing:{after:240}}),
           HR(),
-          new Paragraph({children:[new TextRun({text:'Plano orientativo por fase pós-bariátrica. Prazos e progressão de textura devem ser ajustados pelo profissional conforme a evolução clínica de cada Bodymate.',size:16,color:'7F8C8D'})]})
+          new Paragraph({children:[new TextRun({text:'Plano orientativo por fase pós-bariátrica. Prazos e progressão de textura devem ser ajustados pelo profissional conforme a evolução clínica de cada Paciente/Cliente.',size:16,color:'7F8C8D'})]})
         ]
       }]
     });
     const blob=await Packer.toBlob(doc);
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url;a.download=`Bariatrica_${(d.nome||'Bodymate').replace(/\s/g,'_')}_Fase${fase.id}_${new Date().toISOString().slice(0,10)}.docx`;
+    a.href=url;a.download=`Bariatrica_${(d.nome||'Paciente').replace(/\s/g,'_')}_Fase${fase.id}_${new Date().toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     showToast('✅ Plano bariátrico baixado com sucesso!');
   }catch(e){console.error(e);showToast('❌ Erro ao gerar: '+e.message,'#c0392b');}
@@ -3536,7 +3554,7 @@ function updateAnthroMap(){
   wrap.innerHTML=renderAnthroSvg('front',sexo,front,zonesLive)+renderAnthroSvg('back',sexo,back,zonesLive)+
     `<div style="flex-basis:100%;text-align:center;font-size:10.5px;color:var(--mu)">◆ dobra cutânea (mm) · ● circunferência (cm) — cor sólida indica campo preenchido</div>`;
 }
-// ── versão simplificada da silhueta, só com pescoço/cintura/quadril — pro Bodymate saber onde passar a fita ──
+// ── versão simplificada da silhueta, só com pescoço/cintura/quadril — pro Paciente/Cliente saber onde passar a fita ──
 function renderMedidasEssenciaisSvg(){
   const wrap=document.getElementById('medEssenciaisFig');
   if(!wrap)return;
@@ -3880,13 +3898,15 @@ function refreshPtList(){
   const cnt=document.getElementById('ptCount');
   const wrap=document.getElementById('ptList');
   const gs=agruparPacientes(PTS);
-  if(cnt)cnt.textContent=gs.length+' Bodymate(s)';
-  if(!gs.length){wrap.innerHTML='<div class="est"><div class="ei">📭</div>Nenhum Bodymate finalizado ainda.</div>';renderPastaStatus();return;}
+  if(cnt)cnt.textContent=gs.length+' Paciente/Cliente(s)';
+  if(!gs.length){wrap.innerHTML='<div class="est"><div class="ei">📭</div>Nenhum Paciente/Cliente finalizado ainda.</div>';renderPastaStatus();return;}
   wrap.innerHTML=gs.map(g=>{
     const u=g.entries[g.entries.length-1];
     const imc=u.imcVal?parseFloat(u.imcVal):null;
     const lbl=imc?classIMC(imc).label:'—';
-    return `<div class="prow" style="cursor:pointer" onclick="abrirPaciente(${kJs(g.key)})"><div><div class="pn">${escH(g.nome||'Sem nome')}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
+    const flagCor=getFlagBodymate(g.key);
+    const flagInfo=flagCor?FLAG_INFO[flagCor]:{emoji:'⚪',titulo:'Sem status — clique para marcar'};
+    return `<div class="prow" style="cursor:pointer" onclick="abrirPaciente(${kJs(g.key)})"><div style="display:flex;align-items:center;gap:10px"><span title="${flagInfo.titulo} (clique para mudar)" onclick="cicloFlagBodymate(${kJs(g.key)},event)" style="font-size:16px;cursor:pointer;line-height:1">${flagInfo.emoji}</span><div><div class="pn">${escH(g.nome||'Sem nome')}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
   }).join('');
   renderPastaStatus();
 }
@@ -3969,7 +3989,7 @@ function renderRel(d){
   document.getElementById('rptArea').innerHTML=`
     <div class="rpt-hdr">
       <div class="rpt-logo"><img src="${LOGO_URI}" alt="logo" style="width:42px;height:42px;border-radius:10px;object-fit:cover"><div><h2>Relatório Nutricional</h2><p>Avaliação Individual · ${now}</p></div></div>
-      <div style="text-align:right;font-size:12px;color:var(--mu)"><div style="font-weight:700;font-size:16px;color:var(--gd)">${d.nome||'Bodymate'}</div><div>Idade: ${d.idade||'—'} anos · ${sexo==='F'?'Feminino':sexo==='M'?'Masculino':'—'}</div></div>
+      <div style="text-align:right;font-size:12px;color:var(--mu)"><div style="font-weight:700;font-size:16px;color:var(--gd)">${d.nome||'Paciente/Cliente'}</div><div>Idade: ${d.idade||'—'} anos · ${sexo==='F'?'Feminino':sexo==='M'?'Masculino':'—'}</div></div>
     </div>
     ${(d.objetivo||d.turno||d.posicaoTrab)?`<div class="rc" style="margin:-6px 0 14px">${d.objetivo?`<span class="rchip cg2">🎯 ${escH(d.objetivo==='Outro (especificar)'?(d.objOutroTxt||'Outro'):d.objetivo)}</span>`:''}${d.turno?`<span class="rchip cg2">🕐 Turno: ${escH(d.turno)}</span>`:''}${d.posicaoTrab?`<span class="rchip cg2">💼 ${escH({SENT:'Trabalho sentado(a)',EM_PE:'Trabalho em pé',MISTO:'Trabalho misto',CAMINHANDO:'Trabalho em movimento'}[d.posicaoTrab]||d.posicaoTrab)}</span>`:''}</div>`:''}
 
@@ -4031,7 +4051,7 @@ function renderRel(d){
     <div class="rsec"><div class="rstit">💡 Orientações Nutricionais <span style="font-weight:400;font-size:10.5px;text-transform:none;letter-spacing:0;color:var(--mu)">— base para elaboração do plano alimentar</span></div>${recs}</div>
     ${(d.obsGerais||d.alergiasObs)?`<div class="rsec"><div class="rstit">📝 Observações</div>${d.alergiasObs?`<p style="font-size:12px;margin-bottom:6px"><b>Alergias/observações:</b> ${d.alergiasObs}</p>`:''}${d.obsGerais?`<p style="font-size:12px">${d.obsGerais}</p>`:''}</div>`:''}
     ${consentRelHtml(d)}
-    <div style="margin-top:16px;padding:10px 16px;background:var(--gp);border-radius:var(--rs);font-size:10.5px;color:var(--mu);border:1px solid var(--br)">⚠️ Este relatório é uma ferramenta de triagem e apoio à prescrição. Referências: Diretrizes Nutricionais Brasil 2026 · Guia Alimentar MS 2014 · ABESO · Consenso Brasileiro de Sarcopenia (EWGSOP2) · SBC/SBD · OMS.</div>`;
+    <div style="margin-top:16px;padding:10px 16px;background:var(--gp);border-radius:var(--rs);font-size:10.5px;color:var(--mu);border:1px solid var(--br)">⚠️ Este relatório é uma ferramenta de triagem e apoio à prescrição. Referências: Diretrizes Nutricionais Brasil 2026 · Guia Alimentar MS 2014 · ABESO · Consenso Brasileiro de Sarcopenia (EWGSOP2) · SBC/SBD · OMS. Este plano compreende uma estratégia de 90 dias, podendo ser reavaliado a qualquer momento conforme a evolução do Paciente/Cliente.</div>`;
 
   document.querySelector('.rap').style.display='none';
   document.querySelector('.plist-wrap').style.display='none';
@@ -4112,7 +4132,7 @@ function buildRisksPlain(d){
 let dietWizCtx=null;
 function iniciarGeracaoDieta(dataOverride){
   const d=dataOverride||collectData();
-  if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
+  if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
   const base=calcDietaBase(d);
   let ajusteInfo=null;
   if(d.id){
@@ -4204,7 +4224,7 @@ function dietWizRenderStep1(){
     g('dwDistCalPerfil').value=perfilSugerido;
     g('dwDistFatPerfil').value=perfilSugerido;
     nota.style.display='block';
-    nota.textContent='💡 Bodymate relatou mais fome à(o) '+horaFome.toLowerCase()+' — perfil de distribuição sugerido automaticamente abaixo (pode ajustar).';
+    nota.textContent='💡 Paciente/Cliente relatou mais fome à(o) '+horaFome.toLowerCase()+' — perfil de distribuição sugerido automaticamente abaixo (pode ajustar).';
   }else{
     g('dwDistCalPerfil').value='padrao';
     g('dwDistFatPerfil').value='padrao';
@@ -4354,7 +4374,7 @@ function _arr(x){return Array.isArray(x)?x:(x?String(x).split(/[,;|]+/).map(t=>t
 function _abrirEditorDietaInterno(dataOverride,ov){
   const ovNovo=ov;
   const d=dataOverride||collectData();
-  if(!d.nome){showToast('⚠️ Preencha o nome do Bodymate antes de gerar a dieta','#e67e22');return;}
+  if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
   dietPesosLocked={};dietPesosStale=false;
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
@@ -4363,7 +4383,7 @@ function _abrirEditorDietaInterno(dataOverride,ov){
     const raw=localStorage.getItem(dietDKp(d))||localStorage.getItem(DIET_DK);
     if(raw){
       const rasc=JSON.parse(raw);
-      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei a última dieta desse Bodymate, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'.\n\nOK = abrir essa dieta para ajustar.\nCancelar = montar uma nova do zero (a antiga continua guardada até você mexer na nova).')){
+      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei a última dieta desse Paciente/Cliente, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'.\n\nOK = abrir essa dieta para ajustar.\nCancelar = montar uma nova do zero (a antiga continua guardada até você mexer na nova).')){
         dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
         dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
         dietPesosLocked=rasc.dietPesosLocked||{};dietPesosStale=!!rasc.dietPesosStale;
@@ -4463,18 +4483,18 @@ function verificarConflitosDieta(){
   _arr(d.alergias).forEach(cod=>{
     const a=ALERGIA_TERMOS[cod];if(!a)return;
     const bateu=a.termos.filter(t=>texto.includes(t));
-    if(bateu.length)achados.push('Bodymate relatou alergia/intolerância a '+a.rot+' — a dieta ou os suplementos contêm: '+bateu.join(', ')+'.');
+    if(bateu.length)achados.push('Paciente/Cliente relatou alergia/intolerância a '+a.rot+' — a dieta ou os suplementos contêm: '+bateu.join(', ')+'.');
   });
   _arr(d.doencas).forEach(cod=>{
     const dd=DOENCA_TERMOS[cod];if(!dd)return;
     const bateu=dd.termos.filter(t=>texto.includes(t));
-    if(bateu.length)achados.push('Bodymate com '+dd.rot+' — '+dd.aviso+': '+bateu.join(', ')+'.');
+    if(bateu.length)achados.push('Paciente/Cliente com '+dd.rot+' — '+dd.aviso+': '+bateu.join(', ')+'.');
   });
   const modeloAtual=(dietOv&&dietOv.modelo)||'normal';
   if(modeloAtual==='vegana')achados.push('Dieta vegana: vitamina B12 não tem fonte alimentar vegetal confiável — avalie suplementação.');
   if(modeloAtual==='ceto'){
     const dn=_arr(d.doencas);
-    if(dn.includes('RENAL')||dn.includes('HEPAT')||dn.includes('DM1'))achados.push('Cetogênica com doença renal, hepática ou diabetes tipo 1 registrada no Histórico — reavalie a indicação deste modelo para este Bodymate.');
+    if(dn.includes('RENAL')||dn.includes('HEPAT')||dn.includes('DM1'))achados.push('Cetogênica com doença renal, hepática ou diabetes tipo 1 registrada no Histórico — reavalie a indicação deste modelo para este Paciente/Cliente.');
   }
   if(!achados.length){box.style.display='none';box.innerHTML='';return;}
   box.style.display='block';
@@ -5224,7 +5244,7 @@ const DWQ_TELAS=[
      <div class="fg" style="margin-top:14px"><label class="fl">Opções de escolha por refeição</label><div class="cons-grid">${[1,2,3].map(n=>_radio('dwqNOp',n,p.nOp===n,n+(n===1?' opção (cardápio fechado)':' opções'))).join('')}</div></div>`,
    coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||3;},
    padrao:p=>{p.nRef=6;p.nOp=3;}},
-  {titulo:'O que o Bodymate não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
+  {titulo:'O que o Paciente/Cliente não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
    render:p=>{
      const auto=_alergiasReg().map(a=>ALERGIA_EXCL[a].rot||AVERSOES_CAT.find(x=>x.k===ALERGIA_EXCL[a].k).rot);
      const sug=(!p.aversoes.ativo&&!(p.aversoes.marcados||[]).length)?aversoesSugeridasQFA(dietWizCtx.d):[];
@@ -5258,7 +5278,7 @@ const DWQ_TELAS=[
      if(!al.includes('LEITE')&&!al.includes('LACTOSE')){p.leite.usa=_valRadio('dwqLeite')!=='N';if(p.leite.usa)p.leite.tipo=_valRadio('dwqLeiteT')||p.leite.tipo||'desnatado';}
      if(!al.includes('GLUTEN'))p.semGluten=_valRadio('dwqGlu')==='S';},
    padrao:p=>{p.leite={usa:true,tipo:'desnatado'};p.semGluten=false;}},
-  {titulo:'Frutas e oleaginosas específicas',sub:'Só se o Bodymate pediu algo. Se não, uso o padrão da casa.',
+  {titulo:'Frutas e oleaginosas específicas',sub:'Só se o Paciente/Cliente pediu algo. Se não, uso o padrão da casa.',
    render:p=>`<div class="cons-grid">${_radio('dwqFr','N',!p.frutas.ativo,'Não — usar o padrão')}${_radio('dwqFr','S',p.frutas.ativo,'Sim — incluir o que ele informou')}</div>
      <div id="dwqFrBox" style="display:${p.frutas.ativo?'block':'none'};margin-top:12px">
        <label class="fl">Frutas</label><div class="cons-grid" id="dwqFrChips">${FRUTAS_CHIPS.map(f=>_chk(f,p.frutas.marcados)).join('')}</div>
@@ -5269,7 +5289,7 @@ const DWQ_TELAS=[
    coletar:p=>{p.frutas.ativo=_valRadio('dwqFr')==='S';p.frutas.marcados=p.frutas.ativo?_lidosChk('dwqFrChips').concat(_lidosChk('dwqNutChips')):[];p.frutas.texto=p.frutas.ativo?document.getElementById('dwqFrTxt').value.trim():'';},
    padrao:p=>{p.frutas={ativo:false,marcados:[],texto:''};}},
   {titulo:'Legumes e verduras',sub:'No Word o paciente lê dois grupos: os leves (à vontade, em prato) e os com amido (pesados, como o arroz).',
-   render:p=>`<div class="cons-grid">${_radio('dwqLg','N',!p.legumes.ativo,'Não — usar o padrão')}${_radio('dwqLg','S',p.legumes.ativo,'Sim — o Bodymate informou preferências')}</div>
+   render:p=>`<div class="cons-grid">${_radio('dwqLg','N',!p.legumes.ativo,'Não — usar o padrão')}${_radio('dwqLg','S',p.legumes.ativo,'Sim — o Paciente/Cliente informou preferências')}</div>
      <div id="dwqLgBox" style="display:${p.legumes.ativo?'block':'none'};margin-top:12px">
        <label class="fl">Legumes e verduras leves (consumo livre)</label><div class="cons-grid" id="dwqLgL">${LEG_LEVES.map(f=>_chk(f,p.legumes.marcados)).join('')}</div>
        <label class="fl" style="margin-top:12px">Legumes e raízes com amido (contam como carboidrato, em gramas)</label><div class="cons-grid" id="dwqLgA">${LEG_AMIL.map(f=>_chk(f,p.legumes.marcados)).join('')}</div>
@@ -5278,7 +5298,7 @@ const DWQ_TELAS=[
    bind:()=>{document.querySelectorAll('input[name=dwqLg]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLgBox',_valRadio('dwqLg')==='S')));},
    coletar:p=>{p.legumes.ativo=_valRadio('dwqLg')==='S';p.legumes.marcados=p.legumes.ativo?_lidosChk('dwqLgL').concat(_lidosChk('dwqLgA')):[];p.legumes.texto=p.legumes.ativo?document.getElementById('dwqLgTxt').value.trim():'';},
    padrao:p=>{p.legumes={ativo:false,marcados:[],texto:''};}},
-  {titulo:'Bebidas',sub:'O que o Bodymate está autorizado a beber. Sai no bloco de bebidas do Word, sempre em ml.',
+  {titulo:'Bebidas',sub:'O que o Paciente/Cliente está autorizado a beber. Sai no bloco de bebidas do Word, sempre em ml.',
    render:p=>{const b=p.bebidas;
      const item=(id,rot,v)=>`<label class="cons-ck"><input type="checkbox" id="${id}" ${v?'checked':''}><span>${rot}</span></label>`;
      return `<div class="cons-grid">${item('dwqBAgua','Água',b.agua)}${item('dwqBGas','Água com gás',b.gas)}${item('dwqBCha','Chás sem açúcar',b.cha)}${item('dwqBCafe','Café',b.cafe)}${item('dwqBRefri','Refrigerante zero',b.refriZero)}${item('dwqBSuco','Suco zero (pó/diet)',b.sucoZero)}${item('dwqBIso','Isotônico (treino longo)',b.isotonico)}${item('dwqBEner','Energético zero',b.energetico)}</div>
@@ -5426,7 +5446,7 @@ function textoRestricoes(ex,prefs){
   const us=ex.rotsUser.filter(r=>!ex.rotsAuto.includes(r)&&!ex.rotsModelo.includes(r));
   if(us.length)L.push('Não incluído porque você não come ou não gosta: '+us.join(', ')+'.');
   if(ex.reducoes.length)L.push('Quantidade reduzida a pedido: '+(ex.reducoesRot||ex.reducoes).join(', ')+'.');
-  if(ex.semGluten&&!ex.rotsAuto.includes('Glúten'))L.push('Alimentos sem glúten priorizados.');
+  if(ex.semGluten&&!ex.rotsAuto.includes('Glúten'))L.push('Trigo e derivados com glúten (pão, torrada, macarrão e aveia tradicionais) substituídos por versões sem glúten.');
   if(ex.leiteForcado==='semlactose')L.push('Lactose: o leite comum foi trocado por leite sem lactose.');
   else if(ex.leiteForcado==='vegetal')L.push('Proteína do leite: sem leite e derivados; usamos bebida vegetal.');
   else if(prefs&&prefs.leite&&!prefs.leite.usa)L.push('Leite: não incluído neste plano.');
@@ -5618,7 +5638,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[9360],borders:{top:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},bottom:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},left:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'},right:{style:BorderStyle.SINGLE,size:16,color:'C99A1E'}},rows:[
               new TableRow({children:[new TableCell({shading:{fill:'FDF3D8',type:ShadingType.CLEAR},margins:{top:160,bottom:160,left:180,right:180},children:[
                 new Paragraph({children:[new TextRun({text:'🤖 SUBSTITUIÇÕES INTELIGENTES',bold:true,color:'9A7B0A',size:28})],spacing:{after:60}}),
-                new Paragraph({children:[new TextRun({text:'Geradas por IA a partir do que foi escolhido nesta dieta — revise antes de repassar ao Bodymate.',size:18,color:'8A7F5C',italics:true})],spacing:{after:160}}),
+                new Paragraph({children:[new TextRun({text:'Geradas por IA a partir do que foi escolhido nesta dieta — revise antes de repassar ao Paciente/Cliente.',size:18,color:'8A7F5C',italics:true})],spacing:{after:160}}),
                 new Table({width:{size:9000,type:WidthType.DXA},columnWidths:[2250,6750],rows:[new TableRow({children:[hCellDest('Item do cardápio',2250),hCellDest('Pode trocar por',6750)]}),...rowsIA]}),
               ]})]})
             ]}),
@@ -5757,7 +5777,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ...(d.alergiasObs?[new Paragraph({children:[new TextRun({text:'Alergias/observações: ',bold:true,size:18,color:'161616'}),new TextRun({text:d.alergiasObs,size:18})],spacing:{after:80}})]:[]),
           ...(d.obsGerais?[new Paragraph({children:[new TextRun({text:d.obsGerais,size:18})],spacing:{after:80}})]:[])]:[]),
         new Paragraph({spacing:{after:120}}),
-        new Paragraph({children:[new TextRun({text:'⚠️ Este relatório é uma ferramenta de triagem e apoio à prescrição. Referências: Diretrizes Nutricionais Brasil 2026 · Guia Alimentar MS 2014 · ABESO · Consenso Brasileiro de Sarcopenia (EWGSOP2) · SBC/SBD · OMS.',size:15,color:'7F8C8D'})],spacing:{after:200}}),
+        new Paragraph({children:[new TextRun({text:'⚠️ Este relatório é uma ferramenta de triagem e apoio à prescrição. Referências: Diretrizes Nutricionais Brasil 2026 · Guia Alimentar MS 2014 · ABESO · Consenso Brasileiro de Sarcopenia (EWGSOP2) · SBC/SBD · OMS. Este plano compreende uma estratégia de 90 dias, podendo ser reavaliado a qualquer momento conforme a evolução do Paciente/Cliente.',size:15,color:'7F8C8D'})],spacing:{after:200}}),
         HR());
     }
 
@@ -5773,7 +5793,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ...(RN_LOGO_B64?[new Paragraph({children:[new (window.docx.ImageRun)({type:'png',data:b64ToUint8(RN_LOGO_B64),transformation:{width:220,height:105}})],alignment:AlignmentType.CENTER,spacing:{after:400}})]:[]),
           new Paragraph({children:[new TextRun({text:'PLANNER',bold:true,size:64,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:120}}),
           new Paragraph({children:[new TextRun({text:'NUTRIÇÃO - SUPLEMENTAÇÃO - FÁRMACOS - ERGOGÊNICOS',size:20,color:'8A7F5C'})],alignment:AlignmentType.CENTER,spacing:{after:800}}),
-          new Paragraph({children:[new TextRun({text:(d.nome||'Bodymate').toUpperCase(),bold:true,size:32,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:80}}),
+          new Paragraph({children:[new TextRun({text:(d.nome||'Paciente/Cliente').toUpperCase(),bold:true,size:32,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:80}}),
           ...(d.objetivo?[new Paragraph({children:[new TextRun({text:(d.objetivo==='Outro (especificar)'?(d.objOutroTxt||'Outro'):d.objetivo),size:20,color:'8A7F5C'})],alignment:AlignmentType.CENTER,spacing:{after:100}})]:[]),
           new Paragraph({children:[new TextRun({text:now,size:22,color:'7F8C8D'})],alignment:AlignmentType.CENTER,spacing:{after:1400}}),
           new Paragraph({children:[new TextRun({text:PROFISSIONAL.nome||'',size:18,color:'7F8C8D'})],alignment:AlignmentType.CENTER}),
@@ -5785,7 +5805,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           HR(),
           new Paragraph({children:[new TextRun({text:'DADOS DO BODYMATE',bold:true,size:20,color:'8A7F5C'})],spacing:{before:160,after:80}}),
           new Table({width:{size:9366,type:WidthType.DXA},columnWidths:[2340,2343,2341,2342],rows:[
-            new TableRow({children:[hCell('Bodymate'),hCell('Data'),hCell('Sexo / Idade'),hCell('IMC / Peso')]}),
+            new TableRow({children:[hCell('Paciente/Cliente'),hCell('Data'),hCell('Sexo / Idade'),hCell('IMC / Peso')]}),
             new TableRow({children:[
               dCell(d.nome||'—','FDFBF3'),
               dCell(now,'FDFBF3'),
@@ -5931,7 +5951,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     mostrarProgressoWord(97,'Preparando o download...');
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url;a.download=`PlanoAlimentar_${(d.nome||'Bodymate').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
+    a.href=url;a.download=`PlanoAlimentar_${(d.nome||'Paciente').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     mostrarProgressoWord(100,'Pronto!');
     setTimeout(esconderProgressoWord,500);
@@ -6318,7 +6338,7 @@ function buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj){
 }
 function buildEAATable(d){
   const rows=[];
-  if(d.eaaDetalhe)rows.push({item:d.eaaDetalhe,dose:'',fracionamento:'',obs:(d.continuaUso?'Continuará usando: '+(d.continuaUso==='S'?'Sim':'Não')+'. ':'')+(d.reavaliarProtocolo==='S'?'Bodymate sinalizou abertura para reavaliação do protocolo.':'')});
+  if(d.eaaDetalhe)rows.push({item:d.eaaDetalhe,dose:'',fracionamento:'',obs:(d.continuaUso?'Continuará usando: '+(d.continuaUso==='S'?'Sim':'Não')+'. ':'')+(d.reavaliarProtocolo==='S'?'Paciente/Cliente sinalizou abertura para reavaliação do protocolo.':'')});
   else rows.push({item:'',dose:'',fracionamento:'',obs:''});
   return rows;
 }
