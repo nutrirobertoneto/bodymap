@@ -588,6 +588,31 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
           <label class="ro" onclick="clickRadio(this,'usaEAA','N');toggleEAA(false)"><input type="radio" name="usaEAA" value="N">Não</label>
         </div>
       </div>
+      <div class="fg" style="margin-top:14px">
+        <label class="fl">Tem descontrole alimentar, com episódios de exagero na comida?</label>
+        <div class="rg" id="rg_descontrole">
+          <label class="ro" onclick="clickRadio(this,'descontrole','S');toggleDescontrole(true)"><input type="radio" name="descontrole" value="S">Sim</label>
+          <label class="ro" onclick="clickRadio(this,'descontrole','N');toggleDescontrole(false)"><input type="radio" name="descontrole" value="N">Não</label>
+        </div>
+      </div>
+      <div id="descontroleDet" style="display:none;margin-top:10px">
+        <div class="fg"><label class="fl">Frequência</label><div class="rg" id="rg_descontroleFreq">
+          <label class="ro" onclick="clickRadio(this,'descontroleFreq','frequente')"><input type="radio" name="descontroleFreq" value="frequente">Frequente</label>
+          <label class="ro" onclick="clickRadio(this,'descontroleFreq','raro')"><input type="radio" name="descontroleFreq" value="raro">Poucas vezes / quase nunca</label>
+        </div></div>
+        <div class="fg" style="margin-top:10px"><label class="fl">O exagero é mais em quê?</label><div class="rg" id="rg_descontroleTipo">
+          <label class="ro" onclick="clickRadio(this,'descontroleTipo','salgado')"><input type="radio" name="descontroleTipo" value="salgado">Salgado</label>
+          <label class="ro" onclick="clickRadio(this,'descontroleTipo','doce')"><input type="radio" name="descontroleTipo" value="doce">Doce</label>
+          <label class="ro" onclick="clickRadio(this,'descontroleTipo','ambos')"><input type="radio" name="descontroleTipo" value="ambos">Ambos</label>
+        </div></div>
+        <div class="fg" style="margin-top:10px"><label class="fl">Gatilhos (marque um ou mais)</label><div class="cg" id="cg_descontroleGatilhos">
+          <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="ANSIEDADE">Ansiedade</label>
+          <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="DEPRESSAO">Depressão</label>
+          <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="NERVOSO">Nervoso extremo</label>
+          <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="RAIVA">Raiva</label>
+          <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="BURNOUT">Burnout</label>
+        </div></div>
+      </div>
       <div id="eaaDet" style="display:none;margin-top:10px"><div id="eaaListaBox" style="margin-top:10px"><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Ésteres de testosterona</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Cipionato de testosterona" onchange="autoSave()"><span>Cipionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Cipionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Enantato de testosterona" onchange="autoSave()"><span>Enantato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Enantato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Propionato de testosterona" onchange="autoSave()"><span>Propionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Propionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Undecanoato de testosterona" onchange="autoSave()"><span>Undecanoato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Undecanoato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Suspensão de testosterona" onchange="autoSave()"><span>Suspensão de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Suspensão de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Sustanon (mix de ésteres)" onchange="autoSave()"><span>Sustanon (mix de ésteres)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Sustanon (mix de ésteres)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Derivados de DHT</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Masteron (Drostanolona)" onchange="autoSave()"><span>Masteron (Drostanolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Masteron (Drostanolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Winstrol (Stanozolol)" onchange="autoSave()"><span>Winstrol (Stanozolol)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Winstrol (Stanozolol)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Primobolan (Metenolona)" onchange="autoSave()"><span>Primobolan (Metenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Primobolan (Metenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anavar (Oxandrolona)" onchange="autoSave()"><span>Anavar (Oxandrolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anavar (Oxandrolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Proviron (Mesterolona)" onchange="autoSave()"><span>Proviron (Mesterolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Proviron (Mesterolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">19-nor (Nandrolonas/Trembolonas)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Deca-Durabolin (Nandrolona Decanoato)" onchange="autoSave()"><span>Deca-Durabolin (Nandrolona Decanoato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Deca-Durabolin (Nandrolona Decanoato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="NPP (Nandrolona Fenilpropionato)" onchange="autoSave()"><span>NPP (Nandrolona Fenilpropionato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="NPP (Nandrolona Fenilpropionato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Acetato" onchange="autoSave()"><span>Trembolona Acetato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Acetato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Enantato" onchange="autoSave()"><span>Trembolona Enantato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Enantato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">17-alfa-alquilados (orais)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Dianabol (Metandrostenolona)" onchange="autoSave()"><span>Dianabol (Metandrostenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Dianabol (Metandrostenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anadrol (Oxymetholona)" onchange="autoSave()"><span>Anadrol (Oxymetholona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anadrol (Oxymetholona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Halotestin (Fluoximesterona)" onchange="autoSave()"><span>Halotestin (Fluoximesterona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Halotestin (Fluoximesterona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Adjuntos / outros</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="hCG" onchange="autoSave()"><span>hCG</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="hCG" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Hormônio do Crescimento (GH)" onchange="autoSave()"><span>Hormônio do Crescimento (GH)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Hormônio do Crescimento (GH)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Insulina (uso para performance)" onchange="autoSave()"><span>Insulina (uso para performance)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Insulina (uso para performance)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Clembuterol" onchange="autoSave()"><span>Clembuterol</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Clembuterol" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="T3 (Liotironina)" onchange="autoSave()"><span>T3 (Liotironina)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="T3 (Liotironina)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div></div>
         <div class="fg" style="margin-top:10px">
           <label class="fl">Outros / observações (fora da lista)</label>
@@ -757,8 +782,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <h2 style="font-size:18px;margin-bottom:10px">💉 Paciente/Cliente em uso de EAA</h2>
     <p style="font-size:13px;color:var(--mu);margin-bottom:18px">Nesta atualização, o que vai acontecer com o protocolo?</p>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn bp" onclick="tpcEscolher(\'tpc\')" style="padding:12px">Vai fazer TPC (Terapia Pós-Ciclo) agora</button>
-      <button class="btn bs" onclick="tpcEscolher(\'evoluir\')" style="padding:12px">Apenas evoluir (mantém o protocolo atual)</button>
+      <button class="btn bp" onclick="tpcEscolher('tpc')" style="padding:12px">Vai fazer TPC (Terapia Pós-Ciclo) agora</button>
+      <button class="btn bs" onclick="tpcEscolher('evoluir')" style="padding:12px">Apenas evoluir (mantém o protocolo atual)</button>
     </div>
   </div>
 </div>
@@ -783,6 +808,31 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div id="dwAjusteInfo" style="display:none;margin-bottom:16px;padding:12px 14px;background:var(--gp);border-radius:10px;border:1px solid var(--br)"></div>
       <div class="cons-grid" id="dwModeloGrid" style="max-height:300px;overflow-y:auto;padding-right:4px"></div>
       <div id="dwModeloDesc" style="font-size:12px;color:var(--mu);margin-top:8px;padding:8px 10px;background:var(--gp);border-radius:8px;min-height:20px"></div>
+      <div id="dwKcalBox" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">
+        <label class="fl">Estratégia calórica desta dieta</label>
+        <div class="cons-grid" id="dwKcalEstr"></div>
+        <div id="dwKcalIntBox" style="margin-top:10px"><label class="fl">Intensidade</label><div class="cons-grid" id="dwKcalInt"></div></div>
+        <div id="dwKcalPreview" style="font-size:12px;color:var(--mu);margin-top:8px;padding:8px 10px;background:var(--gp);border-radius:8px"></div>
+      </div>
+      <div id="dwDcaBox" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">
+        <label class="fl">Dia Calórico Atípico — refeições livres a liberar</label>
+        <div id="dwDcaResumo" style="font-size:12px;color:var(--mu);margin-bottom:10px;padding:8px 10px;background:var(--gp);border-radius:8px"></div>
+        <div class="cons-grid" id="dwDcaOpcoes"></div>
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">
+        <label class="fl">Horários das refeições</label>
+        <div class="cons-grid">
+          <label class="cons-ck"><input type="radio" name="dwqHorario" value="sugerir" checked><span>Sugerir horários (como hoje)</span></label>
+          <label class="cons-ck"><input type="radio" name="dwqHorario" value="livre"><span>Sem horário fixo — o Paciente/Cliente organiza dentro da rotina dele</span></label>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--br)">
+        <label class="fl">Refeição Pós-Treino</label>
+        <div class="cons-grid">
+          <label class="cons-ck"><input type="radio" name="dwqPosTreino" value="N" checked><span>Não incluir</span></label>
+          <label class="cons-ck"><input type="radio" name="dwqPosTreino" value="S"><span>Incluir como refeição própria no planner</span></label>
+        </div>
+      </div>
       <div id="dwVegBox" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--br);border-radius:8px">
         <div style="font-size:12.5px;font-weight:600;margin-bottom:6px">Subtipo vegetariano</div>
         <label class="cons-ck"><input type="checkbox" id="dwVegOvo" checked><span>Permite ovo</span></label>
@@ -920,6 +970,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div id="dietAlertaConflito" style="display:none"></div>
 
     <div class="div" style="margin:18px 0"></div>
+    <div id="dietDescontroleAlerta" style="display:none"></div>
     <div id="dietSupSection">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <h3 style="font-size:13.5px;font-weight:700;color:var(--gd)">Suplementação, Vitaminas e Minerais</h3>
@@ -1140,6 +1191,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       </div>
       <div class="div"></div>
       <div class="fg"><label class="fl">Observações gerais</label><textarea id="obsGerais" class="fc" style="min-height:80px" placeholder="Informações adicionais relevantes..." oninput="autoSave()"></textarea></div>
+      <div class="fg" style="margin-top:12px"><label class="fl">📝 Notas de atendimento (rascunho da consulta)</label><textarea id="notasAtendimento" class="fc" style="min-height:100px" placeholder="Anotações livres da consulta — vai mudando enquanto você pensa, sem virar dado clínico formal. Só fica salvo com este Paciente/Cliente." oninput="autoSave()"></textarea></div>
     </div>
   </div>
   <div class="nav-btns"><button class="btn bs" onclick="goTab(5)">← Voltar</button><button class="btn bp" onclick="goTab(7)">📷 Fotos e Exames</button></div>
@@ -1841,19 +1893,25 @@ async function analisarTodosExames(consideracoes){
   const sx=document.querySelector('input[name="sexo"]:checked')?.value;
   const sexo=(sx==='M'||sx==='F')?sx:'';
   const idade=document.getElementById('idade').value||'';
-  const resultados=[];
+  const resultados=[],falhas=[];
   for(const f of files){
-    let arquivoBase64,mediaType;
-    if(f.type==='application/pdf'){arquivoBase64=f.data.split(',')[1];mediaType='application/pdf';}
-    else if(f.type&&f.type.startsWith('image/')){arquivoBase64=await reduzirImagemIA(f.data,2000,0.85);mediaType='image/jpeg';}
-    else throw new Error('Formato não suportado em "'+f.name+'". Use PDF ou imagem.');
-    if(arquivoBase64.length>5.6*1024*1024)throw new Error('Arquivo "'+f.name+'" grande demais para a análise (limite de cerca de 4 MB). Comprima ou envie só as páginas principais.');
-    const body={arquivoBase64,mediaType,sexo,idade};
-    if(consideracoes){body.consideracoes=consideracoes;if(exameIA)body.anterior={marcadores:exameIA.marcadores,resumo:exameIA.resumo};}
-    const resp=await fetch('/.netlify/functions/analisar-exame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    let r;try{r=await resp.json();}catch(e){throw new Error('Resposta inválida do servidor ao analisar "'+f.name+'". Tente novamente.');}
-    if(!resp.ok||!r.exame)throw new Error(r.erro||('Não foi possível analisar "'+f.name+'"'));
-    resultados.push({arquivo:f.name,exame:r.exame});
+    try{
+      let arquivoBase64,mediaType;
+      if(f.type==='application/pdf'){arquivoBase64=f.data.split(',')[1];mediaType='application/pdf';}
+      else if(f.type&&f.type.startsWith('image/')){arquivoBase64=await reduzirImagemIA(f.data,2000,0.85);mediaType='image/jpeg';}
+      else{falhas.push({arquivo:f.name,motivo:'formato não suportado (use PDF ou imagem)'});continue;}
+      if(arquivoBase64.length>5.6*1024*1024){falhas.push({arquivo:f.name,motivo:'arquivo grande demais para a análise (limite de cerca de 4 MB)'});continue;}
+      const body={arquivoBase64,mediaType,sexo,idade};
+      if(consideracoes){body.consideracoes=consideracoes;if(exameIA)body.anterior={marcadores:exameIA.marcadores,resumo:exameIA.resumo};}
+      const resp=await fetch('/.netlify/functions/analisar-exame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      let r;try{r=await resp.json();}catch(e){falhas.push({arquivo:f.name,motivo:'resposta inválida do servidor, tente novamente'});continue;}
+      if(!resp.ok||!r.exame){falhas.push({arquivo:f.name,motivo:r.erro||'não encontrei resultados de exame laboratorial neste arquivo (pode ser um exame de imagem, como raio-X, mamografia ou ultrassom)'});continue;}
+      resultados.push({arquivo:f.name,exame:r.exame});
+    }catch(e){falhas.push({arquivo:f.name,motivo:e.message||'erro inesperado ao analisar este arquivo'});}
+  }
+  if(!resultados.length){
+    const detalhe=falhas.map(f=>'"'+f.arquivo+'": '+f.motivo).join(' · ');
+    throw new Error('Não consegui ler nenhum dos arquivos enviados. '+(detalhe?detalhe:''));
   }
   const multi=resultados.length>1;
   const marcadores=[];
@@ -1865,7 +1923,7 @@ async function analisarTodosExames(consideracoes){
     :(resultados[0].exame.resumo||'');
   const laboratorio=resultados.map(r=>r.exame.laboratorio).find(Boolean)||'';
   const coleta=resultados.map(r=>r.exame.coleta).find(Boolean)||'';
-  return{marcadores,resumo,laboratorio,coleta,arquivo:resultados.map(r=>r.arquivo).join(', ')};
+  return{marcadores,resumo,laboratorio,coleta,arquivo:resultados.map(r=>r.arquivo).join(', '),falhas};
 }
 async function reanalisarExameIA(){
   if(!iaPermitida())return;
@@ -1900,6 +1958,9 @@ async function analisarExameIA(){
     const merged=await analisarTodosExames(null);
     exameIA={...merged,aprovado:false,analisadoEm:new Date().toISOString()};
     renderExameIA();autoSave();
+    if(merged.falhas&&merged.falhas.length){
+      showToast('⚠️ '+merged.falhas.length+' arquivo(s) não entraram na leitura: '+merged.falhas.map(f=>f.arquivo+' ('+f.motivo+')').join(' · '),'#e67e22');
+    }
   }catch(e){
     box.textContent='❌ '+e.message;
   }finally{btn.disabled=false;}
@@ -3293,6 +3354,7 @@ function refreshProtocoloDet(){
 }
 function toggleSup(show){document.getElementById('supDet').style.display=show?'block':'none';refreshProtocoloDet();}
 function toggleEAA(show){document.getElementById('eaaDet').style.display=show?'block':'none';refreshProtocoloDet();}
+function toggleDescontrole(show){document.getElementById('descontroleDet').style.display=show?'block':'none';}
 
 // ── CAF (Coeficiente de Atividade Física) ──
 function lerp(a,b,t){return a+(b-a)*t;}
@@ -3778,8 +3840,9 @@ try{localStorage.removeItem(DK);}catch(e){}
 
 function collectData(){
   const d={};
-  ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
-  ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'].forEach(n=>{const e=document.querySelector(`input[name="${n}"]:checked`);d[n]=e?e.value:'';});
+  ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno','notasAtendimento'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
+  ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{const e=document.querySelector(`input[name="${n}"]:checked`);d[n]=e?e.value:'';});
+  d.descontroleGatilhos=Array.from(document.querySelectorAll('#cg_descontroleGatilhos input:checked')).map(i=>i.value);
   ['doencas','alergias','histFam','queixasGI'].forEach(g=>{d[g]=Array.from(document.querySelectorAll(`#cg_${g} input:checked`)).map(i=>i.value);});
   d.tipoAf=Array.from(document.querySelectorAll('#afDet input[type="checkbox"]:checked')).map(i=>i.value);
   d.agua=document.getElementById('aguaS').value;
@@ -3820,6 +3883,13 @@ async function finalizar(){
   const editId=sessionStorage.getItem('bm_editId');
   let idx=editId?pts.findIndex(p=>String(p.id)===editId):-1;
   if(idx<0)idx=pts.findIndex(p=>chavePaciente(p)===chavePaciente(d)&&p.dataPreench===d.dataPreench);
+  if(idx<0&&!editId&&d.dataNasc){
+    const mesmoNasc=pts.find(p=>p.dataNasc&&p.dataNasc===d.dataNasc&&chavePaciente(p)!==chavePaciente(d));
+    if(mesmoNasc&&!confirm('Já existe um Paciente/Cliente com a mesma data de nascimento, cadastrado como "'+mesmoNasc.nome+'". Você digitou o nome como "'+d.nome+'" agora — parecem a mesma pessoa, com o nome escrito diferente.\n\nOK = são pessoas diferentes mesmo, salvar como um novo Paciente/Cliente.\nCancelar = é a mesma pessoa — vou corrigir o nome antes de salvar.')){
+      goTab(0);
+      return false;
+    }
+  }
   const chaveAntiga=idx>-1?chavePaciente(pts[idx]):null;
   const entry={...d,id:idx>-1?pts[idx].id:Date.now()};
   if(idx>-1)pts[idx]=entry;else pts.push(entry);
@@ -3839,8 +3909,8 @@ function loadData(dov){
   const raw=dov?null:sessionStorage.getItem(DK);if(!dov&&!raw)return;
   try{
     const d=dov||JSON.parse(raw);
-    ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
-    ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'].forEach(n=>{
+    ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno','notasAtendimento'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
+    ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{
       if(d[n]){
         document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{
           r.checked=(r.value===d[n]);
@@ -3853,9 +3923,10 @@ function loadData(dov){
     if(d.usaSuplemento==='S')toggleSup(true);
     if(d.usaEAA==='S')toggleEAA(true);
     if(d.usaAnticoncepcional==='S')toggleAnticon(true);
+    if(d.descontrole==='S')toggleDescontrole(true);
     refreshProtocoloDet();
     if(d.taba==='S')document.getElementById('cqtd').style.display='block';
-    ['doencas','alergias','histFam','queixasGI'].forEach(g=>{(d[g]||[]).forEach(v=>{const inp=document.querySelector(`#cg_${g} input[value="${v}"]`);if(inp){inp.checked=true;inp.closest('.co').classList.add('selected');}});});
+    ['doencas','alergias','histFam','queixasGI','descontroleGatilhos'].forEach(g=>{(d[g]||[]).forEach(v=>{const inp=document.querySelector(`#cg_${g} input[value="${v}"]`);if(inp){inp.checked=true;inp.closest('.co').classList.add('selected');}});});
     atualizarMedPorDoenca();atualizarAnticonVisibilidade();atualizarQuadrilVisibilidade();renderMedidasEssenciaisSvg();
     (d.medLista||[]).forEach(m=>{
       const cb=document.querySelector('.medChk[data-cat="'+m.cat+'"][value="'+CSS.escape(m.item)+'"]');
@@ -4091,6 +4162,17 @@ function buildRecsPlain(d,imc,dn){
   if(d.praticaAf==='N')add('💪 Sedentarismo: ','inicie com 150 min/semana de atividade moderada (OMS). Comece com caminhadas de 30 min, 5x/semana.');
   if(d.sonoQual==='P'||d.sonoQual==='R')add('🌙 Qualidade do sono: ','sono ruim aumenta resistência à insulina, eleva grelina (fome) e reduz leptina (saciedade), favorecendo ganho de peso e desejo por ultraprocessados. Mantenha horário fixo de dormir/acordar, evite cafeína após 14h e telas pelo menos 1h antes de dormir.');
   if(d.alcool==='D'||d.alcool==='S')add('🍷 Álcool: ','consumo regular aumenta risco de doenças hepáticas, cardiovasculares e cânceres. Reduza ou elimine o consumo.');
+if(d.descontrole==='S'){
+    const GATILHO_LABEL={ANSIEDADE:'ansiedade',DEPRESSAO:'depressão',NERVOSO:'nervoso extremo',RAIVA:'raiva',BURNOUT:'burnout'};
+    const gat=(d.descontroleGatilhos||[]).map(g=>GATILHO_LABEL[g]||g).join(', ');
+    const tipoTxt={salgado:'salgados',doce:'doces',ambos:'salgados e doces'}[d.descontroleTipo]||'alimentos';
+    const usaGLP1=/retatrutid|tirzepatid|semaglutid|liraglutid/i.test((d.medicamentos||'')+JSON.stringify(d.medLista||[]));
+    add('🧠 Descontrole alimentar: ','relato de episódios de exagero com '+tipoTxt+(d.descontroleFreq==='frequente'?', de forma frequente':', com pouca frequência')+(gat?' — gatilhos relatados: '+gat+'.':'.')+' Considerar apoio multidisciplinar (psicológico/psiquiátrico) em conjunto com o acompanhamento nutricional.'+(usaGLP1?' Atenção redobrada por estar em uso de agonista GLP-1, que já atua sobre o apetite e pode se somar a esse quadro.':''));
+  }
+  const giList=_arr(d.queixasGI);
+  if(giList.includes('CONSTI'))add('🌾 Constipação intestinal: ','aumente a ingestão de fibras (frutas com casca/bagaço, hortaliças cruas, aveia, linhaça, chia) distribuídas ao longo do dia, junto com mais água. A estratégia de fibra deste plano foi ajustada por causa dessa queixa.');
+  if(giList.includes('REFLUXO'))add('🔥 Refluxo/Azia: ','evite frituras, café, álcool, hortelã/menta e deitar logo após comer; prefira refeições menores e mais frequentes.');
+  if(giList.includes('DIARREIA'))add('💧 Diarreia recorrente: ','avalie tolerância a lactose e FODMAPs, modere fibra insolúvel em excesso numa só refeição e priorize hidratação com eletrólitos.');
   if(!rs.length)add('✅ Sem alertas específicos: ','mantenha hábitos atuais e ajuste conforme evolução clínica.');
   return rs;
 }
@@ -4104,6 +4186,23 @@ function buildExamePlanoAcao(d){
 }
 
 // ── Calcula a lista de fatores de risco (mesma lógica do relatório em tela), em texto puro ──
+const MED_CAT_LABEL={HAS:'Hipertensão',DM1:'Diabetes tipo 1',DM2:'Diabetes tipo 2',DISLIPI:'Dislipidemia',OSTEO:'Osteoporose',ARTRI:'Artrite/Artrose',ANEMIA:'Anemia',RENAL:'Doença renal',CARD:'Cardiopatia',TI:'Tireoide',ANTICON:'Anticoncepcional',SUP:'Suplemento',EAA:'EAA'};
+function textoMedicamentos(d){
+  const lista=Array.isArray(d.medLista)?d.medLista:[];
+  const linhas=lista.filter(m=>m&&m.item).map(m=>{
+    const cat=MED_CAT_LABEL[m.cat]||m.cat||'';
+    const dose=(m.dose||'').trim();
+    return m.item+(dose?' — '+dose:'')+(cat?' ('+cat+')':'');
+  });
+  const livres=String(d.medicamentos||'').split(/\n+/).map(t=>t.trim()).filter(Boolean);
+  return linhas.concat(livres);
+}
+const DOENCAS_LABEL={HAS:'❤️ Hipertensão',DM2:'🩸 Diabetes tipo 2',DM1:'🩸 Diabetes tipo 1',DISLIPI:'🧪 Dislipidemia',OBE:'⚖️ Obesidade',CARD:'💓 Doença cardíaca',RENAL:'🫘 Doença renal',HEPAT:'🫁 Doença hepática',TI:'🦋 Tireoide',ARTRI:'🦴 Artrite/Artrose',OSTEO:'🦴 Osteoporose',CANCER:'🎗 Câncer',ANEMIA:'🩸 Anemia'};
+const HISTFAM_LABEL={HAS:'Hipertensão',DM:'Diabetes',CARD:'Doenças cardíacas',OBE:'Obesidade',CANCER:'Câncer',DISLIPI:'Dislipidemia'};
+const GI_LABEL={CONSTI:'Constipação',DIARREIA:'Diarreia',REFLUXO:'Refluxo/Azia',GASES:'Gases/Distensão',NAUSEA:'Náusea',VOMITO:'Vômito',HEMOR:'Hemorroida'};
+function textoDoencas(d){return _arr(d.doencas).filter(c=>c!=='NENHUMA').map(c=>DOENCAS_LABEL[c]||c);}
+function textoHistFam(d){return _arr(d.histFam).filter(c=>c!=='NENHUMA').map(c=>HISTFAM_LABEL[c]||c);}
+function textoQueixasGI(d){return _arr(d.queixasGI).filter(c=>c!=='NENHUMA_GI').map(c=>GI_LABEL[c]||c);}
 function buildRisksPlain(d){
   const imc=d.imcVal?parseFloat(d.imcVal):null;
   const dn=_arr(d.doencas);
@@ -4147,6 +4246,8 @@ function iniciarGeracaoDieta(dataOverride){
     ajusteInfo};
   dietWizRenderModelos();
   renderDwAjusteInfo();
+  dietWizRenderKcalEstrategia();
+  dietWizRenderDca();
   document.getElementById('dwStepQ').style.display='none';
   document.getElementById('dwStep0').style.display='block';
   document.getElementById('dwStep1').style.display='none';
@@ -4176,6 +4277,64 @@ function distKeyFromRefeicao(nome){
   if(/ceia/i.test(nome))return'ceia';
   return'almoco';
 }
+const KCAL_ESTRATEGIAS=[{v:'deficit',rot:'🔻 Déficit calórico (emagrecimento)'},{v:'manutencao',rot:'⚖️ Manutenção (normocalórico)'},{v:'superavit',rot:'🔺 Superávit calórico (ganho de massa)'}];
+const KCAL_INTENSIDADES={
+  deficit:[{v:'leve',rot:'Leve (−15%)',pct:-0.15},{v:'moderado',rot:'Moderado (−25%)',pct:-0.25},{v:'agressivo',rot:'Agressivo (−30%)',pct:-0.30}],
+  superavit:[{v:'leve',rot:'Leve (+10%)',pct:0.10},{v:'moderado',rot:'Moderado (+15%)',pct:0.15}],
+  manutencao:[{v:'_',rot:'0% (mantém o gasto estimado)',pct:0}]
+};
+function _kcalEstrategiaPadrao(obj){
+  const o=(obj||'').toLowerCase();
+  if(o.includes('perda')||o.includes('emagre'))return{estrategia:'deficit',intensidade:'moderado'};
+  if(o.includes('ganho')||o.includes('hipertrofia')||o.includes('massa'))return{estrategia:'superavit',intensidade:'leve'};
+  return{estrategia:'manutencao',intensidade:'_'};
+}
+function dietWizRenderKcalEstrategia(){
+  const d=dietWizCtx.d;
+  const tmbCalc=calcTMB(d);
+  const get=Math.round(tmbCalc.bmr*getCAFValue(d));
+  dietWizCtx._get=get;
+  const padrao=_kcalEstrategiaPadrao(d.objetivo);
+  const box=document.getElementById('dwKcalEstr');
+  box.innerHTML=KCAL_ESTRATEGIAS.map(e=>`<label class="cons-ck"><input type="radio" name="dwqEstr" value="${e.v}" ${e.v===padrao.estrategia?'checked':''}><span>${e.rot}</span></label>`).join('');
+  box.querySelectorAll('input[name="dwqEstr"]').forEach(r=>r.addEventListener('change',()=>dietWizAtualizarIntensidade(padrao.intensidade)));
+  dietWizAtualizarIntensidade(padrao.intensidade);
+}
+function dietWizAtualizarIntensidade(intensidadePadrao){
+  const sel=document.querySelector('input[name="dwqEstr"]:checked');
+  const estr=sel?sel.value:'manutencao';
+  const lista=KCAL_INTENSIDADES[estr]||KCAL_INTENSIDADES.manutencao;
+  const box=document.getElementById('dwKcalInt'),wrap=document.getElementById('dwKcalIntBox');
+  wrap.style.display=estr==='manutencao'?'none':'block';
+  box.innerHTML=lista.map((it,i)=>`<label class="cons-ck"><input type="radio" name="dwqInt" value="${it.v}" ${(it.v===intensidadePadrao)||(intensidadePadrao==null&&i===0)?'checked':''}><span>${it.rot}</span></label>`).join('');
+  box.querySelectorAll('input[name="dwqInt"]').forEach(r=>r.addEventListener('change',dietWizAtualizarPreviewKcal));
+  dietWizAtualizarPreviewKcal();
+}
+function dietWizAtualizarPreviewKcal(){
+  const get=dietWizCtx._get||0;
+  const estrSel=document.querySelector('input[name="dwqEstr"]:checked');
+  const estr=estrSel?estrSel.value:'manutencao';
+  const intSel=document.querySelector('input[name="dwqInt"]:checked');
+  const lista=KCAL_INTENSIDADES[estr]||KCAL_INTENSIDADES.manutencao;
+  const it=lista.find(x=>x.v===(intSel?intSel.value:lista[0].v))||lista[0];
+  const kcal=Math.max(1200,Math.round(get*(1+(it?it.pct:0))));
+  dietWizCtx._kcalEstrategia={estrategia:estr,intensidade:it?it.v:'_',pct:it?it.pct:0,kcal};
+  document.getElementById('dwKcalPreview').textContent='Gasto estimado: '+get+' kcal/dia → meta desta dieta: '+kcal+' kcal/dia'+(it&&it.pct?' ('+(it.pct>0?'+':'')+Math.round(it.pct*100)+'%)':'');
+}
+const DCA_OPCOES=[{v:'nenhuma',rot:'Nenhuma — sem refeição livre'},{v:'1ref',rot:'1 refeição livre/semana'},{v:'2ref',rot:'2 refeições livres/semana'},{v:'1dia',rot:'1 dia livre/semana (todas as refeições)'},{v:'outra',rot:'A definir com o Paciente/Cliente'}];
+function dietWizRenderDca(){
+  const d=dietWizCtx.d;
+  const sel=(d.dcaSel||[]).filter(f=>f&&f.name);
+  const box=document.getElementById('dwDcaBox');
+  if(!sel.length){box.style.display='none';return;}
+  box.style.display='block';
+  const t=dcaTotals(d.dcaSel);
+  const get=dietWizCtx._get||Math.round(calcTMB(d).bmr*getCAFValue(d));
+  const dif=get?Math.round((t.kcal-get)/get*100):0;
+  document.getElementById('dwDcaResumo').innerHTML='📊 Dia Calórico Atípico relatado: <b>'+Math.round(t.kcal)+' kcal</b> ('+sel.length+' item(ns)) — '+(dif>0?'cerca de '+dif+'% acima':'cerca de '+Math.abs(dif)+'% abaixo')+' do gasto estimado ('+get+' kcal). Itens: '+sel.map(f=>f.name).join(', ')+'.';
+  const op=document.getElementById('dwDcaOpcoes');
+  op.innerHTML=DCA_OPCOES.map(o=>`<label class="cons-ck"><input type="radio" name="dwqDca" value="${o.v}" ${o.v==='nenhuma'?'checked':''}><span>${o.rot}</span></label>`).join('');
+}
 function dietWizRenderModelos(){
   const grid=document.getElementById('dwModeloGrid');
   const todos=Object.assign({},MODELOS_DIETA,MODELOS_ESPECIAIS);
@@ -4198,9 +4357,17 @@ function dietWizProximo0(){
     dietWizCtx.regras={semCarne:true,semOvo:!document.getElementById('dwVegOvo').checked,semLaticinio:!document.getElementById('dwVegLat').checked};
   }
   if(dietWizCtx.modelo==='bariatrica'){fecharDietWizard();abrirBariatrica(dietWizCtx.d);return;}
-  const base=calcDietaBase(dietWizCtx.d,{modelo:dietWizCtx.modelo,regras:dietWizCtx.regras});
+  const estr=dietWizCtx._kcalEstrategia;
+  const base=calcDietaBase(dietWizCtx.d,{modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,kcal:estr?estr.kcal:undefined});
   const aj=dietWizCtx.ajusteInfo;
-  dietWizCtx.kcal=aj?aj.sugestao.kcal:base.kcal; // a meta de kcal ajustada pela evolução vale pra qualquer modelo
+  dietWizCtx.kcalEstrategiaEscolhida=estr; // guarda a escolha explícita do nutricionista pra aparecer no relatório
+  const dcaSel=document.querySelector('input[name="dwqDca"]:checked');
+  if(dcaSel){const op=DCA_OPCOES.find(o=>o.v===dcaSel.value);dietWizCtx.dcaRefeicoesLivres=op?{v:op.v,rot:op.rot}:null;}
+  const horSel=document.querySelector('input[name="dwqHorario"]:checked');
+  dietWizCtx.semHorario=!!(horSel&&horSel.value==='livre');
+  const ptSel=document.querySelector('input[name="dwqPosTreino"]:checked');
+  dietWizCtx.posTreino=!!(ptSel&&ptSel.value==='S');
+  dietWizCtx.kcal=aj?aj.sugestao.kcal:base.kcal; // sugestão por evolução (se houver) ainda prevalece; senão vale a estratégia escolhida acima
   dietWizCtx.pP=(aj&&dietWizCtx.modelo==='normal')?aj.sugestao.pP:base.pP; // proteína/gordura em g/kg só substitui no modelo padrão — os demais têm macro própria
   dietWizCtx.gP=(aj&&dietWizCtx.modelo==='normal')?aj.sugestao.gP:base.gP;
   dietWizCtx.fibG=base.fibG;
@@ -4340,14 +4507,15 @@ async function dietWizGerar(){
     showToast('⏳ A IA está montando os lanches com as suas respostas…');
     try{prefsIA=await buscarLanchesIA(ctx);}catch(e){showToast('ℹ️ A IA não respondeu agora — usei os lanches padrão. Você pode ajustar na prévia.','#e67e22');}
   }
-  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA});
+  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino});
 }
 
 // ── DIET WORD ──
 function carregarDieta(i){if(PTS[i])iniciarGeracaoDieta(PTS[i]);}
 
 let dietDataCache=null,dietPlanEdit=[],dietSupEdit=[],dietEAAEdit=[],dietFarmEdit=[],dietOv=null,dietCas=false,dietEditado=false,dietIncluirSup=true,dietIncluirEAA=false,dietIncluirFarm=false;
-function dietResumoLinha(base){const el=document.getElementById('dietResumoLinha');if(el){const ci=cafInfo(dietDataCache||{});el.textContent='Meta desta dieta: '+base.kcal+' kcal/dia · Proteínas '+base.protG+' g ('+Math.round(base.pP*100)+'%) · Carboidratos '+base.carbG+' g ('+Math.round(base.cP*100)+'%) · Gorduras '+base.fatG+' g ('+Math.round(base.gP*100)+'%) · Fibra mín. '+base.fibG+' g · CAF '+ci.v.toFixed(2).replace('.',',')+(ci.def?' (definido por você)':' (estimado pelo questionário — defina em Atividade)');}}
+const KCAL_ESTRATEGIA_ROT={deficit:'🔻 Déficit',manutencao:'⚖️ Manutenção',superavit:'🔺 Superávit'};
+function dietResumoLinha(base){const el=document.getElementById('dietResumoLinha');if(el){const ci=cafInfo(dietDataCache||{});const est=dietOv&&dietOv.estrategiaKcal;const estTxt=est?' · '+(KCAL_ESTRATEGIA_ROT[est.estrategia]||'')+(est.pct?' ('+(est.pct>0?'+':'')+Math.round(est.pct*100)+'%)':''):'';el.textContent='Meta desta dieta: '+base.kcal+' kcal/dia'+estTxt+' · Proteínas '+base.protG+' g ('+Math.round(base.pP*100)+'%) · Carboidratos '+base.carbG+' g ('+Math.round(base.cP*100)+'%) · Gorduras '+base.fatG+' g ('+Math.round(base.gP*100)+'%) · Fibra mín. '+base.fibG+' g · CAF '+ci.v.toFixed(2).replace('.',',')+(ci.def?' (definido por você)':' (estimado pelo questionário — defina em Atividade)');}}
 function dietToggleCaseiras(){
   const cb=document.getElementById('dietCaseiras');
   if(dietEditado&&!confirm('Trocar o formato refaz o cardápio e descarta as edições que você fez nas refeições. Continuar?')){cb.checked=dietCas;return;}
@@ -4402,6 +4570,9 @@ function _abrirEditorDietaInterno(dataOverride,ov){
     dietSupEdit=JSON.parse(JSON.stringify(base.SUP));
     dietEAAEdit=JSON.parse(JSON.stringify(base.EAA));
     dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
+    if(ovNovo&&ovNovo.posTreino){
+      dietPlanEdit.push({refeicao:'🏋️ Pós-Treino',horario:'Após o treino',opcoes:[''],posTreino:true});
+    }
   }
   // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
   if(restaurado&&ovNovo&&ovNovo.incluirSup!==undefined){
@@ -4422,6 +4593,18 @@ function _abrirEditorDietaInterno(dataOverride,ov){
   try{renderDietEAARows();}catch(e){console.error(e);}
   try{renderDietFarmRows();}catch(e){console.error(e);}
   try{verificarInteracoesSup();}catch(e){console.error(e);}
+  const alertaDesc=document.getElementById('dietDescontroleAlerta');
+  if(alertaDesc){
+    if(d.descontrole==='S'){
+      const GATILHO_LABEL={ANSIEDADE:'ansiedade',DEPRESSAO:'depressão',NERVOSO:'nervoso extremo',RAIVA:'raiva',BURNOUT:'burnout'};
+      const gat=(d.descontroleGatilhos||[]).map(g=>GATILHO_LABEL[g]||g).join(', ');
+      const tipoTxt={salgado:'mais pro salgado',doce:'mais pro doce',ambos:'salgado e doce'}[d.descontroleTipo]||'';
+      alertaDesc.style.display='block';
+      alertaDesc.innerHTML='<div style="padding:10px 12px;background:#FFF4E5;border:1px solid #E8B923;border-radius:8px;font-size:12px;color:var(--tx);margin-bottom:12px">💭 <b>Descontrole alimentar relatado</b> ('+(d.descontroleFreq==='frequente'?'frequente':'poucas vezes')+(tipoTxt?', '+tipoTxt:'')+(gat?', gatilhos: '+gat:'')+') — avalie se cabe alguma suplementação de suporte aqui.</div>';
+    }else{
+      alertaDesc.style.display='none';alertaDesc.innerHTML='';
+    }
+  }
   const secOn=document.getElementById('dietSupSection'),secOff=document.getElementById('dietSupOffMsg');
   if(secOn)secOn.style.display=dietIncluirSup?'block':'none';
   if(secOff)secOff.style.display=dietIncluirSup?'none':'block';
@@ -4545,6 +4728,41 @@ function popularDietFoodList(){
   const dl=document.getElementById('dietFoodList');
   if(dl&&!dl.dataset.filled){dl.innerHTML=DIET_FOODS_FLAT.map(f=>`<option value="${f}">`).join('');dl.dataset.filled='1';}
 }
+const POS_TREINO_ITENS=[
+  {nome:'Sucrilhos',gramas:40,gluten:true},
+  {nome:'Arroz inflado',gramas:40},
+  {nome:'Doce de leite',gramas:30,lactose:true},
+  {nome:'Doce de leite sem lactose',gramas:30},
+  {nome:'Bolo pullman',gramas:50,gluten:true},
+  {nome:'Pão de forma sem glúten',gramas:50},
+  {nome:'Pão de mel',gramas:40,gluten:true,lactose:true},
+  {nome:'Mel',gramas:20},
+  {nome:'Melado de cana',gramas:20},
+  {nome:'Banana com mel',gramas:120},
+  {nome:'Tapioca com doce de leite',gramas:80,lactose:true},
+  {nome:'Barrinha de cereal',gramas:25,gluten:true},
+  {nome:'Barrinha de cereal sem glúten',gramas:25},
+  {nome:'Suco de uva integral',gramas:200},
+  {nome:'Isotônico em pó',gramas:500},
+  {nome:'Batata-doce com mel',gramas:150},
+  {nome:'Arroz branco com banana e mel',gramas:150},
+  {nome:'Panqueca de banana (farinha de arroz)',gramas:120},
+  {nome:'Vitamina de banana com leite',gramas:250,lactose:true},
+  {nome:'Vitamina de banana com leite vegetal',gramas:250}
+];
+function addPosTreinoAlimento(i,j,nome,gramas){
+  const rows=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
+  if(rows.length===1&&rows[0].tipo==='item'&&!rows[0].alimento)rows.pop(); // tira a linha em branco inicial
+  rows.push({tipo:'item',alimento:nome,gramas:String(gramas),medida:''});
+  dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rows);
+  dietEditado=true;dietPesosStale=true;renderDietMealRows();
+}
+function gastoEstimadoPosTreino(d){
+  const peso=parseFloat(d&&d.peso)||0;
+  const min=parseFloat(d&&d.duracaoAf)||0;
+  if(!peso||!min)return 0;
+  return Math.round(5.0*3.5*peso/200*min);
+}
 function renderDietMealRows(){
   popularDietFoodList();
   const wrap=document.getElementById('dietMealRows');
@@ -4564,13 +4782,33 @@ function renderDietMealRows(){
         <button class="btn bs" style="padding:4px 8px;font-size:10.5px;margin-top:6px" onclick="addDietItemRow(${i},${j})">+ Adicionar alimento</button>
       </div>`;
     }).join('');
+    let posTreinoBloco='';
+    if(m.posTreino){
+      const alergiasPT=_arr(dietDataCache&&dietDataCache.alergias);
+      const temGluten=alergiasPT.includes('GLUTEN');
+      const temLactose=alergiasPT.some(a=>/LACTOSE|LEITE/.test(a));
+      const itensOk=POS_TREINO_ITENS.filter(it=>!(it.gluten&&temGluten)&&!(it.lactose&&temLactose));
+      const chips=itensOk.map(it=>`<button type="button" class="co" style="font-size:11px;padding:4px 10px" onclick="addPosTreinoAlimento(${i},0,${JSON.stringify(it.nome)},${it.gramas})">+ ${escH(it.nome)}</button>`).join('');
+      let kcalEsc=0;
+      (m.opcoes[0]?parseOpcaoStr(m.opcoes[0]):[]).forEach(r=>{if(r.tipo==='item'&&r.alimento)kcalEsc+=foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;});
+      const gasto=gastoEstimadoPosTreino(dietDataCache);
+      const estourou=gasto&&kcalEsc>gasto;
+      posTreinoBloco=`<div style="margin-top:8px;padding:10px 12px;background:var(--gp);border:1px solid var(--br);border-radius:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--gd);margin-bottom:6px">Alimentos sugeridos (clique pra incluir, depois ajuste a quantidade)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">${chips}</div>
+        <div style="font-size:11.5px;color:${estourou?'#c0392b':'var(--mu)'};margin-top:8px;font-weight:${estourou?'700':'400'}">${gasto?'🔥 Calorias escolhidas: '+Math.round(kcalEsc)+' kcal · gasto estimado do treino: ~'+gasto+' kcal'+(estourou?' — acima do estimado, revise se faz sentido':''):'⚠️ Preencha peso e "Duração por sessão" no cadastro pra calcular o teto calórico.'}</div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">⚠️ Consuma esta refeição somente nos dias em que treinar. Nos dias sem treino, pule esta refeição e siga direto para a próxima.</div>
+      </div>`;
+    }
     return `<div class="diet-row">
       <div class="diet-row-top">
         <input class="di" style="width:170px" value="${m.refeicao}" placeholder="Nome da refeição" oninput="dietPlanEdit[${i}].refeicao=this.value;dietEditado=true">
         <input class="di" style="width:110px" value="${m.horario}" placeholder="Horário" oninput="dietPlanEdit[${i}].horario=this.value;dietEditado=true">
         ${m.sobremesa==='sim'?`<span style="font-size:11.5px;color:var(--gd);font-weight:700;padding:4px 8px;background:var(--gp);border-radius:6px;border:1px solid var(--br)">🍰 Sobremesa incluída</span>`:''}
+        ${m.posTreino?`<span style="font-size:11.5px;color:var(--gd);font-weight:700;padding:4px 8px;background:var(--gp);border-radius:6px;border:1px solid var(--br)">🏋️ Pós-Treino</span>`:''}
         <button class="rf" onclick="removeMealRowDiet(${i})">✕ refeição</button>
       </div>
+      ${posTreinoBloco}
       ${ops}
       <button class="btn bs" style="padding:5px 10px;font-size:11px;margin-top:6px" onclick="addOpcaoDiet(${i})">+ opção</button>
     </div>`;
@@ -4636,9 +4874,10 @@ async function distribuirPesosPlano(silencioso){
   if(!silencioso)showToast('🤖 Lendo os alimentos digitados e estimando o que não está na base...');
   const{expandiu,falhou}=await expandirAlimentosDesconhecidos();
   const kcalTotal=(dietOv&&dietOv.kcal)||1900;
-  const somaDist=dietPlanEdit.reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0)||100;
+  const somaDist=dietPlanEdit.filter(m=>!m.posTreino).reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0)||100;
   let algumAlimento=false;
   dietPlanEdit.forEach((m,i)=>{
+    if(m.posTreino)return; // a refeição Pós-Treino fica fora do cálculo automático de kcal/macros — o nutricionista ajusta na mão
     const distKey=distKeyFromRefeicao(m.refeicao);
     const mealKcal=kcalTotal*((DIST_BASE[distKey]||20)/somaDist); // refeições removidas redistribuem o total entre as que ficaram
     m.opcoes=m.opcoes.map((o,j)=>{
@@ -4916,6 +5155,9 @@ const ALERGIA_EXCL={
 const SOBREMESA_OPCOES=['1 bombom (Sonho de Valsa ou Ouro Branco)','fruta com leite condensado (100 g de fruta + 20 g de leite condensado)','gelatina zero com calda de whey (100 g de gelatina zero + 15 g de whey diluído)','gelatina zero com 20 g de leite condensado','picolé de fruta (1 unidade)','1 suspiro','mousse de whey (120 g)','chocolate 70% (15 g)','iogurte natural com frutas vermelhas','sorvete de creme (1 bola, 60 g)'];
 const FRUTAS_CHIPS=['Abacate','Frutas vermelhas','Morango','Mirtilo (blueberry)','Amora','Banana','Maçã','Pera','Manga','Uva','Kiwi','Mamão','Melão','Melancia','Abacaxi','Laranja','Tangerina','Goiaba','Figo'];
 const NUTS_CHIPS=['Castanha de caju','Castanha-do-pará','Macadâmia','Nozes','Amêndoas','Chia','Linhaça','Gergelim'];
+const FIBRA_INSOLUVEL_CHIPS=['Farelo de trigo','Farinha de aveia','Linhaça','Feijão preto','Grão-de-bico','Couve','Brócolis'];
+const FIBRA_SOLUVEL_CHIPS=['Aveia','Chia','Psyllium','Maçã','Pera','Laranja','Ameixa seca'];
+const FIBRA_GRAMAS={'Farelo de trigo':15,'Farinha de aveia':20,'Linhaça':15,'Feijão preto':60,'Grão-de-bico':60,'Couve':50,'Brócolis':60,'Aveia':20,'Chia':15,'Psyllium':10,'Maçã':100,'Pera':100,'Laranja':120,'Ameixa seca':30};
 const LEG_LEVES=['Alface','Rúcula','Agrião','Couve','Espinafre','Repolho','Brócolis','Couve-flor','Abobrinha','Berinjela','Pepino','Tomate','Chuchu','Vagem','Pimentão','Cogumelo','Aspargos','Quiabo'];
 const LEG_AMIL=['Batata','Batata-doce','Mandioca','Inhame','Milho','Ervilha','Beterraba','Cenoura','Abóbora'];
 const LANCHE_TIPOS=['Lanche natural','Shake','Tapioca ou crepioca','Panqueca','Wrap','Mingau','Bowl de iogurte','Pré-treino','Pós-treino','Salada de frutas proteica'];
@@ -4929,6 +5171,7 @@ function prefsPadrao(d){
     semGluten:false,
     frutas:{ativo:false,marcados:[],texto:''},
     legumes:{ativo:false,marcados:[],texto:''},
+    fibras:{insoluveis:{ativo:false,marcados:[]},soluveis:{ativo:false,marcados:[]}},
     bebidas:{agua:true,gas:true,cha:true,cafe:true,refriZero:true,sucoZero:true,isotonico:false,energetico:false,alcool:'nao',adocante:'sucralose',mlDia:''},
     sobremesa:{ativo:true,marcados:[],texto:'',diferentes:false},
     interm:{modo:'padrao',manha:'',tarde:'',escritosM:'',escritosT:'',ia:true,tipos:['Lanche natural','Shake']}
@@ -4968,7 +5211,7 @@ function _defDeTexto(alvoObj){
 }
 // junta o que veio do cadastro (automático), das marcações e do texto livre
 function exclusoesAtivas(d,prefs,regras){
-  const ex={defs:[],rotsAuto:[],rotsUser:[],rotsModelo:[],reducoes:[],reducoesRot:[],leiteForcado:null,semGluten:!!(prefs&&prefs.semGluten),laticinioProibido:false,semCarne:false,textoOnly:[]};
+  const ex={defs:[],rotsAuto:[],rotsUser:[],rotsModelo:[],rotsQFA:[],reducoes:[],reducoesRot:[],leiteForcado:null,semGluten:!!(prefs&&prefs.semGluten),laticinioProibido:false,semCarne:false,textoOnly:[]};
   const add=(def,auto)=>{if(!def||ex.defs.some(x=>x.k===def.k))return;ex.defs.push(def);(auto?ex.rotsAuto:ex.rotsUser).push(def.rot);if(def.txt)ex.textoOnly.push(def.rot);};
   _arr(d&&d.alergias).forEach(a=>{
     const e=ALERGIA_EXCL[a];if(!e)return;
@@ -5072,7 +5315,7 @@ function aplicarExclusoes(plan,ex){
 const LEITE_NOME={integral:'leite integral',semi:'leite semidesnatado',desnatado:'leite desnatado',vegetal:'leite de soja',aveia:'leite de aveia',semlactose:'leite sem lactose'};
 function nomeLeite(prefs,ex){
   if(ex.laticinioProibido){const soja=((ex.defs||[]).some(d=>d.k==='al_SOJA'));return soja?'leite de aveia':'leite de soja';}
-  if(ex.leiteForcado==='semlactose')return 'leite sem lactose';
+  if(ex.leiteForcado==='semlactose')return null; // não sugerir leite sem lactose — prioriza café/chá puro e bebidas zero
   if(!prefs||!prefs.leite||!prefs.leite.usa)return null;
   return LEITE_NOME[prefs.leite.tipo]||'leite desnatado';
 }
@@ -5080,7 +5323,7 @@ function nomeLeite(prefs,ex){
 function ajustarTextoBebidas(o,prefs,ex){
   let s=String(o);
   const nome=nomeLeite(prefs,ex);
-  const iog=ex.laticinioProibido?'iogurte de soja':'iogurte natural';
+  const iog=(ex.laticinioProibido||ex.leiteForcado==='semlactose')?'iogurte de soja':'iogurte natural';
   s=s.replace(/café com \d+ ml de leite desnatado/gi,m=>nome?m.replace(/leite desnatado/i,nome):'café');
   s=s.replace(/(\d+(?:[.,]\d+)?) ml de (leite desnatado|leite morno|bebida vegetal \(soja\/coco\) sem açúcar)/gi,(m,n)=>nome?n+' ml de '+nome:n+' g de '+iog);
   const b=(prefs&&prefs.bebidas)||{};
@@ -5108,7 +5351,10 @@ function _inserirNeutro(opStr,nome,gramas){
 }
 function _nomeChip(s){return String(s).replace(/ \(blueberry\)/,'').toLowerCase();}
 function aplicarInclusoes(plan,prefs,ex){
-  const fr=(prefs&&prefs.frutas)||{};if(!fr.ativo)return plan;
+  const fr=(prefs&&prefs.frutas)||{};
+  const fbChk=(prefs&&prefs.fibras)||{};
+  const fibraAtiva=!!((fbChk.insoluveis&&fbChk.insoluveis.ativo&&(fbChk.insoluveis.marcados||[]).length)||(fbChk.soluveis&&fbChk.soluveis.ativo&&(fbChk.soluveis.marcados||[]).length));
+  if(!fr.ativo&&!fibraAtiva)return plan;
   const pt=String(fr.texto||'').split(/[\n;,]+/).map(s=>s.trim()).filter(Boolean);
   const todos=(fr.marcados||[]).concat(pt);
   const frutas=[],nuts=[];
@@ -5117,7 +5363,7 @@ function aplicarInclusoes(plan,prefs,ex){
     const nk=normAlim(k);
     if(NUT_KEYS.includes(nk))nuts.push(k);else if(_ehFruta(k)||['abacate','frutas vermelhas'].includes(nk))frutas.push(k);
   });
-  let iF=0,iN=0;
+  let iF=0,iN=0,iFb=0;
   return plan.map(m=>{
     const key=distKeyFromRefeicao(m.refeicao);
     const ops=(m.opcoes||[]).map(o=>{
@@ -5135,6 +5381,15 @@ function aplicarInclusoes(plan,prefs,ex){
         if(idx>1||/Receitas Fit|pipoca|Pipoca/.test(o))return o;
         const nut=nuts[(iN++)%nuts.length];
         return _inserirNeutro(o,nut.toLowerCase(),15);
+      });
+    }
+    const fb=(prefs&&prefs.fibras)||{};
+    const fibraItens=[].concat((fb.insoluveis&&fb.insoluveis.ativo)?(fb.insoluveis.marcados||[]):[],(fb.soluveis&&fb.soluveis.ativo)?(fb.soluveis.marcados||[]):[]);
+    if(fibraItens.length&&/cafe|lancheM|lancheT|ceia/.test(key)){
+      final=final.map((o,idx)=>{
+        if(idx>0||/Receitas Fit|pipoca|Pipoca/.test(o))return o;
+        const item=fibraItens[(iFb++)%fibraItens.length];
+        return _inserirNeutro(o,item,FIBRA_GRAMAS[item]||20);
       });
     }
     return Object.assign({},m,{opcoes:final});
@@ -5231,7 +5486,7 @@ function aplicarPreferencias(plan,prefs,d,ov,kcalDia,regras){
 }
 
 // ═══════════════ TELAS DO QUESTIONÁRIO (uma pergunta por tela, com Voltar e Pular) ═══════════════
-const DWQ_TOTAL=12;
+const DWQ_TOTAL=13;
 function _chk(v,marc,rot){return `<label class="cons-ck"><input type="checkbox" data-v="${escH(v)}" ${marc.includes(v)?'checked':''}><span>${escH(rot||v)}</span></label>`;}
 function _radio(name,v,marcado,rot){return `<label class="cons-ck"><input type="radio" name="${name}" value="${v}" ${marcado?'checked':''}><span>${rot}</span></label>`;}
 function _lidosChk(id){return Array.from(document.querySelectorAll('#'+id+' input[type=checkbox]:checked')).map(i=>i.dataset.v);}
@@ -5298,6 +5553,22 @@ const DWQ_TELAS=[
    bind:()=>{document.querySelectorAll('input[name=dwqLg]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLgBox',_valRadio('dwqLg')==='S')));},
    coletar:p=>{p.legumes.ativo=_valRadio('dwqLg')==='S';p.legumes.marcados=p.legumes.ativo?_lidosChk('dwqLgL').concat(_lidosChk('dwqLgA')):[];p.legumes.texto=p.legumes.ativo?document.getElementById('dwqLgTxt').value.trim():'';},
    padrao:p=>{p.legumes={ativo:false,marcados:[],texto:''};}},
+  {titulo:'Fibras — solúveis e insolúveis',sub:'Marque pra priorizar e aparece a lista de alimentos de cada tipo, pra incluir no planner.',
+   render:p=>{const f=p.fibras;
+     return `<label class="cons-ck"><input type="checkbox" id="dwqFbIns" ${f.insoluveis.ativo?'checked':''}><span>Priorizar fibras insolúveis (trânsito intestinal — bom pra constipação)</span></label>
+     <div id="dwqFbInsBox" style="display:${f.insoluveis.ativo?'block':'none'};margin-top:8px;margin-bottom:16px"><div class="cons-grid" id="dwqFbInsChips">${FIBRA_INSOLUVEL_CHIPS.map(x=>_chk(x,f.insoluveis.marcados)).join('')}</div></div>
+     <label class="cons-ck"><input type="checkbox" id="dwqFbSol" ${f.soluveis.ativo?'checked':''}><span>Priorizar fibras solúveis (saciedade, colesterol e glicemia)</span></label>
+     <div id="dwqFbSolBox" style="display:${f.soluveis.ativo?'block':'none'};margin-top:8px"><div class="cons-grid" id="dwqFbSolChips">${FIBRA_SOLUVEL_CHIPS.map(x=>_chk(x,f.soluveis.marcados)).join('')}</div></div>`;},
+   bind:()=>{
+     const bi=document.getElementById('dwqFbIns'),bs=document.getElementById('dwqFbSol');
+     if(bi)bi.addEventListener('change',()=>dwQToggle('dwqFbInsBox',bi.checked));
+     if(bs)bs.addEventListener('change',()=>dwQToggle('dwqFbSolBox',bs.checked));
+   },
+   coletar:p=>{
+     const ins=document.getElementById('dwqFbIns').checked,sol=document.getElementById('dwqFbSol').checked;
+     p.fibras={insoluveis:{ativo:ins,marcados:ins?_lidosChk('dwqFbInsChips'):[]},soluveis:{ativo:sol,marcados:sol?_lidosChk('dwqFbSolChips'):[]}};
+   },
+   padrao:p=>{p.fibras={insoluveis:{ativo:false,marcados:[]},soluveis:{ativo:false,marcados:[]}};}},
   {titulo:'Bebidas',sub:'O que o Paciente/Cliente está autorizado a beber. Sai no bloco de bebidas do Word, sempre em ml.',
    render:p=>{const b=p.bebidas;
      const item=(id,rot,v)=>`<label class="cons-ck"><input type="checkbox" id="${id}" ${v?'checked':''}><span>${rot}</span></label>`;
@@ -5368,6 +5639,8 @@ function dwQProximo2(){ // avança sem recoletar (depois de "Pular")
 function metaAguaMl(prefs,d){
   const ml=prefs&&prefs.bebidas&&parseInt(prefs.bebidas.mlDia);
   if(ml>0)return ml;
+  const aguaAtual=parseFloat(d&&d.agua)||0;
+  if(aguaAtual>=1.5)return Math.round(aguaAtual*1000/100)*100; // usa o que o Paciente/Cliente já relatou beber em Hábitos, se for uma meta razoável
   const peso=parseFloat(d&&d.peso)||70;
   return Math.round(Math.max(3000,peso*40)/100)*100;
 }
@@ -5447,7 +5720,7 @@ function textoRestricoes(ex,prefs){
   if(us.length)L.push('Não incluído porque você não come ou não gosta: '+us.join(', ')+'.');
   if(ex.reducoes.length)L.push('Quantidade reduzida a pedido: '+(ex.reducoesRot||ex.reducoes).join(', ')+'.');
   if(ex.semGluten&&!ex.rotsAuto.includes('Glúten'))L.push('Trigo e derivados com glúten (pão, torrada, macarrão e aveia tradicionais) substituídos por versões sem glúten.');
-  if(ex.leiteForcado==='semlactose')L.push('Lactose: o leite comum foi trocado por leite sem lactose.');
+  if(ex.leiteForcado==='semlactose')L.push('Lactose: sem leite neste plano — priorizamos café, chás e bebidas zero no lugar.');
   else if(ex.leiteForcado==='vegetal')L.push('Proteína do leite: sem leite e derivados; usamos bebida vegetal.');
   else if(prefs&&prefs.leite&&!prefs.leite.usa)L.push('Leite: não incluído neste plano.');
   return L;
@@ -5572,7 +5845,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     }
     const mealRows=PLAN.map(m=>new TableRow({children:[
       dCell(m.refeicao,'FBF3DC',1400),
-      dCell(m.horario,'F7F3E8',1000),
+      dCell((dietOv&&dietOv.semHorario)?'—':m.horario,'F7F3E8',1000),
       optsCell(m.opcoes,6960),
     ]}));
 
@@ -5707,6 +5980,10 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       const repCaf=getCAFValue(d);
       const repGet=Math.round(repTmb.bmr*repCaf);
       const repRisks=buildRisksPlain(d);
+      const repMeds=textoMedicamentos(d);
+      const repDoencas=textoDoencas(d);
+      const repHistFam=textoHistFam(d);
+      const repGI=textoQueixasGI(d);
       const repRecs=buildRecsPlain(d,repImc,repDn);
       const repRcq=d.cintura&&d.quadril?(parseFloat(d.cintura)/parseFloat(d.quadril)):null;
       const repRcqCl=repRcq!==null?classRCQ(repRcq,sexo||'M',repIdadeN||30):null;
@@ -5767,10 +6044,20 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new TableRow({children:[hCell('TMB (kcal)'),hCell('CAF'),hCell('GET estimado (kcal)')]}),
           new TableRow({children:[dCell(String(Math.round(repTmb.bmr)),'FDFBF3'),dCell(repCaf.toFixed(2),'FDFBF3'),dCell(String(repGet),'FDFBF3')]}),
         ]}),
+        ...(dietOv&&dietOv.estrategiaKcal?[new Paragraph({children:[new TextRun({text:'Estratégia calórica escolhida: ',bold:true,size:18,color:'161616'}),new TextRun({text:(KCAL_ESTRATEGIA_ROT[dietOv.estrategiaKcal.estrategia]||'')+' — meta de '+dietOv.estrategiaKcal.kcal+' kcal/dia'+(dietOv.estrategiaKcal.pct?' ('+(dietOv.estrategiaKcal.pct>0?'+':'')+Math.round(dietOv.estrategiaKcal.pct*100)+'% sobre o GET estimado)':' (igual ao GET estimado)'),size:18})],spacing:{after:60}})]:[]),
+        ...(dietOv&&dietOv.dcaRefeicoesLivres&&dietOv.dcaRefeicoesLivres.v!=='nenhuma'?[new Paragraph({children:[new TextRun({text:'Refeições livres combinadas: ',bold:true,size:18,color:'161616'}),new TextRun({text:dietOv.dcaRefeicoesLivres.rot,size:18})],spacing:{after:60}})]:[]),
         new Paragraph({spacing:{after:160}}),
         H2('⚠️ Fatores de risco identificados'),
         ...repRisks.map(r=>new Paragraph({children:[new TextRun({text:'• '+r,size:18})],spacing:{after:60}})),
         new Paragraph({spacing:{after:120}}),
+        ...(repMeds.length?[H2('💊 Medicamentos em Uso'),
+          ...repMeds.map(r=>new Paragraph({children:[new TextRun({text:'• '+r,size:18})],spacing:{after:60}})),
+          new Paragraph({spacing:{after:120}})]:[]),
+        ...(repDoencas.length||repHistFam.length||repGI.length?[H2('📋 Histórico Clínico Declarado'),
+          ...(repDoencas.length?[new Paragraph({children:[new TextRun({text:'Condições de saúde: ',bold:true,size:18,color:'161616'}),new TextRun({text:repDoencas.join(', '),size:18})],spacing:{after:60}})]:[]),
+          ...(repHistFam.length?[new Paragraph({children:[new TextRun({text:'Histórico familiar: ',bold:true,size:18,color:'161616'}),new TextRun({text:repHistFam.join(', '),size:18})],spacing:{after:60}})]:[]),
+          ...(repGI.length?[new Paragraph({children:[new TextRun({text:'Queixas digestivas: ',bold:true,size:18,color:'161616'}),new TextRun({text:repGI.join(', '),size:18})],spacing:{after:60}})]:[]),
+          new Paragraph({spacing:{after:120}})]:[]),
         H2('💡 Orientações nutricionais'),
         ...repRecs.map(r=>new Paragraph({children:[new TextRun({text:'• '+r.bold,bold:true,size:18,color:'161616'}),new TextRun({text:r.rest,size:18})],spacing:{after:80}})),
         ...(d.alergiasObs||d.obsGerais?[new Paragraph({spacing:{after:120}}),H2('📝 Observações'),
