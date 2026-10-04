@@ -56,8 +56,12 @@ REGRAS
 - Cada lanche fica perto da meta calórica da sua refeição (±15%).
 - Ingredientes SEMPRE com peso em gramas (líquidos em ml). Máximo 5 ingredientes por lanche.
 - NUNCA liste alface, tomate, cenoura ralada, pepino, folhas e temperos como ingrediente com peso (são de consumo livre): cite-os só no modo de preparo.
-- "tipo" deve ser um dos tipos pedidos; lanche natural = sanduíche natural/recheado; shake = bebida batida (ml).
+- "tipo" deve ser um dos tipos pedidos; lanche natural = sanduíche natural/recheado; shake = bebida batida (ml). "Fruta com acompanhamento" = fruta fresca com iogurte natural, queijo cottage ou castanhas.
 - Respeite todas as restrições acima sem exceção.
+- Atum e sardinha SÃO peixe: se a restrição citar peixe, não use atum, sardinha nem qualquer peixe.
+- NUNCA use abacate nos lanches.
+- Prefira proteína magra e combinações com sabor coerente: roast beef bovino em fatias, frango desfiado, ovo, queijo branco/minas, queijo cottage (e atum/sardinha só se permitido). Evite misturas estranhas ou muito calóricas, como crepioca de atum com abacate.
+- TODO ingrediente citado no título DEVE aparecer na lista de itens com o seu peso. Se não vai usar, não cite no título.
 - Modo de preparo curto (máx. 30 palavras).
 
 Responda APENAS com JSON válido, sem markdown e sem texto extra:
