@@ -27,6 +27,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .tabs{display:flex;flex-direction:column;padding:16px 10px;gap:3px}
 .tab{padding:12px 14px;font-size:12.5px;font-weight:500;color:var(--mu);cursor:pointer;border-left:3px solid transparent;border-radius:8px;transition:all .2s;white-space:normal;display:flex;align-items:center;gap:8px;user-select:none}
 .tab:hover{color:var(--gm);background:var(--gp)}
+.tab.pend::after{content:'●';color:#c0392b;margin-left:auto;font-size:14px}
+.tab.okk::after{content:'✓';color:#1a7a48;margin-left:auto;font-weight:700}
 .tab.active{color:var(--gd);background:var(--gp);border-left-color:var(--gm);font-weight:700}
 .tnum{width:18px;height:18px;background:var(--gp);color:var(--gm);border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
 .tab.active .tnum{background:var(--gm);color:#fff}
@@ -276,7 +278,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <p style="margin-bottom:22px">Quem está acessando esta avaliação?</p>
     <div style="display:flex;flex-direction:column;gap:12px">
       <button class="btn bp" style="justify-content:center;padding:16px" onclick="openGatePw()">👨‍⚕️ Nutricionista</button>
-      <button class="btn bs" style="justify-content:center;padding:16px;flex-direction:column;gap:2px;line-height:1.3" onclick="enterAsPaciente()">🧑 Paciente/Cliente<span style="font-size:11px;font-weight:700;opacity:.8">(paciente/cliente)</span></button>
+      <button class="btn bs" style="justify-content:center;padding:16px;flex-direction:column;gap:2px;line-height:1.3" onclick="enterAsPaciente()">🧑 Paciente/Cliente</button>
     </div>
     <p style="font-size:10.5px;color:var(--mu);margin-top:18px;margin-bottom:0">Paciente/Cliente: preenche identificação, DCA, frequência, atividade e hábitos. Medições e relatório ficam restritos ao profissional.</p>
     <button class="btn bs" onclick="abrirVideoIntro('tutorial')" style="justify-content:center;padding:12px;margin-top:14px;width:100%">▶️ Como usar o BodyMap</button>
@@ -613,7 +615,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
           <label class="co" onclick="clickCheck(this)"><input type="checkbox" value="BURNOUT">Burnout</label>
         </div></div>
       </div>
-      <div id="eaaDet" style="display:none;margin-top:10px"><div id="eaaListaBox" style="margin-top:10px"><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Ésteres de testosterona</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Cipionato de testosterona" onchange="autoSave()"><span>Cipionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Cipionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Enantato de testosterona" onchange="autoSave()"><span>Enantato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Enantato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Propionato de testosterona" onchange="autoSave()"><span>Propionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Propionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Undecanoato de testosterona" onchange="autoSave()"><span>Undecanoato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Undecanoato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Suspensão de testosterona" onchange="autoSave()"><span>Suspensão de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Suspensão de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Sustanon (mix de ésteres)" onchange="autoSave()"><span>Sustanon (mix de ésteres)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Sustanon (mix de ésteres)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Derivados de DHT</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Masteron (Drostanolona)" onchange="autoSave()"><span>Masteron (Drostanolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Masteron (Drostanolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Winstrol (Stanozolol)" onchange="autoSave()"><span>Winstrol (Stanozolol)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Winstrol (Stanozolol)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Primobolan (Metenolona)" onchange="autoSave()"><span>Primobolan (Metenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Primobolan (Metenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anavar (Oxandrolona)" onchange="autoSave()"><span>Anavar (Oxandrolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anavar (Oxandrolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Proviron (Mesterolona)" onchange="autoSave()"><span>Proviron (Mesterolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Proviron (Mesterolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">19-nor (Nandrolonas/Trembolonas)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Deca-Durabolin (Nandrolona Decanoato)" onchange="autoSave()"><span>Deca-Durabolin (Nandrolona Decanoato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Deca-Durabolin (Nandrolona Decanoato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="NPP (Nandrolona Fenilpropionato)" onchange="autoSave()"><span>NPP (Nandrolona Fenilpropionato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="NPP (Nandrolona Fenilpropionato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Acetato" onchange="autoSave()"><span>Trembolona Acetato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Acetato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Enantato" onchange="autoSave()"><span>Trembolona Enantato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Enantato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">17-alfa-alquilados (orais)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Dianabol (Metandrostenolona)" onchange="autoSave()"><span>Dianabol (Metandrostenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Dianabol (Metandrostenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anadrol (Oxymetholona)" onchange="autoSave()"><span>Anadrol (Oxymetholona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anadrol (Oxymetholona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Halotestin (Fluoximesterona)" onchange="autoSave()"><span>Halotestin (Fluoximesterona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Halotestin (Fluoximesterona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Adjuntos / outros</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="hCG" onchange="autoSave()"><span>hCG</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="hCG" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Hormônio do Crescimento (GH)" onchange="autoSave()"><span>Hormônio do Crescimento (GH)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Hormônio do Crescimento (GH)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Insulina (uso para performance)" onchange="autoSave()"><span>Insulina (uso para performance)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Insulina (uso para performance)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Clembuterol" onchange="autoSave()"><span>Clembuterol</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Clembuterol" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="T3 (Liotironina)" onchange="autoSave()"><span>T3 (Liotironina)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="T3 (Liotironina)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div></div>
+      <div id="eaaDet" style="display:none;margin-top:10px"><div id="eaaListaBox" style="margin-top:10px"><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Ésteres de testosterona</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Cipionato de testosterona" onchange="autoSave()"><span>Cipionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Cipionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Enantato de testosterona" onchange="autoSave()"><span>Enantato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Enantato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Propionato de testosterona" onchange="autoSave()"><span>Propionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Propionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Undecanoato de testosterona" onchange="autoSave()"><span>Undecanoato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Undecanoato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Suspensão de testosterona" onchange="autoSave()"><span>Suspensão de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Suspensão de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Sustanon (mix de ésteres)" onchange="autoSave()"><span>Sustanon / Durateston (mix de ésteres)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Sustanon (mix de ésteres)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Derivados de DHT</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Masteron (Drostanolona)" onchange="autoSave()"><span>Masteron (Drostanolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Masteron (Drostanolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Winstrol (Stanozolol)" onchange="autoSave()"><span>Winstrol (Stanozolol)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Winstrol (Stanozolol)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Primobolan (Metenolona)" onchange="autoSave()"><span>Primobolan (Metenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Primobolan (Metenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anavar (Oxandrolona)" onchange="autoSave()"><span>Anavar (Oxandrolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anavar (Oxandrolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Proviron (Mesterolona)" onchange="autoSave()"><span>Proviron (Mesterolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Proviron (Mesterolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">19-nor (Nandrolonas/Trembolonas)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Deca-Durabolin (Nandrolona Decanoato)" onchange="autoSave()"><span>Deca-Durabolin (Nandrolona Decanoato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Deca-Durabolin (Nandrolona Decanoato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="NPP (Nandrolona Fenilpropionato)" onchange="autoSave()"><span>NPP (Nandrolona Fenilpropionato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="NPP (Nandrolona Fenilpropionato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Acetato" onchange="autoSave()"><span>Trembolona Acetato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Acetato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Enantato" onchange="autoSave()"><span>Trembolona Enantato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Enantato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">17-alfa-alquilados (orais)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Dianabol (Metandrostenolona)" onchange="autoSave()"><span>Dianabol (Metandrostenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Dianabol (Metandrostenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anadrol (Oxymetholona)" onchange="autoSave()"><span>Anadrol (Oxymetholona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anadrol (Oxymetholona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Halotestin (Fluoximesterona)" onchange="autoSave()"><span>Halotestin (Fluoximesterona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Halotestin (Fluoximesterona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Adjuntos / outros</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="hCG" onchange="autoSave()"><span>hCG</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="hCG" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Hormônio do Crescimento (GH)" onchange="autoSave()"><span>Hormônio do Crescimento (GH)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Hormônio do Crescimento (GH)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Insulina (uso para performance)" onchange="autoSave()"><span>Insulina (uso para performance)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Insulina (uso para performance)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Clembuterol" onchange="autoSave()"><span>Clembuterol</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Clembuterol" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="T3 (Liotironina)" onchange="autoSave()"><span>T3 (Liotironina)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="T3 (Liotironina)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div></div>
         <div class="fg" style="margin-top:10px">
           <label class="fl">Outros / observações (fora da lista)</label>
           <textarea id="eaaDetalhe" class="fc" placeholder="Ex: protocolo detalhado, ciclagem..." oninput="autoSave()"></textarea>
@@ -698,6 +700,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
         <button class="btn bp" onclick="openDCA()" style="font-size:16px;padding:14px 26px;box-shadow:0 3px 10px rgba(0,0,0,.15)">▶️ Clique aqui para responder — Dia Atípico (10 itens)</button>
         <div id="dcaProgTxt" style="font-size:12.5px;color:var(--mu)"></div>
+        <label class="co" style="margin-left:6px"><input type="checkbox" id="dcaNaoHouve" onchange="autoSave()">Não houve dia atípico</label>
       </div>
     </div>
   </div>
@@ -962,6 +965,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     </div>
     <h2 style="font-size:19px;margin-bottom:2px">🍽️ Revisar PLANNER</h2>
     <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Prévia pronta com as suas respostas. Ajuste nomes, quantidades e refeições se precisar, depois gere o Word.</p>
+    <div id="dietAlertaConflito" style="display:none"></div>
     <div id="dietResumoLinha" style="font-size:12.5px;font-weight:600;color:var(--gd);margin-bottom:10px"></div>
     <div style="margin-bottom:14px">
       <button class="btn bp" onclick="distribuirPesosPlano()">🔄 Refresh (recalcular pesos)</button>
@@ -975,8 +979,6 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     <div id="dietMealRows"></div>
     <datalist id="dietFoodList"></datalist>
     <datalist id="dietSupList"></datalist>
-
-    <div id="dietAlertaConflito" style="display:none"></div>
 
     <div class="div" style="margin:18px 0"></div>
     <div id="dietDescontroleAlerta" style="display:none"></div>
@@ -1492,7 +1494,7 @@ const FOOD_NUT={
  'Água':[0,0,0,0,0,200],'Suco natural':[45,0.6,0.1,11.0,0.3,200],'Suco industrializado':[48,0,0,12.0,0,200],
  'Refrigerante':[42,0,0,10.5,0,300],'Refrigerante zero':[1,0,0,0.2,0,300],'Café preto':[9,0.7,0.1,1.5,0,100],
  'Café com leite':[35,1.6,1.4,4.3,0,150],'Chá':[1,0,0,0.4,0,200],'Vitamina de fruta':[90,3.0,2.5,14.0,1.0,250],
- 'Achocolatado':[401,4.2,2.2,91.2,3.9,20],'Isotônico':[24,0,0,6.0,0,300],'Água de coco':[22,0,0,5.3,0.1,250],
+ 'Achocolatado':[401,4.2,2.2,91.2,3.9,20],'Isotônico':[24,0,0,6.0,0,300],'Energético zero':[2,0,0,0.3,0,250],'Kombucha':[13,0,0,3,0,200],'Água de coco':[22,0,0,5.3,0.1,250],
  'Biscoito recheado':[472,6.4,19.6,70.5,3.0,30],'Salgadinho':[523,6.8,32.0,54.0,2.5,50],'Pipoca industrializada':[448,9.9,15.9,70.3,14.3,30],
  'Bolo industrializado':[410,6.2,18.5,54.7,1.4,60],'Chocolate':[540,7.2,30.3,59.6,2.2,25],'Sorvete':[207,3.5,11.0,24.0,0.5,100],
  'Hambúrguer/Fast food':[258,20.0,17.0,6.3,0,150],'Pizza':[266,11.0,10.0,33.0,2.0,150],'Lasanha congelada':[164,5.8,1.2,32.5,1.6,250],
@@ -1599,7 +1601,7 @@ async function estimarAlimentoIA(i,j,k){
   const nome=(rowsAntes[k].alimento||'').trim();
   if(!nome){showToast('⚠️ Digite o nome do alimento antes de estimar','#e67e22');return;}
   // salada/legumes/verduras = consumo livre (padrão da casa): não pesa, não abre ingredientes
-  if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr/i.test(nome)){
+  if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr|sopa|caldo|creme|pur[êe]/i.test(nome)){
     const rowsL=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
     rowsL[k]={tipo:'texto',valor:'01 prato raso de servir cheio de '+nome.toLowerCase()+' (consumo livre — temperar só com limão, ervas, sal até 1 g e pimenta-do-reino)'};
     dietPlanEdit[i].opcoes[j]=serializeOpcaoRows(rowsL);dietEditado=true;renderDietMealRows();
@@ -1633,7 +1635,7 @@ async function estimarAlimentoIA(i,j,k){
     dietEditado=true;dietPesosStale=true;
     renderDietMealRows();
     const resumo=data.itens.map(it=>it.nome+' '+it.gramas+'g').join(' + ');
-    showToast('✅ Quebrado em: '+resumo+' — revise antes de usar em outros pacientes.');
+    showToast('✅ Quebrado em: '+resumo+' — revise antes de usar em outros Pacientes/Clientes.');
   }catch(e){showToast('❌ Erro ao estimar. Verifique a internet.','#c0392b');}
 }
 const RN_LOGO_B64='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j18sFPDCYHR6qFSJIC7zrVvWfPDdt5hiYWxoUkw4MXbWw/ja5QuO7D366r7RH+zs/Zv//o3zQ1MLeloWL25+6lvPdc9uXrm8va3Nz6X1d5/84cmz+Zd+eHjg7MU5nR0WQIDY8JJF8//kE39wz923CgMCaMRyMfzm155bs2zZ4x+8f/6sNg9FAUMcewIYRnFxBI0N88WUx7fesr6rc/bIxVGNEpWnNERu4gGBEIf33LXpl37h4RXLlkkM5Yn40J79G1Z33739mpMH940NjWR85UM0r7PtQ++/990P3JsLUtkg6Dt53JbGP/TwJq5cqJSnCqEcPTU+NikXhsv9F4q5lN66efm3vv3yucHBrVuWtuagu7vz+ed3HTo5/vRzb37liRcqpWjTdd2eqnz1S19btbxtThOsXdYT5sf++Z9fO3G68Pyzu5vTmY62LIJoNErKjz50+3/6g491tGaZWWPKB1AQZjNyz31bP/zhh1ubWnq6MkvnNX31C//UPbt507qFJABxedWyOY+8Z5Piyskjp1OeHj53YaD/+DvuXnL96q6+E71sw0oEK1fO9XXxU//H55cvbe6eozo7WkZHh7/91OuHT4z917998seHBq5ZPf/Ng8defXXw0Knxf/raDxYt6hkezX/5Kz+8eftNt9+5Np0zoERpQmAWfvS993/8P/1me0vaWGanc1LML+pp+8hH3nHXHTvQcFicWrao6cOPbmxrTZ043rdw4eyBc6effXbXxusWrl7TvWhhZs2attOnD3z3O/t6B8Jnnzswb17rymvajC1873uvz2lv37Zx1YZrl3ogxHDnHVs/9MF3LuzuRpb8xMWTx48/8shNi5ZAZEY9D4rFiVKp2D1vbmzUd5/be/zM1P/22e/sPza4auWSfW/2vnJg8Fj/+K6db87qmDU8WP7yF5/fvHnLfffd1NykfS0/sVzdALufhdoEsShBYDKCFcYYABCyFwbp61/70ZYtq9avX4QSKoGWbGr+7FxnFme3p0ph6NLpU3GlAkYQDQEGuhzFixbNOzswcujoBBJWorJlGBud6Gxrnt+EC+c13bb92lyab9m+4No17VtvuHberLbNG+ZX8mGUj1ct78ko6F7Y1JLNFicrroXFAhYKhdd2vdZ/pg8AWJBBlPZPHh/86//22X27Dz36/rsWzM8V8pXuebk2BXNnN2OQigwXKnExpgqr51468tUnf2RIkYqDwBKCphhAFfKVp771ymc+888njp9QGoJsx8uvnEhlMuvWrX31tZPkNcdMzHTuzOjXvvL0U99+tlQuM6qpAn3qH56d3z3/mlVzpvIXFYDnISOk076HeP2q2etXzV6wbOGseblVq1vTKchPDq1ePmt2AGuXzrp12+psGrZvX71k8fw16xYuWJzbtnnR8LnBpnR6w7VzmwiW9XQW88ViOY5RrGILcOxE/+uv7w3j2DIYRgsESGPj5WeeP/ClJ75/dmDoppuXzZ3fvnrVoq7ZHdeuWZhRICwD56ea23Kl0OzafdILgpjbX3r59C23bwwCf/fuobTX0qTg+jU9c+fMWbtudXfP3G2bF02Ojuey2TWr5mVT+MDdm1ct7rw4NLZowdwF84LWFK5bv3h4eDgKad/e0//L33ypXC6+44Gb0gHEHAtZX0FfX//rr++uVCJxRQMBNubI8ROf/fw3n37mBRHIpHW5HHV2tIihXa8cKeVt2qOFPc1D588vXdRx45bV58+cy2Uy1yzvavNx3er5+cni4Ll8WJJrli4cOj+cy3o3bFgTaEKQF3+w84tf/sbp030pz2vKdn3ryTfODFy49fa3RXFUiaAShtbS8PCUiCxfOqcpRQ/cvnHp/NaLo5NLl85fPMdrz9DihXPicoTG6zs59r//r0+cHxx47JE75nakzFsPdfvZtpmjVOxSyk6AkYWQAYz2vKbmvYcLz//g+Hs+cIsXNA+cP3fiyPmHH7r57Xde75F/8PAZAhQi9nKsMyISpFISdD774ktDF3f/ysceWbh8f9mSpbYY/G89+8Zv/MrbP/4fH5CgZayYmhge2HLD+tde7f3B949ds6K0cevbnnzm9De/+do7H9rR0jNv9rz08VNnDh3q9xEisQw0cGHi0595EpWr+JKw+Ongoffd68X5KJw4eOTYeD7ava/vphvX/MmfPDxrXvu+o2fOTZbWpTK9F+w/PvHGeAwWYMmCZvLT996zbfWm2w4fPXdozxvArdcs39AxR06en/rOd16idOuESb+8u7+9ferMiLZBm/EghFS6ae6GLRsibBkrvVpgivW8AydD9dTe3/y1e2PIMSAo8IKM52V8ke1bbzx1aujJZw6lU/K+973rurWrvv/067/84bv+7A86mmctPHDsHNuphYuXfP3JHx051Lt9St3x9lv+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';
@@ -1992,7 +1994,7 @@ function consentRelHtml(d){
   const c=d.consent;
   if(!c)return '<div class="ri w" style="margin-top:14px;font-size:11.5px">⚠️ Consentimento LGPD (Lei Geral de Proteção de Dados) não registrado nesta ficha.</div>';
   const s=x=>x?'sim':'não';
-  return '<div style="margin-top:14px;padding:10px 16px;border:1px solid var(--br);border-radius:var(--rs);font-size:10.5px;color:var(--mu);line-height:1.6">🔒 <b>Consentimento LGPD (Lei Geral de Proteção de Dados):</b> registrado em '+escH(new Date(c.dataHora).toLocaleString('pt-BR'))+' · termo versão '+escH(c.versao)+' (código '+escH(c.termoHash)+') · por '+escH(c.consentente)+(c.quem==='responsavel'?' (responsável legal, '+escH(c.vinculo)+')':' (paciente)')+' · '+(c.forma==='consulta'?'na consulta':'preenchido pelo próprio')+' · dados de saúde: '+s(c.aceites.dados)+' · fotos e exames: '+s(c.aceites.fotosExames)+' · uso de IA (Inteligência Artificial): '+s(c.aceites.ia)+'</div>';
+  return '<div style="margin-top:14px;padding:10px 16px;border:1px solid var(--br);border-radius:var(--rs);font-size:10.5px;color:var(--mu);line-height:1.6">🔒 <b>Consentimento LGPD (Lei Geral de Proteção de Dados):</b> registrado em '+escH(new Date(c.dataHora).toLocaleString('pt-BR'))+' · termo versão '+escH(c.versao)+' (código '+escH(c.termoHash)+') · por '+escH(c.consentente)+(c.quem==='responsavel'?' (responsável legal, '+escH(c.vinculo)+')':' (Paciente/Cliente)')+' · '+(c.forma==='consulta'?'na consulta':'preenchido pelo próprio')+' · dados de saúde: '+s(c.aceites.dados)+' · fotos e exames: '+s(c.aceites.fotosExames)+' · uso de IA (Inteligência Artificial): '+s(c.aceites.ia)+'</div>';
 }
 document.addEventListener('DOMContentLoaded',()=>{const dmr=document.getElementById('dietMealRows');if(dmr)dmr.addEventListener('input',()=>{dietEditado=true;autoSave();});renderConsent();renderExameIA();const id=document.getElementById('idade');if(id)id.addEventListener('input',consQuemChange);});
 
@@ -2066,8 +2068,8 @@ function ordenarAval(a,b){return String(a.dataPreench||'').localeCompare(String(
 function avaliacoesDe(key){return PTS.filter(p=>chavePaciente(p)===key).sort(ordenarAval);}
 const FLAG_CICLO=[null,'g','y','r'];
 const FLAG_INFO={g:{emoji:'🟢',titulo:'Entregue'},y:{emoji:'🟡',titulo:'Em andamento'},r:{emoji:'🔴',titulo:'Atrasado'}};
-function getFlagBodymate(key){try{return(JSON.parse(localStorage.getItem('bm_flags')||'{}'))[key]||null;}catch(e){return null;}}
-function setFlagBodymate(key,cor){
+function getFlagPaciente(key){try{return(JSON.parse(localStorage.getItem('bm_flags')||'{}'))[key]||null;}catch(e){return null;}}
+function setFlagPaciente(key,cor){
   try{
     const m=JSON.parse(localStorage.getItem('bm_flags')||'{}');
     if(cor)m[key]=cor;else delete m[key];
@@ -2075,12 +2077,12 @@ function setFlagBodymate(key,cor){
   }catch(e){}
   refreshPtList();
 }
-function cicloFlagBodymate(key,ev){
+function cicloFlagPaciente(key,ev){
   if(ev){ev.stopPropagation();}
-  const atual=getFlagBodymate(key);
+  const atual=getFlagPaciente(key);
   const i=FLAG_CICLO.indexOf(atual);
   const prox=FLAG_CICLO[(i+1)%FLAG_CICLO.length];
-  setFlagBodymate(key,prox);
+  setFlagPaciente(key,prox);
 }
 function agruparPacientes(pts){
   const m=new Map();
@@ -2357,7 +2359,7 @@ async function bkAgora(){document.getElementById('bkOverlay').style.display='non
 function bkDepois(){sessionStorage.setItem('bm_bk_adiado','1');document.getElementById('bkOverlay').style.display='none';}
 // ── pasta no computador (Chrome/Edge) ──
 function fsaOk(){return typeof window.showDirectoryPicker==='function';}
-function nomeArquivoKey(key){const i=key.lastIndexOf('|');const n=key.slice(0,i).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'bodymate';return n+'__'+(key.slice(i+1)||'sem-data')+'.json';}
+function nomeArquivoKey(key){const i=key.lastIndexOf('|');const n=key.slice(0,i).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'paciente';return n+'__'+(key.slice(i+1)||'sem-data')+'.json';}
 async function pastaOk(){try{return !!pastaHandle&&(await pastaHandle.queryPermission({mode:'readwrite'}))==='granted';}catch(e){return false;}}
 async function pastaIniciar(){
   if(!fsaOk()){renderPastaStatus();return;}
@@ -2927,8 +2929,9 @@ async function gerarBariatricaDoc(d,fase,obsExtra){
     const bdr={style:BorderStyle.SINGLE,size:1,color:'E8DCB8'};
     const bdrAll={top:bdr,bottom:bdr,left:bdr,right:bdr};
     function P(txt,opts={}){return new Paragraph({children:[new TextRun({text:txt,...opts})],spacing:{after:120}});}
-    function H1(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:280,after:140}});}
-    function HR(){return new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:1}},spacing:{after:160}});}
+    function H1(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,keepNext:true,keepLines:true,children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:280,after:140}});}
+    function H1N(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,pageBreakBefore:true,keepNext:true,keepLines:true,border:{top:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:8}},children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:0,after:140}});}
+    function HR(){return new Paragraph({keepNext:true,border:{bottom:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:1}},spacing:{after:160}});}
     function dCell(txt,fill='FDFBF3'){return new TableCell({borders:bdrAll,shading:{fill,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:9360,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:18})],spacing:{after:0}})]});}
     const now=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
     const logoRow=RN_LOGO_B64?[new Paragraph({children:[new (window.docx.ImageRun)({type:'png',data:b64ToUint8(RN_LOGO_B64),transformation:{width:220,height:105}})],alignment:AlignmentType.CENTER,spacing:{after:400}})]:[];
@@ -3121,6 +3124,7 @@ function goTab(n){
   updatePB(n);
   window.scrollTo({top:0,behavior:'smooth'});
   if(n===8){resetRelatoriosUI();refreshPtList();}
+  marcarAbasPendentes();
 }
 function enterAsPaciente(){
   userRole='paciente';sessionStorage.setItem(RK_ROLE,'paciente');
@@ -3140,14 +3144,14 @@ function exportPatientJSON(){
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  const safeName=(d.nome||'bodymate').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
+  const safeName=(d.nome||'paciente').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
   a.href=url;a.download=`BodyMap_${safeName}_${d.dataPreench||new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 let expArquivo=null;
 function nomeArquivoPaciente(d){
-  const safeName=(d.nome||'bodymate').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
+  const safeName=(d.nome||'paciente').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'_');
   return `BodyMap_${safeName}_${d.dataPreench||new Date().toISOString().split('T')[0]}`;
 }
 function podeCompartilharArquivo(){
@@ -3860,6 +3864,7 @@ function collectData(){
   FREQ_GROUPS.forEach((_,gi)=>{const e=document.querySelector(`input[name="freq_${gi}"]:checked`);d.freqTable[gi]=e?parseInt(e.value):null;});
   d.medLista=Array.from(document.querySelectorAll('.medChk:checked')).map(el=>{const dose=document.querySelector('.medDose[data-cat="'+el.dataset.cat+'"][data-item="'+CSS.escape(el.value)+'"]');return{cat:el.dataset.cat,item:el.value,dose:dose?dose.value:''};});
   d.dcaSel=dcaItems;
+  d.dcaNaoHouve=!!(document.getElementById('dcaNaoHouve')&&document.getElementById('dcaNaoHouve').checked);
   PHOTO_FIELDS.forEach(f=>{if(photoData[f])d[f]=photoData[f];});
   d.caf=cafDefinido?document.getElementById('caf').value:'';
   if(consent)d.consent=consent;
@@ -3872,12 +3877,42 @@ function objetivoOutroToggle(){
   const sel=document.getElementById('objetivo');const box=document.getElementById('objOutroBox');
   if(box)box.style.display=(sel&&sel.value==='Outro (especificar)')?'block':'none';
 }
-function autoSave(){clearTimeout(asTimer);asTimer=setTimeout(persistirRascunho,800);}
+function marcarAbasPendentes(){
+  try{
+    const f=faltasFicha(collectData()),tabs=document.querySelectorAll('.tab');
+    [3,4].forEach(ix=>{const t=tabs[ix];if(!t)return;const pend=f.some(x=>x.tab===ix);t.classList.toggle('pend',pend);t.classList.toggle('okk',!pend);});
+  }catch(e){}
+}
+function autoSave(){clearTimeout(asTimer);asTimer=setTimeout(()=>{persistirRascunho();marcarAbasPendentes();},800);}
 function saveData(){persistirRascunho();showToast('✅ Dados salvos!');}
 
+function faltasFicha(d){
+  const f=[];
+  if(!d.dataNasc&&!d.idade)f.push({rot:'Data de nascimento',tab:0});
+  if(!d.sexo)f.push({rot:'Sexo',tab:0});
+  if(!(parseFloat(d.peso)>0))f.push({rot:'Peso',tab:0});
+  if(!(parseFloat(d.altura)>0))f.push({rot:'Altura',tab:0});
+  if(!d.objetivo)f.push({rot:'Objetivo',tab:0});
+  const q=FREQ_GROUPS.filter((_,gi)=>d.freqTable&&d.freqTable[gi]!==null&&d.freqTable[gi]!==undefined).length;
+  if(q<FREQ_GROUPS.length)f.push({rot:'Frequência alimentar ('+q+'/'+FREQ_GROUPS.length+' grupos respondidos)',tab:4});
+  const n=(d.dcaSel||[]).filter(x=>x&&x.name).length;
+  if(n<3&&!d.dcaNaoHouve)f.push({rot:'Dia Calórico Atípico ('+n+' item(ns); preencha ao menos 3 ou marque "Não houve dia atípico")',tab:3});
+  return f;
+}
+async function avisarFaltas(falt,d){
+  const ehPac=userRole==='paciente';
+  const botoes=falt.filter((x,i)=>falt.findIndex(y=>y.tab===x.tab)===i).map(x=>({v:'tab:'+x.tab,rot:'➡️ Ir para '+(x.tab===0?'Identificação':x.tab===3?'DCA':'Frequência'),cls:'bp'}));
+  if(!ehPac)botoes.push({v:'assim',rot:'Finalizar assim mesmo — o Paciente/Cliente não consegue responder',cls:'bs'});
+  const corpo='<p>'+(ehPac?'Para gerar o seu arquivo, é preciso responder tudo. Esses dados são usados para montar o seu plano alimentar com segurança — sem eles, o plano sairia com valores genéricos.':'Faltam dados que o PLANNER usa para montar a dieta com segurança.')+'</p><p><b>Falta preencher:</b></p><ul style="margin:6px 0 0 18px">'+falt.map(x=>'<li>'+escH(x.rot)+'</li>').join('')+'</ul>';
+  const r=await dlgEscolha('Ainda não dá para gerar o arquivo',corpo,botoes);
+  if(r&&r.indexOf('tab:')===0){goTab(parseInt(r.slice(4)));return false;}
+  if(r==='assim'){d.semResposta=true;return true;}
+  return false;
+}
 async function finalizar(){
   const d=collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome antes de finalizar','#e67e22');goTab(0);return false;}
+  {const _falt=faltasFicha(d);if(_falt.length&&!d.semResposta){if(!(await avisarFaltas(_falt,d)))return false;}}
   if(userRole==='paciente'&&gorduraPctFromData(d)===null){
     const semCintura=!d.cintura,semPescoco=!d.pescoco,semQuadril=(d.sexo==='F')&&!d.quadril;
     if(semCintura||semPescoco||semQuadril){
@@ -3947,7 +3982,7 @@ function loadData(dov){
     if(d.agua){document.getElementById('aguaS').value=d.agua;document.getElementById('aguaV').textContent=parseFloat(d.agua).toFixed(1)+' L';}
     if(d.estresse){document.getElementById('estS').value=d.estresse;document.getElementById('estV').textContent=d.estresse;}
     if(d.freqTable){Object.entries(d.freqTable).forEach(([gi,oi])=>{if(oi!==null){const e=document.querySelector(`input[name="freq_${gi}"][value="${oi}"]`);if(e)e.checked=true;}});updateQfaProgress();qfaChartRender();}
-    if(d.dcaSel){dcaItems=Array.from({length:10},(_,i)=>d.dcaSel[i]&&d.dcaSel[i].name?d.dcaSel[i]:{name:'',mode:'porcao',qty:1});} updateDCA();updDcaCnt();
+    if(d.dcaSel){dcaItems=Array.from({length:10},(_,i)=>d.dcaSel[i]&&d.dcaSel[i].name?d.dcaSel[i]:{name:'',mode:'porcao',qty:1});} updateDCA();updDcaCnt();{const _nh=document.getElementById('dcaNaoHouve');if(_nh)_nh.checked=!!d.dcaNaoHouve;}
     if(d.fotoLado&&!d.fotoLatEsq)d.fotoLatEsq=d.fotoLado;
     if(d.exameArquivo&&!Array.isArray(d.exameArquivo))d.exameArquivo=[d.exameArquivo]; // compatibilidade com fichas antigas (1 exame só)
     PHOTO_FIELDS.forEach(f=>{if(d[f]){photoData[f]=d[f];if(f==='exameArquivo')renderExameFilesPreview();else renderPhotoPreview(f);}});
@@ -3984,9 +4019,9 @@ function refreshPtList(){
     const u=g.entries[g.entries.length-1];
     const imc=u.imcVal?parseFloat(u.imcVal):null;
     const lbl=imc?classIMC(imc).label:'—';
-    const flagCor=getFlagBodymate(g.key);
+    const flagCor=getFlagPaciente(g.key);
     const flagInfo=flagCor?FLAG_INFO[flagCor]:{emoji:'⚪',titulo:'Sem status — clique para marcar'};
-    return `<div class="prow" style="cursor:pointer" onclick="abrirPaciente(${kJs(g.key)})"><div style="display:flex;align-items:center;gap:10px"><span title="${flagInfo.titulo} (clique para mudar)" onclick="cicloFlagBodymate(${kJs(g.key)},event)" style="font-size:16px;cursor:pointer;line-height:1">${flagInfo.emoji}</span><div><div class="pn">${escH(g.nome||'Sem nome')}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
+    return `<div class="prow" style="cursor:pointer" onclick="abrirPaciente(${kJs(g.key)})"><div style="display:flex;align-items:center;gap:10px"><span title="${flagInfo.titulo} (clique para mudar)" onclick="cicloFlagPaciente(${kJs(g.key)},event)" style="font-size:16px;cursor:pointer;line-height:1">${flagInfo.emoji}</span><div><div class="pn">${escH(g.nome||'Sem nome')}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
   }).join('');
   renderPastaStatus();
 }
@@ -4158,11 +4193,11 @@ function buildRecs(d,imc,dn){
 }
 
 // ── Versão em texto puro (título em negrito + resto) dos mesmos alertas/orientações, para uso no Word ──
-function buildRecsPlain(d,imc,dn){
+function buildRecsPlain(d,imc,dn,metaL){
   const rs=[];
   const add=(bold,rest)=>rs.push({bold,rest});
   const agua=parseFloat(d.agua||0);
-  if(agua<2)add('💧 Hidratação insuficiente: ','aumente para pelo menos 2L/dia de água. Evite substituir por sucos industrializados ou refrigerantes.');
+  if(agua<2)add('💧 Hidratação insuficiente: ',(metaL?'aumente até a meta deste plano ('+String(Math.round(metaL*10)/10).replace('.',',')+' L/dia) de água.':'aumente para pelo menos 2L/dia de água.')+' Evite substituir por sucos industrializados ou refrigerantes.');
   if(dn.includes('HAS'))add('❤️ Hipertensão (DASH): ','reduza o sal para menos de 5g/dia. Aumente potássio (banana, laranja, feijão), evite embutidos e conservas.');
   if(dn.includes('DM2')||dn.includes('DM1'))add('🩸 Diabetes: ','fracione as refeições (5–6x/dia), prefira carboidratos complexos/integrais, elimine açúcares simples e bebidas açucaradas. Monitore a glicemia.');
   if(dn.includes('DISLIPI'))add('🧪 Dislipidemia: ','inclua azeite extra virgem, peixes ricos em ômega-3 (salmão, sardinha), castanhas, aveia e linhaça. Evite gordura saturada e trans.');
@@ -4201,7 +4236,7 @@ function textoMedicamentos(d){
   const linhas=lista.filter(m=>m&&m.item).map(m=>{
     const cat=MED_CAT_LABEL[m.cat]||m.cat||'';
     const dose=(m.dose||'').trim();
-    return m.item+(dose?' — '+dose:'')+(cat?' ('+cat+')':'');
+    return (m.item==='Sustanon (mix de ésteres)'?'Sustanon / Durateston (mix de ésteres)':m.item)+(dose?' — '+dose:'')+(cat?' ('+cat+')':'');
   });
   const livres=String(d.medicamentos||'').split(/\n+/).map(t=>t.trim()).filter(Boolean);
   return linhas.concat(livres);
@@ -4238,9 +4273,54 @@ function buildRisksPlain(d){
 
 // ── ASSISTENTE DE GERAÇÃO DA DIETA (macros → suplementos) ──
 let dietWizCtx=null;
-function iniciarGeracaoDieta(dataOverride){
+function dlgEscolha(titulo,corpoHtml,botoes){
+  if(window.__dlgAuto!==undefined)return Promise.resolve(window.__dlgAuto);
+  return new Promise(res=>{
+    const ov=document.createElement('div');ov.className='pw-overlay';ov.style.cssText='display:flex;z-index:10050';
+    ov.innerHTML='<div class="big-box" style="width:540px;max-width:94vw"><h2 style="font-size:18px;margin-bottom:10px">'+escH(titulo)+'</h2><div style="font-size:13.5px;line-height:1.55;margin-bottom:16px">'+corpoHtml+'</div><div id="dlgEscBtns" style="display:flex;flex-direction:column;gap:8px"></div></div>';
+    const box=ov.querySelector('#dlgEscBtns');
+    const fechar=v=>{ov.remove();window._dlgCancel=null;res(v);};
+    window._dlgCancel=()=>fechar('cancelar');
+    botoes.forEach(b=>{
+      const bt=document.createElement('button');
+      bt.className=b.cls==='link'?'pw-cancel':('btn '+(b.cls||'bs'));
+      bt.style.cssText='padding:11px 14px;font-size:13.5px;text-align:left';
+      bt.textContent=b.rot;bt.onclick=()=>fechar(b.v);box.appendChild(bt);
+    });
+    document.body.appendChild(ov);
+  });
+}
+function _lerRascunhoDieta(d,sufixo){
+  try{
+    const raw=localStorage.getItem(dietDKp(d)+(sufixo||''))||(sufixo?null:localStorage.getItem(DIET_DK));
+    if(!raw)return null;
+    const r=JSON.parse(raw);
+    return(r&&r.chave&&r.chave===dietChavePaciente(d)&&Array.isArray(r.dietPlanEdit)&&r.dietPlanEdit.length)?r:null;
+  }catch(e){return null;}
+}
+async function perguntarNovaOuContinuar(d){
+  const rasc=_lerRascunhoDieta(d),prev=_lerRascunhoDieta(d,'_prev');
+  const quando=x=>new Date(x.savedAt).toLocaleString('pt-BR');
+  const botoes=[
+    {v:'nova',rot:'🆕 Nova dieta — começar o questionário com as respostas de agora',cls:'bp'},
+    {v:'continuar',rot:'✏️ Continuar a anterior — abrir como eu deixei (de '+quando(rasc)+')',cls:'bs'}
+  ];
+  if(prev)botoes.push({v:'prev',rot:'↩️ Abrir a versão anterior à última (de '+quando(prev)+')',cls:'bs'});
+  botoes.push({v:'cancelar',rot:'Cancelar',cls:'link'});
+  const esc=await dlgEscolha('Este Paciente/Cliente já tem uma dieta','<p>Escolha como quer seguir:</p><p><b>Nova dieta</b> refaz tudo com as suas respostas de agora. A dieta anterior continua guardada.</p><p><b>Continuar a anterior</b> abre a dieta com as suas edições. As respostas do questionário <b>não</b> são refeitas nesse caminho.</p>',botoes);
+  if(esc==='nova')return _iniciarWizardDieta(d);
+  if(esc==='continuar')return abrirEditorDieta(d,null,'continuar');
+  if(esc==='prev')return abrirEditorDieta(d,null,'prev');
+}
+function iniciarGeracaoDieta(dataOverride,opts){
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
+  if(!(opts&&opts.pular)&&_lerRascunhoDieta(d))return perguntarNovaOuContinuar(d);
+  return _iniciarWizardDieta(d);
+}
+function _iniciarWizardDieta(d){
+  const _fb=faltasFicha(d).filter(x=>x.tab===0);
+  if(_fb.length){showToast('⚠️ Antes do PLANNER, preencha na aba Identificação: '+_fb.map(x=>x.rot).join(', ')+'. Sem isso o sistema usaria valores padrão e o plano sairia errado.','#e67e22');goTab(0);return;}
   const base=calcDietaBase(d);
   let ajusteInfo=null;
   if(d.id){
@@ -4525,9 +4605,29 @@ async function dietWizGerar(){
     showToast('⏳ A IA está montando os lanches com as suas respostas…');
     try{prefsIA=await buscarLanchesIA(ctx);}catch(e){showToast('ℹ️ A IA não respondeu agora — usei os lanches padrão. Você pode ajustar na prévia.','#e67e22');}
   }
-  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino});
+  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino},'nova');
 }
 
+// ── Botão Voltar do navegador: fecha a tela aberta, volta de aba e só então pergunta se quer sair ──
+(function(){
+  let armado=false,saindo=false;
+  function armar(){if(armado)return;armado=true;try{history.replaceState({bm:'base'},'');history.pushState({bm:'guard'},'');}catch(e){}}
+  ['pointerdown','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,armar,{passive:true}));
+  window.__bmArmar=armar;
+  window.addEventListener('popstate',async()=>{
+    if(saindo||!armado)return;
+    const rearmar=()=>{try{history.pushState({bm:'guard'},'');}catch(e){}};
+    if(window._dlgCancel){window._dlgCancel();rearmar();return;}
+    const abertos=[['dietEditorOverlay',()=>cancelarDietEditor()],['dietWizardOverlay',()=>fecharDietWizard()],['tpcOverlay',()=>{document.getElementById('tpcOverlay').style.display='none';}],['expOverlay',()=>fecharExp()]];
+    for(const[id,fn]of abertos){const e=document.getElementById(id);if(e&&e.style.display&&e.style.display!=='none'){fn();rearmar();return;}}
+    const ativa=Array.from(document.querySelectorAll('.tab')).findIndex(t=>t.classList.contains('active'));
+    if(ativa>0){goTab(ativa-1);rearmar();return;}
+    rearmar();
+    const r=await dlgEscolha('Sair do BodyMap?','<p>O que ainda não foi salvo pode se perder.</p>',[{v:'ficar',rot:'Ficar no BodyMap',cls:'bp'},{v:'sair',rot:'Sair do site',cls:'bs'}]);
+    if(r==='sair'){saindo=true;history.go(-2);}
+  });
+  window.addEventListener('beforeunload',e=>{if(saindo)return;try{if(typeof fichaPendente==='function'&&fichaPendente()){e.preventDefault();e.returnValue='';}}catch(x){}});
+})();
 // ── DIET WORD ──
 function carregarDieta(i){if(PTS[i])iniciarGeracaoDieta(PTS[i]);}
 
@@ -4551,31 +4651,33 @@ function salvarRascunhoDieta(){
     localStorage.setItem(dietDKp(dietDataCache),JSON.stringify({
       chave:dietChavePaciente(dietDataCache),savedAt:new Date().toISOString(),
       dietPlanEdit,dietSupEdit,dietEAAEdit,dietFarmEdit,dietOv,dietCas,
-      dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale
+      dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale,dietExcecoes:[...dietExcecoes]
     }));
   }catch(e){}
 }
 function limparRascunhoDieta(){try{localStorage.removeItem(DIET_DK);}catch(e){}}
 function _arr(x){return Array.isArray(x)?x:(x?String(x).split(/[,;|]+/).map(t=>t.trim()).filter(Boolean):[]);}
-function _abrirEditorDietaInterno(dataOverride,ov){
+function _abrirEditorDietaInterno(dataOverride,ov,modo){
   const ovNovo=ov;
   const d=dataOverride||collectData();
   if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
-  dietPesosLocked={};dietPesosStale=false;
+  dietPesosLocked={};dietPesosStale=false;dietExcecoes=new Set();
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
   let restaurado=false;
   try{
-    const raw=localStorage.getItem(dietDKp(d))||localStorage.getItem(DIET_DK);
-    if(raw){
-      const rasc=JSON.parse(raw);
-      if(rasc&&rasc.chave&&rasc.chave===dietChavePaciente(d)&&confirm('Encontrei a última dieta desse Paciente/Cliente, de '+new Date(rasc.savedAt).toLocaleString('pt-BR')+'.\n\nOK = abrir essa dieta para ajustar.\nCancelar = montar uma nova do zero (a antiga continua guardada até você mexer na nova).')){
-        dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
-        dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
-        dietPesosLocked=rasc.dietPesosLocked||{};dietPesosStale=!!rasc.dietPesosStale;
-        if(cbc)cbc.checked=dietCas;
-        restaurado=true;
-      }
+    const sufixo=modo==='prev'?'_prev':'';
+    const rasc=(modo==='continuar'||modo==='prev')?_lerRascunhoDieta(d,sufixo):null;
+    if(rasc){
+      dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
+      dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
+      dietPesosLocked=rasc.dietPesosLocked||{};dietExcecoes=new Set(rasc.dietExcecoes||[]);dietPesosStale=!!rasc.dietPesosStale;
+      if(cbc)cbc.checked=dietCas;
+      restaurado=true;
+    }else{
+      // dieta nova: guarda a anterior como "versão anterior" antes de ela ser sobrescrita
+      const k=dietDKp(d),antiga=localStorage.getItem(k);
+      if(antiga){const ra=JSON.parse(antiga);if(ra&&ra.chave===dietChavePaciente(d)&&ra.dietPlanEdit&&ra.dietPlanEdit.length)localStorage.setItem(k+'_prev',antiga);}
     }
   }catch(e){}
   const base=calcDietaBase(d,dietOv,dietCas);
@@ -4593,6 +4695,7 @@ function _abrirEditorDietaInterno(dataOverride,ov){
     if(ovNovo&&ovNovo.posTreino){
       dietPlanEdit.push({refeicao:'🏋️ Pós-Treino',horario:'Após o treino',opcoes:[''],posTreino:true});
     }
+    if(ovNovo&&ovNovo.semHorario)dietPlanEdit.forEach(m=>{m.horario='';});
     dietPlanEdit.forEach(m=>{if(m.posTreino)return;const key=distKeyFromRefeicao(m.refeicao);m.opcoes=(m.opcoes||[]).map(o=>comTituloAuto(o,key));});
   }
   // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
@@ -4635,8 +4738,8 @@ function _abrirEditorDietaInterno(dataOverride,ov){
   try{verificarConflitosDieta();}catch(e){console.error(e);}
   if(semSugestao)showToast('ℹ️ Nenhum suplemento sugerido automaticamente para este paciente. Role até "Suplementação, Vitaminas e Minerais" e preencha a linha em branco.','#e67e22');
 }
-function abrirEditorDieta(dataOverride,ov){
-  try{_abrirEditorDietaInterno(dataOverride,ov);}
+function abrirEditorDieta(dataOverride,ov,modo){
+  try{_abrirEditorDietaInterno(dataOverride,ov,modo);}
   catch(e){console.error(e);showToast('❌ Não consegui montar a prévia da dieta: '+(e&&e.message||e)+' — me mande este texto.','#c0392b');}
 }
 function salvarDietaManual(){salvarRascunhoDieta();showToast('💾 Dieta salva. Ela continua guardada para ajustes depois.');}
@@ -4644,7 +4747,7 @@ function corrigirRespostasDieta(){
   salvarRascunhoDieta();
   const d=dietDataCache;
   cancelarDietEditor();
-  if(d)iniciarGeracaoDieta(d);
+  if(d)iniciarGeracaoDieta(d,{pular:true});
   showToast('↩️ Suas respostas estão preenchidas. Corrija o que precisar e monte de novo. A dieta atual continua salva.');
 }
 function cancelarDietEditor(){document.getElementById('dietEditorOverlay').style.display='none';}
@@ -4677,42 +4780,90 @@ const DOENCA_TERMOS={
   DISLIPI:{rot:'Dislipidemia',termos:['fritura','bacon','gordura saturada','embutido'],aviso:'contém itens ricos em gordura saturada'},
   RENAL:{rot:'Doença renal',termos:['whey protein','whey concentrado','proteína em excesso'],aviso:'a carga de proteína pede atenção pela doença renal'}
 };
+let dietExcecoes=new Set();
+function _restricoesAtuais(){
+  const d=dietDataCache||{};
+  return exclusoesAtivas(d,(dietOv&&dietOv.prefs)||prefsPadrao(d),(dietOv&&dietOv.regras)||{});
+}
+function detectarConflitosPlano(){
+  if(!dietPlanEdit||!dietPlanEdit.length)return[];
+  const ex=_restricoesAtuais(),out=[];
+  dietPlanEdit.forEach((m,i)=>(m.opcoes||[]).forEach((o,j)=>parseOpcaoStr(o).forEach((r,k)=>{
+    const texto=r.tipo==='item'?r.alimento:r.valor;
+    if(!texto||!String(texto).trim())return;
+    if(r.tipo==='texto'){
+      const t=String(texto).trim();
+      if(k===0&&(/:$/.test(t)||/ — /.test(t)))return; // título da opção
+      if(/^(sem |preparo sem|salada|legumes|01 prato|consumir|vitamina:)/i.test(normAlim(t)))return;
+    }
+    const nm=normAlim(texto);
+    const def=ex.defs.find(df=>_defConflita(df,nm));
+    let motivo=def?(def.rot||def.k):null;
+    if(!motivo&&ex.leiteForcado==='semlactose'&&/\bleite\b/.test(nm)&&!/sem lactose|zero lactose|vegetal|soja|aveia|amendoa|coco|condensado/.test(nm))motivo='Lactose';
+    if(!motivo&&ex.laticinioProibido&&/\b(leite|whey)\b/.test(nm)&&!/vegetal|soja|aveia|amendoa|coco/.test(nm))motivo='Proteína do leite';
+    if(!motivo)return;
+    const chave=nm.slice(0,70);
+    if(dietExcecoes.has(chave))return;
+    out.push({i,j,k,meal:m.refeicao||'',opcao:j+1,texto:String(texto),motivo,chave});
+  })));
+  return out;
+}
+function manterConflito(n){const c=(window._conflitosAtuais||[])[n];if(!c)return;dietExcecoes.add(c.chave);dietEditado=true;salvarRascunhoDieta();renderDietMealRows();}
+function removerConflito(n){const c=(window._conflitosAtuais||[])[n];if(!c)return;removeDietItemRow(c.i,c.j,c.k);}
 function verificarConflitosDieta(){
   const box=document.getElementById('dietAlertaConflito');if(!box)return;
   const d=dietDataCache||{};
+  const duros=detectarConflitosPlano();
+  window._conflitosAtuais=duros;
   const textoDieta=(dietPlanEdit||[]).map(m=>(m.opcoes||[]).join(' ')).join(' ').toLowerCase();
-  const textoSup=(dietSupEdit||[]).map(s=>[s.item,s.dose,s.horario,s.rec].join(' ')).join(' ').toLowerCase();
+  const textoSup=(dietSupEdit||[]).map(x=>[x.item,x.dose,x.horario,x.rec].join(' ')).join(' ').toLowerCase();
   const texto=textoDieta+' '+textoSup;
-  const achados=[];
-  _arr(d.alergias).forEach(cod=>{
-    const a=ALERGIA_TERMOS[cod];if(!a)return;
-    const bateu=a.termos.filter(t=>texto.includes(t));
-    if(bateu.length)achados.push('Paciente/Cliente relatou alergia/intolerância a '+a.rot+' — a dieta ou os suplementos contêm: '+bateu.join(', ')+'.');
-  });
+  const avisos=[];
   _arr(d.doencas).forEach(cod=>{
     const dd=DOENCA_TERMOS[cod];if(!dd)return;
     const bateu=dd.termos.filter(t=>texto.includes(t));
-    if(bateu.length)achados.push('Paciente/Cliente com '+dd.rot+' — '+dd.aviso+': '+bateu.join(', ')+'.');
+    if(bateu.length)avisos.push('Paciente/Cliente com '+dd.rot+' — '+dd.aviso+': '+bateu.join(', ')+'.');
   });
   const modeloAtual=(dietOv&&dietOv.modelo)||'normal';
-  if(modeloAtual==='vegana')achados.push('Dieta vegana: vitamina B12 não tem fonte alimentar vegetal confiável — avalie suplementação.');
+  if(modeloAtual==='vegana')avisos.push('Dieta vegana: vitamina B12 não tem fonte alimentar vegetal confiável — avalie suplementação.');
   if(modeloAtual==='ceto'){
     const dn=_arr(d.doencas);
-    if(dn.includes('RENAL')||dn.includes('HEPAT')||dn.includes('DM1'))achados.push('Cetogênica com doença renal, hepática ou diabetes tipo 1 registrada no Histórico — reavalie a indicação deste modelo para este Paciente/Cliente.');
+    if(dn.includes('RENAL')||dn.includes('HEPAT')||dn.includes('DM1'))avisos.push('Cetogênica com doença renal, hepática ou diabetes tipo 1 registrada no Histórico — reavalie a indicação deste modelo para este Paciente/Cliente.');
   }
-  if(!achados.length){box.style.display='none';box.innerHTML='';return;}
-  box.style.display='block';
-  box.innerHTML='<div class="aj-alert" style="margin-bottom:14px">⚠️ <b>Atenção — conflitos encontrados com o Histórico:</b><br>'+achados.map(a=>'• '+escH(a)).join('<br>')+'<div style="font-size:11px;margin-top:6px">Revise os itens acima antes de gerar o documento. Isso não bloqueia a geração — a decisão final é sua.</div></div>';
+  if(!duros.length&&!avisos.length){box.style.display='none';box.innerHTML='';return;}
+  let h='';
+  if(duros.length){
+    h+='<div class="aj-alert" style="border-color:#c0392b;background:#fdecea;margin-bottom:12px">🚫 <b>Gerar PLANNER está travado: '+duros.length+' item(ns) contrariam as restrições deste Paciente/Cliente</b><br>'+
+      duros.map((c,n)=>'• <b>'+escH(c.meal.replace(/^[^A-Za-zÀ-ú]+/,''))+', opção '+c.opcao+':</b> '+escH(c.texto)+' <i>('+escH(c.motivo)+')</i> <button class="btn bs" style="padding:2px 8px;font-size:11px" onclick="removerConflito('+n+')">Remover</button> <button class="btn bs" style="padding:2px 8px;font-size:11px" onclick="manterConflito('+n+')">Manter por decisão minha</button>').join('<br>')+'</div>';
+  }
+  if(avisos.length)h+='<div class="aj-alert" style="margin-bottom:12px">⚠️ <b>Atenção ao Histórico:</b><br>'+avisos.map(a=>'• '+escH(a)).join('<br>')+'<div style="font-size:11px;margin-top:6px">Aviso: não bloqueia a geração — a decisão final é sua.</div></div>';
+  box.style.display='block';box.innerHTML=h;
 }
+
 // ── Editor de refeições por item (alimento + gramas), em vez de texto corrido ──
-const DIET_FOODS_FLAT=Object.values(FOODS).flat();
+const BEBIDAS_EXTRA=['Chá preto','Chá verde','Chá mate','Chá branco','Chá de hibisco','Chá de gengibre','Chá de canela','Chá de erva-doce','Chá de camomila (calmante)','Chá de erva-cidreira (calmante)','Chá de capim-limão (calmante)','Chá de hortelã (calmante)','Café coado','Água com gás','Água com limão','Energético zero','Kombucha'];
+const DIET_FOODS_FLAT=Array.from(new Set(Object.values(FOODS).flat().concat(BEBIDAS_EXTRA)));
+function dietLinhaAlimentoMudou(el,i,j,k){
+  const row=el.closest('.med-row');if(!row)return;
+  const liq=ehLiquido(el.value);
+  const un=row.querySelector('span');if(un)un.textContent=liq?'ml':'g';
+  const num=row.querySelector('input[type=number]');
+  if(num){
+    num.placeholder=liq?'ml':'g';
+    if(!(parseFloat(num.value)>0)){
+      const kk=achaFoodKey(el.value),nut=kk?(FOOD_NUT[kk]||FOOD_NUT_CUSTOM[kk]):null;
+      if(nut&&nut[5]){num.value=nut[5];dietOpcaoRowEdit(i,j,k,'gramas',String(nut[5]));}
+    }
+  }
+  try{verificarConflitosDieta();}catch(e){}
+}
 
 function capFirst(s){s=String(s||'');return s.length?s.charAt(0).toUpperCase()+s.slice(1):s;}
 // ── Identifica bebidas/líquidos pra trocar o rótulo de "g" pra "ml" — cobre a lista fixa e nomes digitados/estimados por IA ──
 function ehLiquido(nome){
   const n=(nome||'').toLowerCase().replace(/\([^)]*\)/g,' ');
   if(/creme de leite|doce de leite|leite condensado|leite em p[óo]|\bp[óo]\b/.test(n))return false; // derivados que não são bebida
-  return /(?<![\p{L}])(água|leite|suco|chá|café|caldo|kefir|bebida|energético|vitamina de fruta)(?![\p{L}])|refrigerante|isot[ôo]nico|achocolatado|cerveja/u.test(n);
+  return /(?<![\p{L}])(água|leite|suco|chá|café|caldo|kefir|bebida|energético|kombucha|chimarr[ãa]o|terer[ée]|limonada|vitamina de fruta)(?![\p{L}])|refrigerante|isot[ôo]nico|achocolatado|cerveja/u.test(n);
 }
 // ── Lista, sem repetir, os alimentos que realmente entraram no cardápio final — usado pra pedir substituições sob medida por IA ──
 function itensUnicosDoPlan(plan){
@@ -4729,8 +4880,18 @@ function itensUnicosDoPlan(plan){
   });
   return Object.values(vistos);
 }
+function _splitMais(str){
+  const out=[];let prof=0,cur='';
+  for(let i=0;i<str.length;i++){
+    const c=str[i];
+    if(c==='(')prof++;else if(c===')')prof=Math.max(0,prof-1);
+    if(prof===0&&str.startsWith(' + ',i)){out.push(cur);cur='';i+=2;continue;}
+    cur+=c;
+  }
+  out.push(cur);return out;
+}
 function parseOpcaoStr(str){
-  const segs=(str||'').split(' + ').map(t=>t.trim()).filter(Boolean);
+  const segs=_splitMais(str||'').map(t=>t.trim()).filter(Boolean);
   if(!segs.length)return[{tipo:'item',alimento:'',gramas:'',medida:''}];
   return segs.map(seg=>{
     const m=seg.match(/^(\d+(?:[.,]\d+)?)\s*(?:g|ml)\s+de\s*(.*?)(?:\s*\(([^)]+)\))?$/i);
@@ -4812,6 +4973,11 @@ function _limpaNomeTitulo(n){
 function tituloAutoOpcao(rows,refKey){
   const itens=rows.filter(r=>r.tipo==='item'&&r.alimento&&r.alimento.trim());
   if(!itens.length)return '';
+  const _principais=itens.filter(r=>{const nm=normAlim(r.alimento);return !TIT_IGNORA.test(nm)&&!(achaFoodKey(r.alimento)&&foodNut(r.alimento)[0]<25);});
+  if(!_principais.length){
+    const tx=rows.find(r=>r.tipo==='texto'&&String(r.valor||'').trim()&&!/:$/.test(String(r.valor).trim())&&!/^(salada|sobremesa|preparo|sem |legumes|01 prato|consumir|vitamina:)/i.test(normAlim(r.valor)));
+    if(tx)return String(tx.valor).replace(/\s*\(.*$/,'').replace(/[:.]+$/,'').trim().toUpperCase();
+  }
   let rel=itens.filter(r=>{
     const nm=normAlim(r.alimento);
     if(TIT_IGNORA.test(nm))return false;
@@ -4864,12 +5030,21 @@ const ALT_TORRADA=[
   {nome:'Crepioca',op:'CREPIOCA:'+' + 50 g de ovo mexido (1 ovo inteiro) + 30 g de Tapioca'},
   {nome:'Mingau de aveia',op:'200 g de Mingau de aveia',gluten:true},
   {nome:'Iogurte com fruta',op:'130 g de iogurte natural + 100 g de maçã',lactose:true},
-  {nome:'Gelatina zero',op:'200 g de Gelatina zero'}
+  {nome:'Gelatina zero',op:'200 g de Gelatina zero'},
+  {nome:'Fruta',op:'FRUTA'}
 ];
 function addAlternativaVolume(i,idx){
   const it=ALT_TORRADA[idx];if(!it||!dietPlanEdit[i])return;
   const key=distKeyFromRefeicao(dietPlanEdit[i].refeicao);
-  const txt=it.op==='PIPOCA'?PIPOCA_OPCAO:comTituloAuto(it.op,key);
+  let txt;
+  if(it.op==='FRUTA'){
+    const prefsX=(dietOv&&dietOv.prefs)||null;
+    const exX=exclusoesAtivas(dietDataCache||{},prefsX||prefsPadrao(dietDataCache||{}),(dietOv&&dietOv.regras)||{});
+    if(!window._frChip)window._frChip=ctxFrutas(prefsX,dietDataCache||{},exX,(dietOv&&dietOv.modelo)||'normal');
+    const f=proximaFruta(window._frChip);
+    if(!f){showToast('⚠️ Nenhuma fruta disponível com as restrições deste Paciente/Cliente','#e67e22');return;}
+    txt=comTituloAuto(f.g+' g de '+f.nome,key);
+  }else txt=it.op==='PIPOCA'?PIPOCA_OPCAO:comTituloAuto(it.op,key);
   dietPlanEdit[i].opcoes.push(txt);
   dietEditado=true;dietPesosStale=true;renderDietMealRows();
   showToast('➕ '+it.nome+' incluída como nova opção — ajuste a quantidade se precisar','#27ae60');
@@ -4888,6 +5063,11 @@ function gastoEstimadoPosTreino(d){
   return Math.round(5.0*3.5*peso/200*min);
 }
 function renderDietMealRows(){
+  _renderDietMealRowsBase();
+  try{verificarConflitosDieta();}catch(e){console.error(e);}
+}
+function _renderDietMealRowsBase(){
+  const cfSet=new Set(detectarConflitosPlano().map(c=>c.i*10000+c.j*100+c.k));
   popularDietFoodList();
   const wrap=document.getElementById('dietMealRows');
   wrap.innerHTML=dietPlanEdit.map((m,i)=>{
@@ -4895,7 +5075,7 @@ function renderDietMealRows(){
       const rows=parseOpcaoStr(o);
       const rowsHtml=rows.map((r,k)=>r.tipo==='texto'
         ?`<div class="med-row"><input class="di" style="flex:1${(k===0&&/:$/.test(String(r.valor||'').trim()))?';font-weight:700':''}" value="${escH(capFirst(r.valor))}" placeholder="${(k===0&&/:$/.test(String(r.valor||'').trim()))?'Título da opção':'Observação (ex: café sem açúcar)'}" oninput="dietOpcaoRowEdit(${i},${j},${k},'valor',this.value)"><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
-        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
+        :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1${cfSet.has(i*10000+j*100+k)?";border-color:#c0392b;background:#fdecea":""}" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)" onchange="dietLinhaAlimentoMudou(this,${i},${j},${k})"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
       ).join('');
       return `<div style="border:1px solid var(--br);border-radius:8px;padding:10px;margin-top:8px;background:var(--gp)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -4973,7 +5153,7 @@ async function expandirAlimentosDesconhecidos(){
         const r=rows[k];
         if(r.tipo!=='item'||!r.alimento||!r.alimento.trim())continue;
         const nome=r.alimento.trim();
-        if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr/i.test(nome)){
+        if(/salada|legume|verdura|hortali[cç]a|folhas?\b/i.test(nome)&&!/molho|maionese|batata|macarr|sopa|caldo|creme|pur[êe]/i.test(nome)){
           rows[k]={tipo:'texto',valor:'01 prato raso de servir cheio de '+nome.toLowerCase()+' (consumo livre — temperar só com limão, ervas, sal até 1 g e pimenta-do-reino)'};
           mudouOpcao=true;continue;
         }
@@ -5051,7 +5231,7 @@ async function distribuirPesosPlano(silencioso){
   renderDietMealRows();
   if(!silencioso){
     let msg='✅ Pesos recalculados — revise e ajuste se precisar';
-    if(expandiu)msg+=' (alguns itens foram estimados por IA — confira antes de usar em outros pacientes)';
+    if(expandiu)msg+=' (alguns itens foram estimados por IA — confira antes de usar em outros Pacientes/Clientes)';
     if(falhou)msg+=' · '+falhou+' item(ns) não foi possível estimar — confira o nome digitado';
     showToast(msg,'#27ae60');
   }
@@ -5213,6 +5393,8 @@ function renderDietFarmRows(){
 function addFarmRowDiet(){dietFarmEdit.push({item:'',dose:'',frequencia:'',tempoUso:'',obs:''});renderDietFarmRows();}
 function removeFarmRowDiet(i){dietFarmEdit.splice(i,1);renderDietFarmRows();}
 async function confirmarGerarDieta(){
+  const _cf=detectarConflitosPlano();
+  if(_cf.length){verificarConflitosDieta();showToast('🚫 '+_cf.length+' item(ns) contrariam as restrições deste Paciente/Cliente — remova ou marque "manter por decisão minha" para gerar','#c0392b');const _ov=document.getElementById('dietEditorOverlay');if(_ov)_ov.scrollTop=0;return;}
   if(dietTemAlimentoSemPeso()){if(!confirm('Tem alimento sem peso preenchido. Gerar o documento assim mesmo?'))return;}
   else if(dietPesosStale){if(!confirm('Você alterou alimentos depois do último cálculo — os pesos podem não bater a meta de cada refeição. Gerar assim mesmo? (Ou cancele e clique em Refresh.)'))return;}
   document.getElementById('dietEditorOverlay').style.display='none';
@@ -5267,8 +5449,8 @@ function calcDietaBase(d,ov,cas){
 // ═══════════════════════════════════════════════════════════════════════════════
 const AVERSOES_CAT=[
   {k:'visceras',rot:'Fígado e vísceras',re:/\b(figado|visceras?|bucho|coracao|moela|rins?|(?<!sem )miolo)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
-  {k:'peixe',rot:'Peixe',chip:'Peixe (filé, grelhado)',re:/\b(peixe|tilapia|salmao|merluza|bacalhau|pescada)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
-  {k:'sardinha_atum',rot:'Sardinha e atum',chip:'Sardinha e atum (lata)',re:/\b(sardinha|atum)\b/,subs:['frango desfiado','ovo cozido','cottage']},
+  {k:'peixe',rot:'Peixe',chip:'Peixe (filé, grelhado)',re:/\b(peixe|peixes|tilapia|salmao|merluza|bacalhau|pescada|atum|atuns|sardinha|sardinhas|truta|linguado|anchova|arenque|cacao|robalo|corvina|dourado|tambaqui|pintado|bagre|tucunare|pirarucu|badejo|namorado)\b/,subs:['frango grelhado','carne bovina magra','ovo cozido']},
+  {k:'sardinha_atum',rot:'Sardinha e atum',chip:'Sardinha e atum (lata)',re:/\b(sardinha|sardinhas|atum|atuns)\b/,subs:['frango desfiado','ovo cozido','cottage']},
   {k:'frutos_mar',rot:'Frutos do mar',re:/\b(camarao|frutos do mar|lula|polvo|marisco|mariscos)\b/,subs:['frango grelhado','peixe grelhado']},
   {k:'ovo',rot:'Ovo',re:/\b(ovo|ovos|omelete|gema|clara)\b/,subs:['queijo muçarela','queijo minas frescal','cottage','peito de peru']},
   {k:'suina',rot:'Carne suína',re:/\b(suino|suina|porco|lombo|bisteca|linguica|bacon)\b/,subs:['frango grelhado','peito de peru']},
@@ -5285,13 +5467,13 @@ const AVERSOES_CAT=[
 ];
 // exclusões que vêm sozinhas do cadastro (Histórico): não perguntam nada
 const ALERGIA_EXCL={
-  GLUTEN:{rot:'Glúten',re:/\b(aveia|granola|torrada|torradas|macarrao|biscoito|cerveja)\b/,subs:['goma de tapioca'],semGluten:true},
+  GLUTEN:{rot:'Glúten',re:/\b(aveia|granola|torrada|torradas|macarrao|biscoito|biscoitos|bolacha|bolachas|cerveja|pao|paes|trigo|centeio|cevada|malte|bolo|bolos|pizza|massa|massas|farelo|wrap|tortilla|pastel|empada|esfiha|coxinha|lasanha|nhoque|croissant|brioche|panetone)\b/,subs:['goma de tapioca'],semGluten:true},
   OVO:{k:'ovo'},LEITE:{rot:'Proteína do leite',k:'laticinios',leite:'vegetal'},LACTOSE:{rot:'Lactose',leite:'semlactose'},
   SOJA:{rot:'Soja',re:/\b(soja|tofu|pts)\b/,subs:['grao de bico','ovo cozido']},
   FRUTOS_MAR:{k:'frutos_mar'},AMENDOIM:{rot:'Amendoim',re:/\bamendoim\b/,remover:true},
   FRUTOSE:{rot:'Frutose',re:/\b(mel|geleia|suco)\b/,remover:true}
 };
-const SOBREMESA_OPCOES=['1 bombom (Sonho de Valsa ou Ouro Branco)','fruta com leite condensado (100 g de fruta + 20 g de leite condensado)','gelatina zero com calda de whey (100 g de gelatina zero + 15 g de whey diluído)','gelatina zero com 20 g de leite condensado','picolé de fruta (1 unidade)','1 suspiro','mousse de whey (120 g)','chocolate 70% (15 g)','iogurte natural com frutas vermelhas','sorvete de creme (1 bola, 60 g)'];
+const SOBREMESA_OPCOES=['1 bombom (Sonho de Valsa ou Ouro Branco)','fruta com leite condensado (100 g de fruta e 20 g de leite condensado)','gelatina zero com calda de whey (100 g de gelatina zero e 15 g de whey diluído)','gelatina zero com 20 g de leite condensado','picolé de fruta (1 unidade)','1 suspiro','mousse de whey (120 g)','chocolate 70% (15 g)','iogurte natural com frutas vermelhas','sorvete de creme (1 bola, 60 g)'];
 const FRUTAS_CHIPS=['Abacate','Frutas vermelhas','Morango','Mirtilo (blueberry)','Amora','Banana','Maçã','Pera','Manga','Uva','Kiwi','Mamão','Melão','Melancia','Abacaxi','Laranja','Tangerina','Goiaba','Figo'];
 const NUTS_CHIPS=['Castanha de caju','Castanha-do-pará','Macadâmia','Nozes','Amêndoas','Chia','Linhaça','Gergelim'];
 const FIBRA_INSOLUVEL_CHIPS=['Farelo de trigo','Farinha de aveia','Linhaça','Feijão preto','Grão-de-bico','Couve','Brócolis'];
@@ -5299,7 +5481,7 @@ const FIBRA_SOLUVEL_CHIPS=['Aveia','Chia','Psyllium','Maçã','Pera','Laranja','
 const FIBRA_GRAMAS={'Farelo de trigo':15,'Farinha de aveia':20,'Linhaça':15,'Feijão preto':60,'Grão-de-bico':60,'Couve':50,'Brócolis':60,'Aveia':20,'Chia':15,'Psyllium':10,'Maçã':100,'Pera':100,'Laranja':120,'Ameixa seca':30};
 const LEG_LEVES=['Alface','Rúcula','Agrião','Couve','Espinafre','Repolho','Brócolis','Couve-flor','Abobrinha','Berinjela','Pepino','Tomate','Chuchu','Vagem','Pimentão','Cogumelo','Aspargos','Quiabo'];
 const LEG_AMIL=['Batata','Batata-doce','Mandioca','Inhame','Milho','Ervilha','Beterraba','Cenoura','Abóbora'];
-const LANCHE_TIPOS=['Lanche natural','Shake','Tapioca ou crepioca','Panqueca','Wrap','Mingau','Bowl de iogurte','Pré-treino','Pós-treino','Salada de frutas proteica'];
+const LANCHE_TIPOS=['Lanche natural','Shake','Fruta com acompanhamento','Tapioca ou crepioca','Panqueca','Wrap','Mingau','Bowl de iogurte','Pré-treino','Pós-treino','Salada de frutas proteica'];
 const NUT_KEYS=['castanha de caju','castanha do para','macadamia','nozes','amendoas','chia','linhaca','gergelim'];
 
 function prefsPadrao(d){
@@ -5312,8 +5494,8 @@ function prefsPadrao(d){
     legumes:{ativo:false,marcados:[],texto:''},
     fibras:{insoluveis:{ativo:false,marcados:[]},soluveis:{ativo:false,marcados:[]}},
     bebidas:{agua:true,gas:true,cha:true,cafe:true,refriZero:true,sucoZero:true,isotonico:false,energetico:false,alcool:'nao',adocante:'sucralose',mlDia:''},
-    sobremesa:{ativo:true,marcados:[],texto:'',diferentes:false},
-    interm:{modo:'padrao',manha:'',tarde:'',escritosM:'',escritosT:'',ia:true,tipos:['Lanche natural','Shake']}
+    sobremesa:{ativo:true,modo:'casa',marcados:[],texto:'',diferentes:false},
+    interm:{modo:'padrao',manha:'',tarde:'',escritosM:'',escritosT:'',ia:true,tipos:['Lanche natural','Shake','Fruta com acompanhamento']}
   };
 }
 // leitura do paciente: o QFA (Questionário de Frequência Alimentar) marca "Nunca" → já sugere como aversão
@@ -5330,23 +5512,58 @@ function prefsCarregar(d){try{const r=JSON.parse(localStorage.getItem(prefsChave
 
 function _escRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 // separa o texto livre em "não come X" e "diminuir Y"
+const _RE_RED=/^(diminuir|reduzir|menos|menor quantidade de|pouco|poucos|pouca)\s+/;
+const _RE_EXCL=/^(?:(?:eu\s+)?nao\s+(?:quero|come|comer|como|gosta|gosto|aceita|aceito|tolera|tolero|uso|usa|usar|incluir|inclua|colocar|coloque|pode|posso|consegue|consigo)(?:\s+(?:de|do|da|dos|das|comer|usar|incluir))*|nunca(?:\s+(?:come|como|comer|quer|quero))?|nada\s+de|sem|evitar|evite|tirar|tire|retirar|retire|excluir|exclua|cortar|corte|remover|remova|nao\s+incluir|nao\s+usar)\s+/;
+function _limpaAlvo(t){
+  let x=String(t||'').trim().replace(/\s+(nao|nunca)$/,'');let ant;
+  do{ant=x;x=x.replace(/^(?:o|a|os|as|um|uma|de|do|da|dos|das|no|na|nos|nas)\s+/,'');}while(x!==ant);
+  return x.trim();
+}
+function _rawDe(p0,alvo){
+  const tk=String(p0).split(/\s+/),at=alvo.split(' ');
+  for(let i=0;i+at.length<=tk.length;i++){if(tk.slice(i,i+at.length).map(normAlim).join(' ')===alvo)return tk.slice(i,i+at.length).join(' ');}
+  return alvo;
+}
 function parseTextoLivre(txt){
   const excl=[],red=[];
-  String(txt||'').split(/[\n;,]+/).map(s=>s.trim()).filter(Boolean).forEach(p0=>{
+  const cortar=resto=>{
+    const pecas=resto.split(/\s+(?:e|ou|nem)\s+|\s*\/\s*/).map(_limpaAlvo).filter(Boolean),out=[];
+    pecas.forEach(pc=>{
+      const ws=pc.split(' ');
+      const conhecidas=ws.filter(w1=>w1.length>2&&AVERSOES_CAT.some(c=>c.re&&c.re.test(w1)));
+      if(ws.length>=2&&conhecidas.length>=2)ws.filter(w1=>conhecidas.includes(w1)).forEach(w1=>out.push(w1));else out.push(pc);
+    });
+    return out;
+  };
+  String(txt||'').split(/[\n;,]+/).map(x=>x.trim()).filter(Boolean).forEach(p0=>{
     const p=normAlim(p0);
-    let m=p.match(/^(diminuir|reduzir|menos|menor quantidade de|pouco)\s+(?:de\s+|do\s+|da\s+)?(.+)$/);
-    if(m){red.push({n:m[2],raw:p0.replace(/^(diminuir|reduzir|menos|menor quantidade de|pouco)\s+(?:de\s+|do\s+|da\s+)?/i,'')});return;}
-    m=p.match(/^(?:nao (?:come|gosta de|quer|aceita|como|gosto de)|sem|evitar|tirar|retirar|excluir|nao incluir|nao usar)\s+(?:de\s+|do\s+|da\s+)?(.+)$/);
-    excl.push({n:m?m[1]:p,raw:p0.replace(/^(n[aã]o (?:come|gosta de|quer|aceita|como|gosto de)|sem|evitar|tirar|retirar|excluir|n[aã]o incluir|n[aã]o usar)\s+(?:de\s+|do\s+|da\s+)?/i,'')});
+    const mr=p.match(_RE_RED);
+    if(mr){cortar(p.slice(mr[0].length)).forEach(a=>red.push({n:a,raw:_rawDe(p0,a)}));return;}
+    const me=p.match(_RE_EXCL);
+    cortar(me?p.slice(me[0].length):p).forEach(a=>excl.push({n:a,raw:_rawDe(p0,a)}));
   });
   return{excl,red};
 }
+function atualizarEntendiAv(){
+  const t=document.getElementById('dwqAvTxt'),b=document.getElementById('dwqAvEntendi');
+  if(!t||!b)return;
+  const pt=parseTextoLivre(t.value);
+  const tirar=pt.excl.map(a=>capFirst(a.raw||a.n)),dim=pt.red.map(a=>capFirst(a.raw||a.n));
+  b.innerHTML=(tirar.length||dim.length)?('✔ <b>O sistema entendeu</b>'+(tirar.length?' — tirar: '+escH(tirar.join(', ')):'')+(dim.length?' · diminuir: '+escH(dim.join(', ')):'')):'';
+}
+function restricaoExtensa(d){
+  if(d.k==='peixe')return 'Peixe (qualquer peixe, inclusive atum e sardinha)';
+  if(d.k==='sardinha_atum')return 'Sardinha e atum (lata)';
+  if(d.k==='al_GLUTEN')return 'Glúten (pão, trigo, aveia, massas, biscoitos, bolos)';
+  return d.rot||d.k;
+}
 function _defDeTexto(alvoObj){
   const alvo=alvoObj.n;
-  const cat=AVERSOES_CAT.find(d=>d.re&&d.re.test(alvo))||AVERSOES_CAT.find(d=>normAlim(d.rot).split(' ').some(t=>t.length>3&&t===_sing(alvo)));
+  const cats=AVERSOES_CAT.slice().sort((a,b)=>(a.k==='sardinha_atum'?-1:0)-(b.k==='sardinha_atum'?-1:0));
+  const cat=cats.find(d=>d.re&&d.re.test(alvo))||cats.find(d=>normAlim(d.rot).split(' ').some(t=>t.length>3&&t===_sing(alvo)));
   if(cat)return cat;
-  const t=_sing(alvo.split(' ')[0]);
-  return{k:'txt_'+alvo,rot:alvoObj.raw||alvo,re:new RegExp('\\b'+_escRe(t)+'s?\\b'),generico:true};
+  const pal=alvo.split(' ');pal[pal.length-1]=_sing(pal[pal.length-1]);
+  return{k:'txt_'+alvo,rot:alvoObj.raw||alvo,re:new RegExp('\\b'+_escRe(pal.join(' '))+'s?\\b'),generico:true};
 }
 // junta o que veio do cadastro (automático), das marcações e do texto livre
 function exclusoesAtivas(d,prefs,regras){
@@ -5360,6 +5577,9 @@ function exclusoesAtivas(d,prefs,regras){
     if(e.k)add(AVERSOES_CAT.find(x=>x.k===e.k),true);
     else if(e.re)add({k:'al_'+a,rot:e.rot,re:e.re,subs:e.subs,remover:e.remover},true);
   });
+  if((ex.semGluten||(regras&&regras.semGluten))&&!ex.defs.some(x=>x.k==='al_GLUTEN')){
+    const eg=ALERGIA_EXCL.GLUTEN;ex.semGluten=true;ex.defs.push({k:'al_GLUTEN',rot:eg.rot,re:eg.re,subs:eg.subs,remover:eg.remover});
+  }
   if(regras){ // exclusões que já são do próprio modelo de dieta (vegana, paleo…)
     const addM=k=>{const df=AVERSOES_CAT.find(x=>x.k===k);if(df&&!ex.defs.some(x=>x.k===k)){ex.defs.push(df);ex.rotsModelo.push(df.rot);}};
     if(regras.semLaticinio){ex.laticinioProibido=true;addM('laticinios');}
@@ -5418,6 +5638,12 @@ function _subsPara(def,ex,refeicao){
   if(ex.semCarne)cands=['tofu grelhado','grão-de-bico cozido','lentilha cozida','iogurte de soja'];
   return cands.find(c=>!bloqueado(c))||(isCafe&&!_ehPao?CAFE_POOL.find(c=>!bloqueado(c))||null:null);
 }
+function _defConflita(d,nm){
+  if(!d||!d.re||!d.re.test(nm))return false;
+  if(d.k==='al_GLUTEN'&&/sem gluten|biscoito de arroz|arroz inflado|pao de queijo|goma de tapioca|massa de tapioca/.test(nm))return false;
+  if(d.k==='laticinios'&&/soja|coco|vegetal|amendoa|aveia/.test(nm))return false;
+  return true;
+}
 function aplicarExclusoes(plan,ex){
   if(!ex.defs.length)return plan;
   const usadas={n:0};
@@ -5431,7 +5657,7 @@ function aplicarExclusoes(plan,ex){
       rows.forEach(r=>{
         if(r.tipo!=='item'){saida.push(r);return;}
         const nm=normAlim(r.alimento);
-        const def=ex.defs.find(d=>d.re&&d.re.test(nm)&&!(d.k==='al_GLUTEN'&&/sem gluten|biscoito de arroz|arroz inflado/.test(nm))&&!(d.k==='laticinios'&&/soja|coco|vegetal|amendoa|aveia/.test(nm)));
+        const def=ex.defs.find(d=>_defConflita(d,nm));
         if(!def){saida.push(r);return;}
         if(def.fruta){saida.push(Object.assign({},r,{alimento:_frutaAlternativa(ex,usadas),gramas:String(r.gramas||100),medida:''}));return;}
         if(def.remover){return;}
@@ -5442,6 +5668,11 @@ function aplicarExclusoes(plan,ex){
         saida.push(Object.assign({},r,{alimento:alvo,gramas:_gramasEquiv(r,alvo),medida:''}));
       });
       // se o feijão saiu, a observação sobre o preparo dele também sai
+      if(saida.length&&saida[0].tipo==='texto'&&/ — /.test(saida[0].valor||'')&&(saida.length!==rows.length||saida.some((r,ix)=>rows[ix]&&r.tipo==='item'&&rows[ix].tipo==='item'&&r.alimento!==rows[ix].alimento))){
+        const tipo=(saida[0].valor||'').split(' — ')[0];
+        const nt=tituloAutoOpcao(saida.slice(1),distKeyFromRefeicao(m.refeicao||''));
+        if(nt)saida[0]={tipo:'texto',valor:tipo+' — '+capFirst(nt.toLowerCase())};
+      }
       const semFeijao=ex.defs.some(d=>d.k==='feijao');
       const limpa=semFeijao?saida.filter(r=>!(r.tipo==='texto'&&/Sem bacon, linguiça, toucinho/.test(r.valor||''))):saida;
       return limpa.some(r=>r.tipo==='item'||(r.tipo==='texto'&&r.valor))?serializeOpcaoRows(limpa):'';
@@ -5459,11 +5690,17 @@ function nomeLeite(prefs,ex){
   return LEITE_NOME[prefs.leite.tipo]||'leite desnatado';
 }
 // leite, café/chá e adoçante nos textos das refeições
-function ajustarTextoBebidas(o,prefs,ex){
+const CHAS_DIA=['chá preto','chá verde','chá mate','chá de hibisco','chá de gengibre','chá branco'];
+let _chaIdx=0;
+function _hashTxt(t){let h=0;for(const ch of String(t||''))h=(h*31+ch.charCodeAt(0))>>>0;return h;}
+function proximoChaDia(){const c=CHAS_DIA[_chaIdx%CHAS_DIA.length];_chaIdx++;return c;}
+function ajustarTextoBebidas(o,prefs,ex,rodizio){
   let s=String(o);
   const nome=nomeLeite(prefs,ex);
   const iog=(ex.laticinioProibido||ex.leiteForcado==='semlactose')?'iogurte de soja':'iogurte natural';
-  s=s.replace(/café com \d+ ml de leite desnatado/gi,m=>nome?m.replace(/leite desnatado/i,nome):'café');
+  const _chaOk=!(prefs&&prefs.bebidas&&prefs.bebidas.cha===false);
+  s=s.replace(/café com \d+ ml de leite desnatado/gi,m=>nome?m.replace(/leite desnatado/i,nome):((rodizio&&_chaOk)?proximoChaDia():'café'));
+  if(rodizio&&_chaOk)s=s.replace(/chá (preto|mate)(?=\s+sem|\s*\()/gi,()=>proximoChaDia());
   s=s.replace(/(\d+(?:[.,]\d+)?) ml de (leite desnatado|leite morno|bebida vegetal \(soja\/coco\) sem açúcar)/gi,(m,n)=>nome?n+' ml de '+nome:n+' g de '+iog);
   const b=(prefs&&prefs.bebidas)||{};
   if(b.cafe===false)s=s.replace(/café com (\d+ ml de [^(+]*)/gi,'$1').replace(/(?<![\p{L}])café(?![\p{L}])/giu,'chá mate');
@@ -5491,9 +5728,7 @@ function _inserirNeutro(opStr,nome,gramas){
 function _nomeChip(s){return String(s).replace(/ \(blueberry\)/,'').toLowerCase();}
 function aplicarInclusoes(plan,prefs,ex){
   const fr=(prefs&&prefs.frutas)||{};
-  const fbChk=(prefs&&prefs.fibras)||{};
-  const fibraAtiva=!!((fbChk.insoluveis&&fbChk.insoluveis.ativo&&(fbChk.insoluveis.marcados||[]).length)||(fbChk.soluveis&&fbChk.soluveis.ativo&&(fbChk.soluveis.marcados||[]).length));
-  if(!fr.ativo&&!fibraAtiva)return plan;
+  if(!fr.ativo)return plan;
   const pt=String(fr.texto||'').split(/[\n;,]+/).map(s=>s.trim()).filter(Boolean);
   const todos=(fr.marcados||[]).concat(pt);
   const frutas=[],nuts=[];
@@ -5522,39 +5757,39 @@ function aplicarInclusoes(plan,prefs,ex){
         return _inserirNeutro(o,nut.toLowerCase(),15);
       });
     }
-    const fb=(prefs&&prefs.fibras)||{};
-    const fibraItens=[].concat((fb.insoluveis&&fb.insoluveis.ativo)?(fb.insoluveis.marcados||[]):[],(fb.soluveis&&fb.soluveis.ativo)?(fb.soluveis.marcados||[]):[]);
-    if(fibraItens.length&&/cafe|lancheM|lancheT|ceia/.test(key)){
-      final=final.map((o,idx)=>{
-        if(idx>0||/Receitas Fit|pipoca|Pipoca/.test(o))return o;
-        const item=fibraItens[(iFb++)%fibraItens.length];
-        return _inserirNeutro(o,item,FIBRA_GRAMAS[item]||20);
-      });
-    }
     return Object.assign({},m,{opcoes:final});
   });
 }
-function listaSobremesa(prefs){
+const SOBREMESA_FRUTAS_OUT=['fruta picada com canela','fruta assada com canela (maçã, pera ou banana)','salada de frutas (120 g)','fruta congelada batida, sem açúcar','iogurte natural com frutas vermelhas','gelatina zero'];
+function listaSobremesa(prefs,ex){
   const s=(prefs&&prefs.sobremesa)||{};
+  if(s.modo==='frutas')return ['1 fruta da estação'].concat(SOBREMESA_FRUTAS_OUT).filter(x=>!(ex&&ex.laticinioProibido&&/iogurte/.test(x)));
   const marc=(s.marcados||[]).map(x=>x);
   const txt=String(s.texto||'').split(/[\n;]+/).map(t=>t.trim()).filter(Boolean);
   return marc.concat(txt);
 }
-function textoSobremesa(prefs,refeicaoNome,idxGrande){
+function textoSobremesa(prefs,refeicaoNome,idxGrande,fctx,ex){
   const s=(prefs&&prefs.sobremesa)||{};
+  if(s.modo==='frutas'){
+    const f=proximaFruta(fctx);
+    const outros=SOBREMESA_FRUTAS_OUT.filter(x=>!(ex&&ex.laticinioProibido&&/iogurte/.test(x)));
+    const lista=[f?('1 fruta — '+f.nome+' ('+f.g+' g)'):'1 fruta da estação'].concat(outros);
+    if(s.diferentes)return 'Sobremesa (~60 kcal): '+lista[(idxGrande||0)%lista.length];
+    return 'Sobremesa (escolha 1, ~60 kcal): '+lista.join(', ou ');
+  }
   const lista=listaSobremesa(prefs);
   if(!lista.length)return SOBREMESA_TXT;
   if(s.diferentes&&lista.length>=2)return 'Sobremesa (~100 kcal): '+lista[idxGrande%lista.length];
   return 'Sobremesa (escolha 1, ~100 kcal): '+lista.join(', ou ');
 }
-function aplicarSobremesaPrefs(plan,prefs){
+function aplicarSobremesaPrefs(plan,prefs,ex,fctx){
   let n=0;
   (plan||[]).forEach(m=>{
     if(!isRefeicaoGrande(m.refeicao))return;
     m.opcoes=(m.opcoes||[]).map(o=>String(o).replace(/\s*\+\s*Sobremesa[^+]*$/i,''));
     if(prefs&&prefs.sobremesa&&prefs.sobremesa.ativo===false){m.sobremesa='nao';return;}
     m.sobremesa='sim';
-    const txt=textoSobremesa(prefs,m.refeicao,n++);
+    const txt=textoSobremesa(prefs,m.refeicao,n++,fctx,ex);
     m.opcoes=m.opcoes.map(o=>o+' + '+txt);
   });
   return plan;
@@ -5608,18 +5843,165 @@ function aplicarReducoes(plan,ex){
     return serializeOpcaoRows(rows);
   })}));
 }
+const FIBRA_TIPO={'Aveia':'aveia','Farinha de aveia':'farelo','Farelo de trigo':'farelo','Chia':'semente','Linhaça':'semente','Psyllium':'semente','Maçã':'fruta','Pera':'fruta','Laranja':'fruta','Ameixa seca':'fruta','Feijão preto':'leguminosa','Grão-de-bico':'leguminosa','Couve':'legume','Brócolis':'legume'};
+function _optItensTxt(o){return parseOpcaoStr(o).filter(r=>r.tipo==='item'&&r.alimento).map(r=>normAlim(r.alimento)).join(' | ');}
+function _compatFibra(tipo,o){
+  const it=_optItensTxt(o),tx=normAlim(o),temFruta=_opcTemFruta(o),temIog=/iogurte/.test(it),temVit=/vitamina/.test(tx);
+  const pesado=/pao|torrada|biscoito|tapioca|cuscuz|ovo|queijo|requeijao|atum|frango|presunto|carne/.test(it);
+  if(tipo==='aveia')return !pesado&&(temFruta||temIog||temVit);
+  if(tipo==='farelo')return !pesado&&(temIog||temVit);
+  if(tipo==='semente')return !pesado&&(temIog||temVit||temFruta||/leite/.test(it));
+  if(tipo==='fruta')return temFruta;
+  if(tipo==='leguminosa'||tipo==='legume')return /arroz|frango|carne|peixe|ovo|atum|sardinha|macarrao|molho|tofu/.test(it);
+  return false;
+}
+function _aplicarFibraNaOpcao(tipo,item,o){
+  const g=FIBRA_GRAMAS[item]||20,rows=parseOpcaoStr(o);
+  if(rows.some(r=>r.tipo==='item'&&normAlim(r.alimento||'')===normAlim(item)))return o;
+  if(tipo==='fruta'){
+    const ix=rows.findIndex(r=>r.tipo==='item'&&r.alimento&&_ehFruta(r.alimento));
+    if(ix<0)return o;
+    rows[ix]=Object.assign({},rows[ix],{alimento:item.toLowerCase(),gramas:String(g),medida:''});
+    return serializeOpcaoRows(rows);
+  }
+  if(tipo==='leguminosa'){
+    const ix=rows.findIndex(r=>r.tipo==='item'&&/feijao|lentilha|grao de bico/.test(normAlim(r.alimento||'')));
+    if(ix>=0){rows[ix]=Object.assign({},rows[ix],{alimento:item.toLowerCase()+' cozido'});return serializeOpcaoRows(rows);}
+  }
+  return _inserirNeutro(o,item.toLowerCase(),g);
+}
+function _opcaoCompletaFibra(tipo,item,key,prefs,ex,fctx){
+  const g=FIBRA_GRAMAS[item]||20,it=item.toLowerCase();
+  if(tipo==='aveia'){
+    if(key==='ceia'){
+      const leite=nomeLeite(prefs,ex);
+      return 'MINGAU DE AVEIA: + '+g+' g de aveia em flocos + 200 '+(leite?'ml de '+leite:'ml de água')+' + canela a gosto';
+    }
+    if(key==='cafe')return 'PÃO DE AVEIA NO MICRO-ONDAS: + 30 g de aveia em flocos + 50 g de ovo inteiro (1 ovo) + 4 g de azeite extravirgem (para untar) + sal a gosto + 15 g de requeijão light';
+    const f=proximaFruta(fctx);
+    return '130 g de iogurte natural + '+g+' g de aveia em flocos'+(f?' + '+f.g+' g de '+f.nome:'');
+  }
+  if(tipo==='farelo'||tipo==='semente')return '170 g de iogurte natural + '+g+' g de '+it;
+  if(tipo==='fruta')return g+' g de '+it+' + 130 g de iogurte natural';
+  return null;
+}
+function aplicarFibras(plan,prefs,ex,nOp,fctx){
+  const fb=(prefs&&prefs.fibras)||{};
+  let itens=[].concat((fb.insoluveis&&fb.insoluveis.ativo)?(fb.insoluveis.marcados||[]):[],(fb.soluveis&&fb.soluveis.ativo)?(fb.soluveis.marcados||[]):[]);
+  itens=itens.filter(it=>FIBRA_TIPO[it]&&!ex.defs.some(df=>_defConflita(df,normAlim(it))));
+  if(!itens.length)return plan;
+  const out=plan.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).slice()}));
+  const idxMeal=k=>out.findIndex(m=>distKeyFromRefeicao(m.refeicao||'')===k);
+  const ordemDia=['cafe','lancheM','lancheT','ceia'],ordemPrinc=['almoco','jantar'];
+  let rrD=0,rrP=0;const usados={};
+  itens.forEach(item=>{
+    const tipo=FIBRA_TIPO[item],principal=(tipo==='leguminosa'||tipo==='legume'),ordem=principal?ordemPrinc:ordemDia;
+    for(let t=0;t<ordem.length;t++){
+      const key=ordem[((principal?rrP:rrD)+t)%ordem.length],mi=idxMeal(key);
+      if(mi<0||(usados[mi]||0)>=(principal?2:1))continue;
+      const m=out[mi],lim=Math.min(nOp,m.opcoes.length);
+      let ok=false;
+      for(let j=0;j<lim&&!ok;j++){
+        if(/Receitas Fit|Pipoca de milho/i.test(m.opcoes[j]))continue;
+        if(_compatFibra(tipo,m.opcoes[j])){const novo=_aplicarFibraNaOpcao(tipo,item,m.opcoes[j]);if(novo!==m.opcoes[j]){m.opcoes[j]=novo;ok=true;}}
+      }
+      if(!ok&&!principal&&nOp>=2){
+        const c=_opcaoCompletaFibra(tipo,item,key,prefs,ex,fctx);
+        if(c){m.opcoes.splice(Math.min(nOp,m.opcoes.length)-1,0,c);ok=true;}
+      }
+      if(ok){usados[mi]=(usados[mi]||0)+1;if(principal)rrP=(rrP+t+1)%ordem.length;else rrD=(rrD+t+1)%ordem.length;break;}
+    }
+  });
+  return out;
+}
+const FRUTAS_CAT={
+  baixo:['morango','melão','melancia','figo','amora','tangerina','frutas vermelhas'],
+  interm:['kiwi','laranja','mamão','abacaxi','goiaba','uva','pera'],
+  alto:['mirtilo','maçã','manga','banana']
+};
+const FRUTA_PORC={morango:100,'melão':150,melancia:200,figo:50,amora:100,tangerina:100,'frutas vermelhas':100,kiwi:80,laranja:150,'mamão':150,abacaxi:120,goiaba:130,uva:100,pera:130,mirtilo:50,'maçã':130,manga:150,banana:100};
+function ctxFrutas(prefs,d,ex,modelo){
+  const obj=normAlim((d&&d.objetivo)||'');
+  let pool,ceto=false;
+  if(modelo==='ceto'){pool=['morango','amora','frutas vermelhas'];ceto=true;}
+  else if(modelo==='lowcarb')pool=FRUTAS_CAT.baixo.slice();
+  else if(/perda|emagre/.test(obj))pool=FRUTAS_CAT.baixo.concat(FRUTAS_CAT.interm);
+  else pool=FRUTAS_CAT.baixo.concat(FRUTAS_CAT.interm,FRUTAS_CAT.alto);
+  const fr=(prefs&&prefs.frutas)||{};
+  if(fr.ativo&&(fr.marcados||[]).length){
+    const marc=fr.marcados.map(normAlim);
+    const sel=Object.keys(FRUTA_PORC).filter(k=>marc.some(m=>m.startsWith(normAlim(k))||normAlim(k).startsWith(m)));
+    if(sel.length)pool=sel;
+  }
+  const bloq=nm=>((ex&&ex.defs)||[]).some(df=>df.re&&df.re.test(normAlim(nm)));
+  pool=pool.filter(f=>!bloq(f));
+  if(!pool.length&&!bloq('maçã'))pool=['maçã'];
+  return{pool,i:pool.length?_hashTxt((d&&(d.id||d.nome))||'')%pool.length:0,ceto};
+}
+function proximaFruta(ctx){
+  if(!ctx||!ctx.pool.length)return null;
+  const f=ctx.pool[ctx.i%ctx.pool.length];ctx.i++;
+  return{nome:f,g:ctx.ceto?50:(FRUTA_PORC[f]||100)};
+}
+function _opcTemFruta(o){return parseOpcaoStr(o).some(r=>r.tipo==='item'&&r.alimento&&_ehFruta(r.alimento));}
+function aplicarFrutaCafe(plan,ctx,nOp){
+  return plan.map(m=>{
+    if(distKeyFromRefeicao(m.refeicao||'')!=='cafe')return m;
+    const op=(m.opcoes||[]).map((o,ix)=>{
+      if(ix>=nOp)return o;
+      if(!parseOpcaoStr(o).some(r=>r.tipo==='item'&&r.alimento))return o;
+      if(_opcTemFruta(o))return o;
+      const f=proximaFruta(ctx);if(!f)return o;
+      return _inserirNeutro(o,f.nome,f.g);
+    });
+    return Object.assign({},m,{opcoes:op});
+  });
+}
+function garantirFrutaLanche(plan,ctx,nOp){
+  if(nOp<2)return plan;
+  return plan.map(m=>{
+    const k=distKeyFromRefeicao(m.refeicao||'');
+    if(k!=='lancheM'&&k!=='lancheT')return m;
+    const ops=(m.opcoes||[]).slice();
+    if(ops.slice(0,nOp).some(_opcTemFruta))return m;
+    const idx=ops.findIndex((o,ix)=>ix>=nOp&&_opcTemFruta(o));
+    if(idx>=0){const x=ops.splice(idx,1)[0];ops.splice(nOp-1,0,x);return Object.assign({},m,{opcoes:ops});}
+    const f=proximaFruta(ctx);if(!f)return m;
+    ops.splice(nOp-1,0,f.g+' g de '+f.nome+' + 130 g de iogurte natural');
+    return Object.assign({},m,{opcoes:ops});
+  });
+}
+function aplicarChaLanche(plan,prefs){
+  const b=(prefs&&prefs.bebidas)||{};
+  if(b.cha===false)return plan;
+  return plan.map(m=>{
+    const k=distKeyFromRefeicao(m.refeicao||'');
+    if(k!=='lancheM'&&k!=='lancheT')return m;
+    return Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>{
+      if(/Receitas Fit/i.test(o)||/(caf[eé]|ch[aá](?![a-zà-ú])|leite|vitamina|shake|suco|[aá]gua)/i.test(o))return o;
+      return o+' + '+proximoChaDia()+' sem açúcar (ou adoçar com sucralose)';
+    })});
+  });
+}
 function aplicarPreferencias(plan,prefs,d,ov,kcalDia,regras){
   if(!prefs)return plan;
   const ex=exclusoesAtivas(d,prefs,regras);
+  const nOp=prefs.nOp||3;
+  _chaIdx=_hashTxt((d&&(d.id||d.nome))||'')%CHAS_DIA.length;
+  const fctx=ctxFrutas(prefs,d,ex,(ov&&ov.modelo)||'normal');
   let p=JSON.parse(JSON.stringify(plan));
   p=selecionarRefeicoes(p,prefs.nRef||6);
-  p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>ajustarTextoBebidas(o,prefs,ex))}));
+  p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>ajustarTextoBebidas(o,prefs,ex,true))}));
   p=aplicarExclusoes(p,ex);
   p=aplicarInclusoes(p,prefs,ex);
+  p=aplicarFrutaCafe(p,fctx,nOp);
   p=aplicarIntermediarios(p,prefs,ov,kcalDia,regras,ex);
-  p=aplicarSobremesaPrefs(p,prefs);
+  p=aplicarFibras(p,prefs,ex,nOp,fctx);
+  p=garantirFrutaLanche(p,fctx,nOp);
+  p=aplicarChaLanche(p,prefs);
+  p=aplicarSobremesaPrefs(p,prefs,ex,fctx);
   p=aplicarReducoes(p,ex);
-  const nOp=prefs.nOp||3;
+  p=aplicarExclusoes(p,ex); // filtro final: nada que contrarie alergia/aversão entra no plano, de onde quer que venha
   p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).slice(0,Math.max(1,nOp))}));
   return p;
 }
@@ -5649,9 +6031,9 @@ const DWQ_TELAS=[
      <div class="cons-grid">${_radio('dwqAv','N',!ativo,'Não — sem exclusões (usar o padrão)')}${_radio('dwqAv','S',ativo,'Sim — tem algo a excluir ou diminuir')}</div>
      <div id="dwqAvBox" style="display:${ativo?'block':'none'};margin-top:12px">
        <div class="cons-grid" id="dwqAvChips">${AVERSOES_CAT.map(a=>_chk(a.k,marc,a.chip||a.rot)).join('')}</div>
-       <div class="fg" style="margin-top:12px"><label class="fl">Escrever outros ou pedir para diminuir</label><textarea id="dwqAvTxt" class="fc" rows="2" placeholder="Ex.: não come coentro, sem mandioca, diminuir arroz, reduzir pão">${escH(p.aversoes.texto||'')}</textarea></div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever outros ou pedir para diminuir</label><textarea id="dwqAvTxt" class="fc" rows="2" placeholder="Ex.: não come coentro, sem mandioca, diminuir arroz, reduzir pão" oninput="atualizarEntendiAv()">${escH(p.aversoes.texto||'')}</textarea><div id="dwqAvEntendi" style="font-size:12px;color:var(--gd);margin-top:6px"></div></div>
      </div>`;},
-   bind:()=>{document.querySelectorAll('input[name=dwqAv]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqAvBox',_valRadio('dwqAv')==='S')));},
+   bind:()=>{document.querySelectorAll('input[name=dwqAv]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqAvBox',_valRadio('dwqAv')==='S')));atualizarEntendiAv();},
    coletar:p=>{p.aversoes.ativo=_valRadio('dwqAv')==='S';p.aversoes.marcados=p.aversoes.ativo?_lidosChk('dwqAvChips'):[];p.aversoes.texto=p.aversoes.ativo?document.getElementById('dwqAvTxt').value.trim():'';},
    padrao:p=>{p.aversoes={ativo:false,marcados:[],texto:''};}},
   {titulo:'Leite e glúten',sub:'O que já está no cadastro entra sozinho — só pergunto o que falta.',
@@ -5722,13 +6104,13 @@ const DWQ_TELAS=[
   {titulo:'Sobremesa',sub:'Se entra ou não, e quais. Aparece no almoço e no jantar e no bloco de sobremesas do Word.',
    render:p=>`<div class="cons-grid">${_radio('dwqSb','S',p.sobremesa.ativo,'Sim')}${_radio('dwqSb','N',!p.sobremesa.ativo,'Não — sem sobremesa')}</div>
      <div id="dwqSbBox" style="display:${p.sobremesa.ativo?'block':'none'};margin-top:12px">
-       <label class="fl">Opções (marque as que vai usar; sem marcar, uso o padrão da casa)</label><div class="cons-grid" id="dwqSbChips">${SOBREMESA_OPCOES.map(f=>_chk(f,p.sobremesa.marcados)).join('')}</div>
-       <div class="fg" style="margin-top:12px"><label class="fl">Escrever a que vai usar (uma por linha)</label><textarea id="dwqSbTxt" class="fc" rows="2" placeholder="Ex.: gelatina zero com calda de whey">${escH(p.sobremesa.texto||'')}</textarea></div>
+       <label class="fl">Tipo de sobremesa</label><div class="cons-grid">${_radio('dwqSbModo','casa',p.sobremesa.modo!=='frutas','Padrão da casa (gelatina zero, bombom etc.)')}${_radio('dwqSbModo','frutas',p.sobremesa.modo==='frutas','Só frutas, sem doces industriais')}</div><div id="dwqSbCasaBox" style="display:${p.sobremesa.modo==='frutas'?'none':'block'};margin-top:12px"><label class="fl">Opções (marque as que vai usar; sem marcar, uso o padrão da casa)</label><div class="cons-grid" id="dwqSbChips">${SOBREMESA_OPCOES.map(f=>_chk(f,p.sobremesa.marcados)).join('')}</div>
+       <div class="fg" style="margin-top:12px"><label class="fl">Escrever a que vai usar (uma por linha)</label><textarea id="dwqSbTxt" class="fc" rows="2" placeholder="Ex.: gelatina zero com calda de whey">${escH(p.sobremesa.texto||'')}</textarea></div></div>
        <label class="cons-ck" style="margin-top:10px"><input type="checkbox" id="dwqSbDif" ${p.sobremesa.diferentes?'checked':''}><span>Usar uma sobremesa diferente em cada refeição (almoço e jantar)</span></label>
      </div>`,
-   bind:()=>{document.querySelectorAll('input[name=dwqSb]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqSbBox',_valRadio('dwqSb')==='S')));},
-   coletar:p=>{p.sobremesa.ativo=_valRadio('dwqSb')!=='N';p.sobremesa.marcados=p.sobremesa.ativo?_lidosChk('dwqSbChips'):[];p.sobremesa.texto=p.sobremesa.ativo?document.getElementById('dwqSbTxt').value.trim():'';p.sobremesa.diferentes=p.sobremesa.ativo&&document.getElementById('dwqSbDif').checked;},
-   padrao:p=>{p.sobremesa={ativo:true,marcados:[],texto:'',diferentes:false};}},
+   bind:()=>{document.querySelectorAll('input[name=dwqSb]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqSbBox',_valRadio('dwqSb')==='S')));document.querySelectorAll('input[name=dwqSbModo]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqSbCasaBox',_valRadio('dwqSbModo')!=='frutas')));},
+   coletar:p=>{p.sobremesa.ativo=_valRadio('dwqSb')!=='N';p.sobremesa.modo=_valRadio('dwqSbModo')==='frutas'?'frutas':'casa';p.sobremesa.marcados=p.sobremesa.ativo?_lidosChk('dwqSbChips'):[];p.sobremesa.texto=p.sobremesa.ativo?document.getElementById('dwqSbTxt').value.trim():'';p.sobremesa.diferentes=p.sobremesa.ativo&&document.getElementById('dwqSbDif').checked;},
+   padrao:p=>{p.sobremesa={ativo:true,modo:'casa',marcados:[],texto:'',diferentes:false};}},
   {titulo:'Lanches intermediários',sub:'Usar os padrões ou os preparos que você escrever. A IA ainda sugere lanches naturais, shakes e outros, dentro das respostas anteriores.',
    render:p=>{const i=p.interm;
      const selT=(id,v)=>`<select class="di" id="${id}" style="max-width:420px"><option value="">Nenhum (usar as opções abaixo)</option>${Object.keys(LANCHE_TEMPLATES).map(k=>`<option value="${k}" ${v===k?'selected':''}>${LANCHE_TEMPLATES[k].nome}</option>`).join('')}</select>`;
@@ -5793,8 +6175,8 @@ async function buscarLanchesIA(ctx){
   if(!escritos.length&&!querIA)return{lanches:[]};
   const ex=exclusoesAtivas(ctx.d,p,ctx.regras);
   const kM=Math.round(kcalDaRefeicao(ctx.kcal,'lancheM',p,ctx.regras)),kT=Math.round(kcalDaRefeicao(ctx.kcal,'lancheT',p,ctx.regras));
-  const body={escritos,quantidade:querIA?4:0,tipos:(it.tipos&&it.tipos.length)?it.tipos:['Lanche natural','Shake'],kcalM:kM,kcalT:kT,
-    restricoes:ex.defs.map(d=>d.rot),semGluten:ex.semGluten,leite:nomeLeite(p,ex)||'nenhum',
+  const body={escritos,quantidade:querIA?4:0,tipos:(it.tipos&&it.tipos.length)?it.tipos:['Lanche natural','Shake','Fruta com acompanhamento'],kcalM:kM,kcalT:kT,
+    restricoes:ex.defs.map(restricaoExtensa),semGluten:ex.semGluten,leite:nomeLeite(p,ex)||'nenhum',
     objetivo:(ctx.d.objetivo||''),modelo:ctx.modelo,doencas:_arr(ctx.d.doencas).join(', '),
     gostos:[p.frutas.ativo?(p.frutas.marcados.join(', ')+' '+p.frutas.texto):'',].join(' ').trim(),
     adocante:(p.bebidas&&p.bebidas.adocante)||'sucralose'};
@@ -5816,7 +6198,15 @@ async function buscarLanchesIA(ctx){
     return Object.assign({},l,{itens,kcalAprox:Math.round(itens.reduce((s,i)=>s+i.kcal*i.gramas/100,0))});
   });
   salvarFoodCustom();
-  return{lanches};
+  return{lanches:lanches.filter(lancheCoerente)};
+}
+function lancheCoerente(l){
+  const nomes=(l.itens||[]).map(i=>normAlim(i.nome||''));
+  if(nomes.some(n=>/abacate/.test(n)))return false;
+  const tit=normAlim(l.titulo||'');
+  if(/abacate/.test(tit))return false;
+  const conhecidos=['atum','sardinha','frango','ovo','queijo','banana','maca','pera','mamao','melao','morango','aveia','tapioca','iogurte','whey','cottage','requeijao','manga','abacaxi','uva','laranja','kiwi','goiaba','castanha','chia','linhaca','granola','geleia','roast beef','lombo'];
+  return conhecidos.filter(c=>new RegExp('\\b'+c).test(tit)).every(c=>nomes.some(n=>n.includes(c)));
 }
 
 // ═══════════════ TEXTOS DO WORD QUE DEPENDEM DAS RESPOSTAS ═══════════════
@@ -5825,14 +6215,14 @@ function textoBebidasLinhas(prefs,d){
   const ml=metaAguaMl(prefs,d);
   const ad=b.adocante==='nenhum'?'sem adoçante':'adoçante à sua escolha ('+b.adocante+', em gotas)';
   const L=[];
-  L.push('Água: meta de '+ml+' ml por dia ('+(Math.round(ml/300*10)/10).toString().replace('.',',')+' copos de 300 ml), distribuída ao longo do dia'+(b.gas?'; pode ser com gás':'')+'.');
-  if(b.cha)L.push('Chás sem açúcar (camomila, hortelã, erva-doce, mate, chá preto, chá verde): liberados, '+ad+'.');
+  L.push(b.gas?'Água pode ser com gás, e adicionada de frutas para saborização.':'Água pode ser adicionada de frutas para saborização.');
+  if(b.cha)L.push('Chás sem açúcar: até o lanche da tarde, preto, verde, mate, hibisco, gengibre ou branco; a partir do jantar, também camomila, erva-cidreira, capim-limão e hortelã (efeito calmante). Liberados, '+ad+'.');
   if(b.cafe)L.push('Café: até 4 xícaras pequenas (50 ml cada) por dia, sem açúcar, '+ad+'.');
   if(b.refriZero)L.push('Refrigerante zero: consumo livre, inclusive durante as refeições.');
   if(b.sucoZero)L.push('Sucos: evite sucos naturais e industrializados em geral, mesmo os zero açúcar. Se for inevitável, consuma até 200 ml (1 copo).');
   if(b.isotonico)L.push('Isotônico: somente em treino acima de 1 hora, até 500 ml.');
   if(b.energetico)L.push('Energético zero: até 250 ml (1 lata) por dia, evitando depois das 16 h.');
-  L.push(b.alcool==='nao'?'Bebidas alcoólicas: não estão incluídas neste plano.':b.alcool==='ocasional'?'Bebidas alcoólicas: ocasionais, no máximo 1 vez por semana e 1 dose, fora dos dias de treino pesado.':'Bebidas alcoólicas: com moderação, no máximo 2 vezes por semana e 1 a 2 doses.');
+  L.push(b.alcool==='nao'?'Bebidas alcoólicas: não estão incluídas neste plano.':b.alcool==='ocasional'?'Bebidas alcoólicas: ocasionais, no máximo 1 vez por semana e 1 dose, fora dos dias de treino pesado, e intercale a mesma quantidade de água entre as doses/copos.':'Bebidas alcoólicas: com moderação, no máximo 2 vezes por semana, e intercale a mesma quantidade de água, entre as doses/copos.');
   L.push('Evite sempre as versões com açúcar.');
   return L;
 }
@@ -5914,7 +6304,29 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
   if(!window.docx){esconderProgressoWord();showToast('⚠️ Biblioteca Word não carregada. Verifique a internet.','#e67e22');return;}
   mostrarProgressoWord(15,'Calculando metas e cardápio...');
   try{
-    const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType,TabStopType}=window.docx;
+    const{Document,Packer,Paragraph:_Paragraph,TextRun:_TextRun,Table,TableRow:_TableRow,TableCell,HeadingLevel,AlignmentType,BorderStyle,WidthType,ShadingType,TabStopType}=window.docx;
+    // emojis ganham fonte própria (Segoe UI Emoji); linhas de tabela não se partem entre páginas
+    const _EMOJI_RE=/(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic}|[\u{1F3FB}-\u{1F3FF}])*|[\u{1F1E6}-\u{1F1FF}]{2}|\uFE0F)/gu;
+    class TextRun extends _TextRun{constructor(o){super(o);this.__opts=o;}}
+    class TableRow extends _TableRow{constructor(o){super(Object.assign({cantSplit:true},o));}}
+    class Paragraph extends _Paragraph{
+      constructor(o){
+        if(o&&Array.isArray(o.children)){
+          const novos=[];
+          o.children.forEach(ch=>{
+            if(ch instanceof TextRun&&ch.__opts&&typeof ch.__opts.text==='string'&&(_EMOJI_RE.lastIndex=0,_EMOJI_RE.test(ch.__opts.text))){
+              _EMOJI_RE.lastIndex=0;
+              ch.__opts.text.split(_EMOJI_RE).filter(x=>x!==''&&x!==undefined).forEach(pt=>{
+                _EMOJI_RE.lastIndex=0;const ehE=_EMOJI_RE.test(pt);_EMOJI_RE.lastIndex=0;
+                novos.push(new _TextRun(Object.assign({},ch.__opts,{text:pt},ehE?{font:'Segoe UI Emoji'}:{})));
+              });
+            }else novos.push(ch);
+          });
+          o=Object.assign({},o,{children:novos});
+        }
+        super(o);
+      }
+    }
 
     const base=calcDietaBase(d,dietOv,dietCas);
     const{peso,altura,idade,sexo,dn,obj,kcal,cP,pP,gP,carbG,protG,fatG,fibG,hasDM,hasHAS,hasDis,hasObe}=base;
@@ -5932,9 +6344,10 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     const hdrBdrAll={top:hdrBdr,bottom:hdrBdr,left:hdrBdr,right:hdrBdr};
 
     function P(txt,opts={}){return new Paragraph({children:[new TextRun({text:txt,...opts})],spacing:{after:120}});}
-    function H1(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:280,after:140}});}
-    function H2(txt){return new Paragraph({heading:HeadingLevel.HEADING_2,children:[new TextRun({text:txt,bold:true,color:'9A7B0A',size:24})],spacing:{before:200,after:100}});}
-    function HR(){return new Paragraph({border:{bottom:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:1}},spacing:{after:160}});}
+    function H1(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,keepNext:true,keepLines:true,children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:280,after:140}});}
+    function H1N(txt){return new Paragraph({heading:HeadingLevel.HEADING_1,pageBreakBefore:true,keepNext:true,keepLines:true,border:{top:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:8}},children:[new TextRun({text:txt,bold:true,color:'161616',size:28})],spacing:{before:0,after:140}});}
+    function H2(txt){return new Paragraph({heading:HeadingLevel.HEADING_2,keepNext:true,keepLines:true,children:[new TextRun({text:txt,bold:true,color:'9A7B0A',size:24})],spacing:{before:200,after:100}});}
+    function HR(){return new Paragraph({keepNext:true,border:{bottom:{style:BorderStyle.SINGLE,size:6,color:'E8B923',space:1}},spacing:{after:160}});}
 
     function hCell(txt,w=2340){return new TableCell({borders:hdrBdrAll,shading:{fill:'161616',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]});}
     function dCell(txt,fill='FDFBF3',w=2340){return new TableCell({borders:bdrAll,shading:{fill,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:txt,size:18})],spacing:{after:0}})]});}
@@ -5948,7 +6361,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       if(/\bgema(s)? de ovo\b/.test(a)){const n=Math.max(1,Math.round(g/17));return' (≈ '+n+' gema'+(n>1?'s':'')+')';}
       const n=Math.max(1,Math.round(g/50));return' (≈ '+n+' ovo'+(n>1?'s':'')+')';
     }
-    function optsCell(opts,w,refKey){
+    function optsCell(opts,w,refKey,posT){
       const groups=(opts||[]).map(o=>parseOpcaoStr(o).filter(r=>r.tipo==='texto'?r.valor&&r.valor.trim():(r.alimento&&r.alimento.trim()))).filter(g=>g.length);
       const divBdr={style:BorderStyle.SINGLE,size:6,color:'C9A227'};
       const tabPos=Math.max(w-500,800);
@@ -5980,7 +6393,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             }else{
               const nomeOk=r.alimento&&r.alimento.trim();
               const nome=nomeOk?capFirst(r.alimento)+_notaOvo(r.alimento,r.gramas,r.medida):'⚠ alimento não definido — revisar';
-              const peso=(r.gramas||'0')+(ehLiquido(r.alimento)?' ml':' g')+(r.medida?' ('+r.medida+')':'');
+              const peso=/^(sopa|caldo|creme de)/i.test(String(r.alimento||'').trim())?'01 prato fundo cheio':(r.gramas||'0')+(ehLiquido(r.alimento)?' ml':' g')+(r.medida?' ('+r.medida+')':'');
               children.push(new Paragraph({
                 tabStops:[{type:TabStopType.RIGHT,position:tabPos}],
                 children:[new TextRun({text:nome,size:18}),new TextRun({text:'\t'+peso,size:18})],
@@ -5991,15 +6404,20 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           });
         });
       }
+      if(posT)children.push(new Paragraph({children:[new TextRun({text:'⚠️ Consuma esta refeição somente nos dias em que treinar. Nos dias sem treino, pule esta refeição e siga direto para a próxima.',italics:true,size:16,color:'8A6D00'})],spacing:{before:80,after:0}}));
       return new TableCell({borders:bdrAll,shading:{fill:'FFFFFF',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children});
     }
-    const mealRows=PLAN.map(m=>new TableRow({children:[
+    const semHor=PLAN.every(m=>!String(m.horario||'').trim());
+    const mealRows=PLAN.map(m=>new TableRow({children:semHor?[
       dCell(m.refeicao,'FBF3DC',1400),
-      dCell((dietOv&&dietOv.semHorario)?'—':m.horario,'F7F3E8',1000),
-      optsCell(m.opcoes,6960,distKeyFromRefeicao(m.refeicao)),
+      optsCell(m.opcoes,7960,distKeyFromRefeicao(m.refeicao),!!m.posTreino),
+    ]:[
+      dCell(m.refeicao,'FBF3DC',1400),
+      dCell(m.horario,'F7F3E8',1000),
+      optsCell(m.opcoes,6960,distKeyFromRefeicao(m.refeicao),!!m.posTreino),
     ]}));
 
-    const oriRows=buildOris(hasDM,hasHAS,hasDis,hasObe,d,base.modelo,base.regras).map(o=>new TableRow({children:[
+    const oriRows=buildOris(hasDM,hasHAS,hasDis,hasObe,d,base.modelo,base.regras,{metaMl:metaAguaMl(prefsW,d),ex:exW,fibG:base.fibG}).map(o=>new TableRow({children:[
       dCell(o.cat,'FBF3DC',1800),
       new TableCell({borders:bdrAll,shading:{fill:'FFFFFF',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:7560,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.txt,size:18})],spacing:{after:0}})]}),
     ]}));
@@ -6072,18 +6490,18 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       }
     }catch(e){substIABlocks=[];}
 
-    const receitasBlocks=receitasFiltradas(buildReceitas(fatG,hasHAS,false),exW).flatMap(r=>[
+    const receitasBlocks=receitasFiltradas(buildReceitas(fatG,hasHAS,false),exW).concat(PLAN.some(m=>(m.opcoes||[]).some(o=>/PÃO DE AVEIA NO MICRO-ONDAS/i.test(o)))?[RECEITA_PAO_AVEIA]:[]).flatMap(r=>[
       H2(r.titulo),
-      new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
-      new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
+      new Paragraph({keepNext:true,keepLines:true,children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
+      new Paragraph({keepLines:true,children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
     ]);
 
     const adoc=(prefsW&&prefsW.bebidas&&prefsW.bebidas.adocante)||'sucralose';
     const trocaAd=s=>adoc==='sucralose'?s:(adoc==='nenhum'?String(s).replace(/\s*·?\s*Sucralose a gosto/gi,''):String(s).replace(/sucralose/gi,adoc));
     const receitasFitBlocks=buildReceitasFit().map(r=>Object.assign({},r,{ingredientes:trocaAd(r.ingredientes),modo:trocaAd(r.modo)})).flatMap(r=>[
       H2(r.titulo),
-      new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
-      new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
+      new Paragraph({keepNext:true,keepLines:true,children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.ingredientes,size:18})],spacing:{after:80}}),
+      new Paragraph({keepLines:true,children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:r.modo,size:18})],spacing:{after:160}}),
     ]);
 
     // ── FECHAMENTO: composição atual e/ou evolução ──
@@ -6134,7 +6552,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       const repDoencas=textoDoencas(d);
       const repHistFam=textoHistFam(d);
       const repGI=textoQueixasGI(d);
-      const repRecs=buildRecsPlain(d,repImc,repDn);
+      const repRecs=buildRecsPlain(d,repImc,repDn,metaAguaMl(prefsW,d)/1000);
       const repRcq=d.cintura&&d.quadril?(parseFloat(d.cintura)/parseFloat(d.quadril)):null;
       const repRcqCl=repRcq!==null?classRCQ(repRcq,sexo||'M',repIdadeN||30):null;
       const repRce=d.cintura&&d.altura?(parseFloat(d.cintura)/parseFloat(d.altura)):null;
@@ -6241,7 +6659,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new Paragraph({children:[new TextRun({text:'PLANNER',bold:true,size:36,color:'161616'})],alignment:AlignmentType.CENTER,spacing:{after:80}}),
           new Paragraph({children:[new TextRun({text:'NUTRIÇÃO - SUPLEMENTAÇÃO - FÁRMACOS - ERGOGÊNICOS',size:19,color:'8A7F5C'})],alignment:AlignmentType.CENTER,spacing:{after:240}}),
           HR(),
-          new Paragraph({children:[new TextRun({text:'DADOS DO BODYMATE',bold:true,size:20,color:'8A7F5C'})],spacing:{before:160,after:80}}),
+          new Paragraph({children:[new TextRun({text:'DADOS DO PACIENTE/CLIENTE',bold:true,size:20,color:'8A7F5C'})],spacing:{before:160,after:80}}),
           new Table({width:{size:9366,type:WidthType.DXA},columnWidths:[2340,2343,2341,2342],rows:[
             new TableRow({children:[hCell('Paciente/Cliente'),hCell('Data'),hCell('Sexo / Idade'),hCell('IMC / Peso')]}),
             new TableRow({children:[
@@ -6268,16 +6686,14 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             ]}),
           ]}),
           new Paragraph({spacing:{after:200}}),
-          HR(),
-          H1('CARDÁPIO — EXEMPLO DE DISTRIBUIÇÃO DIÁRIA'),
-          new Paragraph({children:[new TextRun({text:'Siga os horários sugeridos. Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
-          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1400,1000,6960],rows:[
-            new TableRow({children:[hCell('Refeição',1400),hCell('Horário',1000),hCell('Opções — escolha uma por refeição',6960)]}),
+          H1N('CARDÁPIO — EXEMPLO DE DISTRIBUIÇÃO DIÁRIA'),
+          new Paragraph({children:[new TextRun({text:(semHor?'':'Siga os horários sugeridos. ')+'Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
+          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:semHor?[1400,7960]:[1400,1000,6960],rows:[
+            new TableRow({children:semHor?[hCell('Refeição',1400),hCell('Opções — escolha uma por refeição',7960)]:[hCell('Refeição',1400),hCell('Horário',1000),hCell('Opções — escolha uma por refeição',6960)]}),
             ...mealRows,
           ]}),
           new Paragraph({spacing:{after:200}}),
-          HR(),
-          H1('ORIENTAÇÕES ESPECÍFICAS'),
+          H1N('ORIENTAÇÕES ESPECÍFICAS'),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[1800,7560],rows:[
             new TableRow({children:[hCell('Categoria'),new TableCell({borders:hdrBdrAll,shading:{fill:'161616',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:7560,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:'Orientação',bold:true,color:'FFFFFF',size:20})],spacing:{after:0}})]}),]}),
             ...oriRows,
@@ -6362,19 +6778,18 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ...(()=>{
             const ls=lanchesIADoPlan(PLAN,dietOv&&dietOv.prefsIA);
             if(!ls.length)return[];
-            return[H1('LANCHES INTERMEDIÁRIOS — INGREDIENTES E MODO DE PREPARO'),
+            return[H1N('LANCHES INTERMEDIÁRIOS — INGREDIENTES E MODO DE PREPARO'),
               new Paragraph({children:[new TextRun({text:'Cada lanche já aparece no cardápio com o nome abaixo. Pesos em gramas (líquidos em ml).',size:18,color:'8A7F5C'})],spacing:{after:100}}),
               ...ls.flatMap(l=>[H2(l.tipo+' — '+l.titulo),
                 new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.itensTxt.join(' · '),size:18})],spacing:{after:60}}),
                 new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.preparo||'Misture os ingredientes e sirva.',size:18})],spacing:{after:140}})]),
               HR()];
           })(),
-          H1('ALGUMAS RECEITAS — MODO DE PREPARO'),
+          H1N('ALGUMAS RECEITAS — MODO DE PREPARO'),
           new Paragraph({children:[new TextRun({text:'Quantidade de azeite calculada proporcionalmente à sua meta diária de gordura. Sal: no máximo 1 g por porção (1 sachê padrão Cisne), salvo orientação diferente abaixo.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           ...receitasBlocks,
           new Paragraph({spacing:{after:240}}),
-          HR(),
-          H1('RECEITAS FIT — SUBSTITUIÇÕES DE LANCHE E SOBREMESA'),
+          H1N('RECEITAS FIT — SUBSTITUIÇÕES DE LANCHE E SOBREMESA'),
           new Paragraph({children:[new TextRun({text:'Pode usar no lugar de qualquer lanche ou sobremesa marcada como "Receitas Fit" no cardápio acima.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           ...receitasFitBlocks,
           new Paragraph({spacing:{after:240}}),
@@ -6712,8 +7127,11 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   ];
 }
 
-function buildOris(dm,has,dis,obe,d,modelo,regras){
+function buildOris(dm,has,dis,obe,d,modelo,regras,ctx){
   regras=regras||{};
+  ctx=ctx||{};
+  const _semGl=!!(ctx.ex&&ctx.ex.semGluten),_semFeijao=!!(ctx.ex&&ctx.ex.defs.some(x=>x.k==='feijao'));
+  const _litros=ml=>(Math.round(ml/100)/10).toString().replace('.',',');
   const os=[];
   if(modelo==='glp1')os.push({cat:'Uso de GLP-1/análogos',txt:'Priorize a proteína no início da refeição. Reduza frituras e gorduras em excesso, que pioram a náusea pelo esvaziamento gástrico mais lento. Fracione bem as refeições, em volumes pequenos. Mantenha a hidratação e a fibra, pois a constipação é um efeito colateral comum dessa classe de medicação.'});
   if(modelo==='glp1'&&/retatrutid/i.test((d&&(d.medicamentos||''))+(d&&JSON.stringify(d.medLista||[])||''))){
@@ -6727,20 +7145,20 @@ function buildOris(dm,has,dis,obe,d,modelo,regras){
   if(d.turno&&d.turno!=='Diurno'&&d.turno!=='Não trabalho')os.push({cat:'⚠️ Atenção ao sono — trabalho em turnos',txt:'Turno '+d.turno.toLowerCase()+' altera o relógio biológico e prejudica a qualidade do sono, o que dificulta o controle do apetite, a recuperação muscular e a resposta metabólica. Priorize dormir sempre no mesmo horário quando possível, escureça o ambiente e evite cafeína nas horas anteriores ao sono principal.'});
   if(regras&&regras.refeicaoLivre){
     const rl=regras.refeicaoLivre;
-    const txtRl=rl==='dia'?'Está liberado 1 dia inteiro livre por semana, sem restrição de escolhas — volte à rotina do plano no dia seguinte.':'Está liberada '+rl+' refeição'+(rl==='1'?'':'s')+' livre'+(rl==='1'?'':'s')+' por semana, na refeição de sua escolha, sem culpa — mantenha o restante do plano.';
+    const txtRl=rl==='dia'?'Está liberado 1 dia inteiro livre por semana, sem restrição de escolhas — volte à rotina do plano no dia seguinte.':(rl==='1'?'Está liberada 1 refeição livre por semana':'Estão liberadas '+rl+' refeições livres por semana')+', na refeição de sua escolha, sem culpa — mantenha o restante do plano.';
     os.push({cat:'Refeição livre',txt:txtRl});
   }
   os.push({cat:'Adoçantes',txt:'Padronize a sucralose como adoçante nas preparações e bebidas (café, chá, sucos, gelatina) que exigirem adoçar — evite açúcar refinado, mel e demais adoçantes.'});
-  os.push({cat:'Hidratação',txt:`Beba ${d.peso?Math.max(3,Math.round(parseFloat(d.peso)*0.04*10)/10):3.0}L de água/dia. Pode beber normalmente durante as refeições — pode associar bebidas zero açúcar em geral (refrigerante, chá etc.). Pela manhã, prefira café ou chá preto/mate; à tarde e à noite, prefira chás calmantes (camomila, hortelã) — sempre sem açúcar, podendo adoçar com sucralose.`});
+  os.push({cat:'Hidratação',txt:`Beba ${_litros(ctx.metaMl||metaAguaMl(null,d))}L de água/dia. Pode beber normalmente durante as refeições — pode associar bebidas zero açúcar em geral (refrigerante, chá etc.). Até o lanche da tarde, prefira café ou chás sem efeito calmante (preto, verde, mate, hibisco, gengibre); a partir do jantar, prefira chás calmantes (camomila, erva-cidreira, hortelã) — sempre sem açúcar, podendo adoçar com sucralose.`});
   if(has)os.push({cat:'Hipertensão',txt:'Limite o sal a <5g/dia. Evite embutidos, enlatados, temperos prontos e frituras. Aumente alimentos ricos em potássio: banana, laranja, feijão, batata doce.'});
   if(dm)os.push({cat:'Diabetes',txt:'Controle as porções de arroz, pão e massas para manter a resposta glicêmica adequada. Fracione bem as refeições. Evite açúcar, mel, suco de fruta e refrigerante com açúcar — prefira as versões zero. Monitore a glicemia.'});
   if(dis)os.push({cat:'Dislipidemia',txt:'Inclua peixes como sardinha e outros peixes de água fria 3x/semana. Use azeite extravirgem como gordura principal. Inclua aveia, linhaça, chia e castanhas. Evite gordura saturada e trans.'});
   if(obe)os.push({cat:'Controle de peso',txt:'Fracione em 5–6 refeições/dia, sem pular. Aumente o volume com vegetais e fibras. Reduza alimentos calóricos densos. Coma devagar e mastigue bem.'});
-  os.push({cat:'Cereais e pães',txt:'Priorizamos arroz branco, pão francês e massas comuns (não integrais): a diferença nutricional para a versão integral é pequena, e essa escolha reduz o custo e aumenta a adesão ao plano. A fibra vem de vegetais, frutas e sementes (chia, linhaça, aveia).'});
-  os.push({cat:'Proteínas',txt:'Consuma ao menos uma fonte proteica em cada refeição principal. Varie entre frango, peixes, ovos, atum e sardinha em lata. Inclua feijão, lentilha ou grão-de-bico diariamente.'});
+  os.push({cat:'Cereais e pães',txt:_semGl?'Priorizamos arroz branco, tapioca, cuscuz de milho, batata e mandioca (opções sem glúten): a escolha por versões comuns, e não integrais, reduz o custo e aumenta a adesão ao plano. A fibra vem de vegetais, frutas e sementes (chia, linhaça).':'Priorizamos arroz branco, pão francês e massas comuns (não integrais): a diferença nutricional para a versão integral é pequena, e essa escolha reduz o custo e aumenta a adesão ao plano. A fibra vem de vegetais, frutas e sementes (chia, linhaça, aveia).'});
+  os.push({cat:'Proteínas',txt:'Sua meta de proteína diária já está contabilizada, não se preocupe em incluir nada adicionado de proteínas, siga o plano.'});
   os.push({cat:'Gorduras',txt:'Use azeite extravirgem (até 25 g/dia). Inclua abacate, castanhas e sementes. Evite frituras, margarina, gordura de coco em excesso e alimentos ultraprocessados.'});
   os.push({cat:'Vegetais e verduras',txt:'Cozidos na água ou no vapor (ou crus) e temperados apenas com até 1 g de sal (1 sachê padrão Cisne), limão, ervas e pimenta-do-reino: consumo livre, sempre na medida de '+LIVRE_PRATO+' por refeição principal.'});
-  os.push({cat:'Fibras',txt:`Meta: ${Math.max(25,Math.round(d.peso?parseFloat(d.peso)*0.35:25))}g/dia. Consuma frutas com casca, vegetais crus, sementes (chia, linhaça), aveia e leguminosas.`});
+  os.push({cat:'Fibras',txt:`Meta: ${ctx.fibG||Math.max(25,Math.round(d.peso?parseFloat(d.peso)*0.35:25))}g/dia. Consuma ${['frutas com casca','vegetais crus','sementes (chia, linhaça)'].concat(_semGl?[]:['aveia'],_semFeijao?[]:['leguminosas']).join(', ').replace(/, ([^,]*)$/,' e $1')}.`});
   return os;
 }
 
@@ -6800,6 +7218,7 @@ function buildSubstituicoes(cas){
 }
 
 // ── RECEITAS COM MODO DE FAZER (em gramas, cruzando o lipídio calculado da dieta) ──
+const RECEITA_PAO_AVEIA={titulo:'Pão de aveia no micro-ondas',ingredientes:'30 g de aveia em flocos · 1 ovo · 1 pitada de sal · 4 g de azeite extravirgem para untar',modo:'1) Unte uma caneca ou forma pequena com o azeite. 2) Misture a aveia, o ovo e o sal até ficar homogêneo e despeje na forma. 3) Leve ao micro-ondas de 2 em 2 minutos, até assar por completo. 4) Desenforme e recheie com o requeijão.'};
 const RECEITAS_FIT_REF='Receitas Fit (ver "Receitas Fit" no final do documento): pode substituir por qualquer uma das opções A a D';
 function buildReceitasFit(){
   return[
