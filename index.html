@@ -883,6 +883,15 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px" id="dwDistFatInputs"></div>
         <div id="dwDistFatSum" style="font-size:11.5px;margin-top:4px"></div>
       </div>
+      <div class="fg" style="margin-top:14px"><label class="fl">Concentrar o carboidrato do dia em</label>
+        <select class="di" id="dwConcCarbo" style="max-width:340px" onchange="this.dataset.tocado=1">
+          <option value="">Distribuir normalmente</option>
+          <option value="manha">Manhã (café e lanche da manhã)</option>
+          <option value="tarde">Tarde (almoço e lanche da tarde)</option>
+          <option value="noite">Noite (jantar e ceia)</option>
+        </select>
+        <div style="font-size:11.5px;color:var(--mu);margin-top:4px">O sistema reforça o carboidrato nesse período e reduz nos demais, mantendo as calorias de cada refeição. Indicado para o modelo low-carb.</div>
+      </div>
       <div style="display:flex;justify-content:space-between;margin-top:16px">
         <button class="pw-cancel" onclick="dietWizPadrao()">↺ Usar sugestão do modelo</button>
         <div style="display:flex;gap:10px">
@@ -1541,7 +1550,7 @@ const FOOD_NUT={
  'Nozes':[620,14.0,59.4,18.4,5.2,15],'Amêndoas':[579,21.2,49.9,21.6,12.5,15],'Chia':[486,16.5,30.7,42.1,34.4,10],'Linhaça':[495,14.1,32.3,43.3,33.5,10],
  'Gergelim':[573,17.7,49.7,23.4,11.8,10],'Amora':[43,1.4,0.5,9.6,5.3,100],'Frutas vermelhas':[46,1.0,0.4,10.0,4.0,100],
  'Pão sem glúten':[270,4.0,4.0,54.0,3.0,50],'Pão de forma sem glúten':[265,4.0,4.5,52.0,3.0,25],'Granola sem glúten':[400,9.0,12.0,66.0,7.0,10],
- 'Sopa de legumes':[35,1.5,0.8,5.5,1.2,250],'Torrada':[380,11.0,4.0,72.0,5.0,15],'Suco de laranja natural':[45,0.7,0.2,10.4,0.2,200],
+ 'Sopa de legumes':[35,1.5,0.8,5.5,1.2,250],'Torrada':[380,11.0,4.0,72.0,5.0,15],'Biscoito de arroz':[387,8.2,2.8,81.5,3.5,30],'Suco de laranja natural':[45,0.7,0.2,10.4,0.2,200],
  'Gelatina zero':[10,2.0,0,0.5,0,100],'Suspiro':[380,2.0,0,93.0,0,10],'Mousse de whey':[90,12.0,2.0,6.0,0,120],'Whey com água':[27,5.5,0.4,0.6,0,300],
  'Vinagre':[18,0,0,0.9,0,10],'Creme de leite light':[130,3.0,8.0,8.5,0,20],'Leite condensado light':[257,7.0,4.5,49.0,0,20],
  'Azeite de coco':[862,0,100.0,0,0,10],'Mostarda dijon':[66,4.2,3.3,5.0,3.3,10],'Molho barbecue':[172,1.5,0.3,40.0,1.0,15]
@@ -1549,7 +1558,7 @@ const FOOD_NUT={
 function normAlim(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
 function _sing(w){return w.length>3&&w.endsWith('s')?w.slice(0,-1):w;}
 function _toks(s){return normAlim(s).split(' ').filter(Boolean).map(_sing);}
-const ALIAS_ALIM={'leite morno':'Leite desnatado','ovos mexidos':'Ovo mexido','ovo mexido':'Ovo mexido','clara de ovo pasteurizada':'Clara de ovo','frango desfiado':'Peito de frango','frango grelhado':'Frango grelhado','sopa de legumes com azeite':'Sopa de legumes','pao frances sem miolo':'Pão francês','queijo cottage':'Cottage','torradas':'Torrada','ovo cozido':'Ovo cozido','carne bovina magra':'Patinho moído','feijao cozido':'Feijão carioca','feijao':'Feijão carioca','feijao carioca cozido':'Feijão carioca','arroz':'Arroz branco','frango':'Frango grelhado','leite':'Leite desnatado','bebida vegetal':'Leite de soja'};
+const ALIAS_ALIM={'leite morno':'Leite desnatado','ovos mexidos':'Ovo mexido','ovo mexido':'Ovo mexido','clara de ovo pasteurizada':'Clara de ovo','frango desfiado':'Peito de frango','frango grelhado':'Frango grelhado','sopa de legumes com azeite':'Sopa de legumes','pao frances sem miolo':'Pão francês','queijo cottage':'Cottage','torradas':'Torrada','biscoito de arroz':'Biscoito de arroz','biscoitos de arroz':'Biscoito de arroz','ovo cozido':'Ovo cozido','carne bovina magra':'Patinho moído','feijao cozido':'Feijão carioca','feijao':'Feijão carioca','feijao carioca cozido':'Feijão carioca','arroz':'Arroz branco','frango':'Frango grelhado','leite':'Leite desnatado','bebida vegetal':'Leite de soja'};
 // Acha o item da base mesmo com maiúscula/acento/plural diferente ou nome descritivo ("arroz branco cozido" -> "Arroz branco")
 function achaFoodKey(nome){
   if(!nome)return null;
@@ -4357,6 +4366,7 @@ function dietWizProximo0(){
     dietWizCtx.regras={semCarne:true,semOvo:!document.getElementById('dwVegOvo').checked,semLaticinio:!document.getElementById('dwVegLat').checked};
   }
   if(dietWizCtx.modelo==='bariatrica'){fecharDietWizard();abrirBariatrica(dietWizCtx.d);return;}
+  const ccReset=document.getElementById('dwConcCarbo');if(ccReset)delete ccReset.dataset.tocado;
   const estr=dietWizCtx._kcalEstrategia;
   const base=calcDietaBase(dietWizCtx.d,{modelo:dietWizCtx.modelo,regras:dietWizCtx.regras,kcal:estr?estr.kcal:undefined});
   const aj=dietWizCtx.ajusteInfo;
@@ -4380,6 +4390,13 @@ function dietWizVoltar0(){
 }
 function dietWizRenderStep1(){
   const g=id=>document.getElementById(id);
+  const ccSel=g('dwConcCarbo');if(ccSel&&!ccSel.dataset.tocado)ccSel.value=(dietWizCtx.modelo==='lowcarb')?'manha':'';
+  const rlSel0=g('dwRefLivre');
+  if(rlSel0&&dietWizCtx.dcaRefeicoesLivres&&!dietWizCtx._rlAplicado){
+    const mapaRL={'nenhuma':'','1ref':'1','2ref':'2','1dia':'dia'};
+    if(mapaRL[dietWizCtx.dcaRefeicoesLivres.v]!==undefined)rlSel0.value=mapaRL[dietWizCtx.dcaRefeicoesLivres.v];
+    dietWizCtx._rlAplicado=true;
+  }
   g('dwKcal').value=Math.round(dietWizCtx.kcal);
   g('dwProt').value=Math.round(dietWizCtx.pP*100);
   g('dwFat').value=Math.round(dietWizCtx.gP*100);
@@ -4457,6 +4474,7 @@ function dietWizProximo(){
   if(Math.abs(somaCal-100)>0.5||Math.abs(somaFat-100)>0.5){showToast('⚠️ A distribuição de calorias e de gordura por refeição deve somar 100% cada','#e67e22');return;}
   dietWizCtx.regras=dietWizCtx.regras||{};
   dietWizCtx.regras.refeicaoLivre=rl?rl.value:'';
+  const ccEl=document.getElementById('dwConcCarbo');dietWizCtx.regras.concCarbo=ccEl?ccEl.value:'';
   const it=(dietWizCtx.prefs&&dietWizCtx.prefs.interm)||{};
   dietWizCtx.regras.lancheManha=it.modo==='preparos'?(it.manha||''):'';
   dietWizCtx.regras.lancheTarde=it.modo==='preparos'?(it.tarde||''):'';
@@ -4570,9 +4588,12 @@ function _abrirEditorDietaInterno(dataOverride,ov){
     dietSupEdit=JSON.parse(JSON.stringify(base.SUP));
     dietEAAEdit=JSON.parse(JSON.stringify(base.EAA));
     dietFarmEdit=JSON.parse(JSON.stringify(base.FARM));
+    const concP=(ovNovo&&ovNovo.regras&&ovNovo.regras.concCarbo)||'';
+    if(concP)aplicarConcentracaoCarbo(dietPlanEdit,concP);
     if(ovNovo&&ovNovo.posTreino){
       dietPlanEdit.push({refeicao:'🏋️ Pós-Treino',horario:'Após o treino',opcoes:[''],posTreino:true});
     }
+    dietPlanEdit.forEach(m=>{if(m.posTreino)return;const key=distKeyFromRefeicao(m.refeicao);m.opcoes=(m.opcoes||[]).map(o=>comTituloAuto(o,key));});
   }
   // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
   if(restaurado&&ovNovo&&ovNovo.incluirSup!==undefined){
@@ -4750,6 +4771,109 @@ const POS_TREINO_ITENS=[
   {nome:'Vitamina de banana com leite',gramas:250,lactose:true},
   {nome:'Vitamina de banana com leite vegetal',gramas:250}
 ];
+const CONC_CARBO={
+  manha:{cafe:1.8,lancheM:1.6,almoco:1.0,lancheT:0.6,jantar:0.4,ceia:0.3},
+  tarde:{cafe:0.6,lancheM:0.8,almoco:1.5,lancheT:1.6,jantar:0.6,ceia:0.4},
+  noite:{cafe:0.5,lancheM:0.6,almoco:0.8,lancheT:0.8,jantar:1.7,ceia:1.6}
+};
+const CONC_CARBO_ROT={manha:'manhã (café e lanche da manhã)',tarde:'tarde (almoço e lanche da tarde)',noite:'noite (jantar e ceia)'};
+function ehFonteCarbo(nome){const n=foodNut(nome);return n[0]>=25&&(n[3]*4/n[0])>=0.65;}
+function fatorCarbo(periodo,refeicao){const t=CONC_CARBO[periodo];return t?(t[distKeyFromRefeicao(refeicao)]||1):1;}
+function aplicarConcentracaoCarbo(plan,periodo){
+  if(!CONC_CARBO[periodo])return plan;
+  plan.forEach(m=>{
+    if(m.posTreino)return;
+    const f=fatorCarbo(periodo,m.refeicao);
+    if(Math.abs(f-1)<0.05)return;
+    m.opcoes=(m.opcoes||[]).map(o=>{
+      if(/Receitas Fit|^(Lanche|Shake|Tapioca|Panqueca|Wrap|Mingau|Bowl|Pré|Pós|Salada)[^+]{0,50} — /i.test(o))return o;
+      const rows=parseOpcaoStr(o);
+      const cal=rows.filter(r=>r.tipo==='item'&&r.alimento&&achaFoodKey(r.alimento)&&foodNut(r.alimento)[0]>=25&&!/azeite|oleo|manteiga|margarina|maionese|acucar|\bmel\b/.test(normAlim(r.alimento)));
+      const carb=cal.filter(r=>ehFonteCarbo(r.alimento)),outros=cal.filter(r=>!ehFonteCarbo(r.alimento));
+      if(!carb.length||!outros.length)return o;
+      const k=r=>foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;
+      const Kc=carb.reduce((a,r)=>a+k(r),0),Ko=outros.reduce((a,r)=>a+k(r),0);
+      if(Kc<=0||Ko<=0)return o;
+      const K=Kc+Ko;
+      let g=(K-f*Kc)/Ko;g=Math.min(1.6,Math.max(0.5,g));
+      let fc=(K-g*Ko)/Kc;fc=Math.min(2.0,Math.max(0.4,fc));
+      carb.forEach(r=>{r.gramas=String(_round5((parseFloat(r.gramas)||0)*fc));r.medida='';});
+      outros.forEach(r=>{r.gramas=String(_round5((parseFloat(r.gramas)||0)*g));r.medida='';});
+      return serializeOpcaoRows(rows);
+    });
+  });
+  return plan;
+}
+const TIT_IGNORA=/\b(cafe|cha|agua|adocante|sucralose|stevia|temperos?|sal|pimenta|azeite|oleo|limao|canela|ervas|vinagre|gelatina)\b/;
+const TIT_PROTEINA=/\b(frango|peixe|carne|bovina|suina|atum|sardinha|ovo|ovos|clara|peru|tofu|camarao|salmao|tilapia|whey|albumina|figado|moela|bacalhau|merluza)\b/;
+function _limpaNomeTitulo(n){
+  return String(n||'').replace(/\s*\([^)]*\)/g,'').replace(/\b(cozid[oa]s?|sem miolo|pasteurizad[oa]|escorrid[oa],?|conservad[oa] em [áa]gua|em lata)\b/gi,'').replace(/\s{2,}/g,' ').replace(/[,\s]+$/,'').trim();
+}
+function tituloAutoOpcao(rows,refKey){
+  const itens=rows.filter(r=>r.tipo==='item'&&r.alimento&&r.alimento.trim());
+  if(!itens.length)return '';
+  let rel=itens.filter(r=>{
+    const nm=normAlim(r.alimento);
+    if(TIT_IGNORA.test(nm))return false;
+    if(achaFoodKey(r.alimento)&&foodNut(r.alimento)[0]<25)return false;
+    return true;
+  });
+  if(!rel.length)rel=itens;
+  let nomes=rel.map(r=>_limpaNomeTitulo(r.alimento).toLowerCase());
+  if(nomes.some(n=>/^ovo/.test(n)))nomes=nomes.filter(n=>!/^clara/.test(n));
+  nomes=nomes.map(n=>n==='ovo mexido'?'ovos mexidos':n);
+  nomes=nomes.filter((n,i)=>n&&nomes.indexOf(n)===i);
+  if(refKey==='almoco'||refKey==='jantar'){
+    nomes=nomes.filter(n=>TIT_PROTEINA.test(normAlim(n))).concat(nomes.filter(n=>!TIT_PROTEINA.test(normAlim(n))));
+  }
+  nomes=nomes.slice(0,3);
+  if(nomes.length<=1){
+    const beb=rows.find(r=>r.tipo==='texto'&&/^(ch[áa]|caf[ée])(?=\s|$)/i.test(String(r.valor||'').trim()));
+    if(beb){const b=String(beb.valor).replace(/\s*\([^)]*\)/g,'').replace(/\s+sem a[çc][úu]car.*$/i,'').trim().toLowerCase();if(b)nomes.unshift(b);}
+  }
+  if(!nomes.length)return '';
+  const t=nomes.length===1?nomes[0]:nomes.length===2?nomes[0]+' com '+nomes[1]:nomes[0]+' com '+nomes[1]+' e '+nomes[2];
+  return t.toUpperCase();
+}
+function comTituloAuto(o,refKey){
+  const rows=parseOpcaoStr(o);
+  const r0=rows[0];
+  if(!r0||(r0.tipo!=='texto'&&!(r0.alimento&&r0.alimento.trim())))return o;
+  if(r0.tipo==='texto'){
+    const v=String(r0.valor||'').trim();
+    if(/:$/.test(v)||/ — /.test(v))return o;
+    const mv=v.match(/^Vitamina:\s*(?:(\d+(?:[.,]\d+)?)\s*ml\s+de\s+(.+))?$/i);
+    if(mv){
+      const frutas=rows.slice(1).filter(r=>r.tipo==='item'&&r.alimento).map(r=>_limpaNomeTitulo(r.alimento).toLowerCase());
+      const leite=mv[2]?mv[2].trim().toLowerCase():'';
+      const t=('VITAMINA'+(frutas.length?' DE '+frutas.join(' E '):'')+(leite?' COM '+leite:'')).toUpperCase();
+      const novo=rows.slice();
+      if(mv[2])novo[0]={tipo:'item',alimento:mv[2].trim(),gramas:mv[1].replace(',','.'),medida:''};else novo.shift();
+      return serializeOpcaoRows([{tipo:'texto',valor:t+':'}].concat(novo));
+    }
+  }
+  if(rows.every(r=>r.tipo==='texto'))return o;
+  const t=tituloAutoOpcao(rows,refKey);
+  return t?serializeOpcaoRows([{tipo:'texto',valor:t+':'}].concat(rows)):o;
+}
+const ALT_TORRADA=[
+  {nome:'Biscoito de arroz',op:'30 g de biscoito de arroz'},
+  {nome:'Pipoca sem óleo',op:'PIPOCA'},
+  {nome:'Cuscuz de milho',op:'80 g de Cuscuz'},
+  {nome:'Tapioca',op:'40 g de Tapioca'},
+  {nome:'Crepioca',op:'CREPIOCA:'+' + 50 g de ovo mexido (1 ovo inteiro) + 30 g de Tapioca'},
+  {nome:'Mingau de aveia',op:'200 g de Mingau de aveia',gluten:true},
+  {nome:'Iogurte com fruta',op:'130 g de iogurte natural + 100 g de maçã',lactose:true},
+  {nome:'Gelatina zero',op:'200 g de Gelatina zero'}
+];
+function addAlternativaVolume(i,idx){
+  const it=ALT_TORRADA[idx];if(!it||!dietPlanEdit[i])return;
+  const key=distKeyFromRefeicao(dietPlanEdit[i].refeicao);
+  const txt=it.op==='PIPOCA'?PIPOCA_OPCAO:comTituloAuto(it.op,key);
+  dietPlanEdit[i].opcoes.push(txt);
+  dietEditado=true;dietPesosStale=true;renderDietMealRows();
+  showToast('➕ '+it.nome+' incluída como nova opção — ajuste a quantidade se precisar','#27ae60');
+}
 function addPosTreinoAlimento(i,j,nome,gramas){
   const rows=parseOpcaoStr(dietPlanEdit[i].opcoes[j]);
   if(rows.length===1&&rows[0].tipo==='item'&&!rows[0].alimento)rows.pop(); // tira a linha em branco inicial
@@ -4770,7 +4894,7 @@ function renderDietMealRows(){
     const ops=(m.opcoes||['']).map((o,j)=>{
       const rows=parseOpcaoStr(o);
       const rowsHtml=rows.map((r,k)=>r.tipo==='texto'
-        ?`<div class="med-row"><input class="di" style="flex:1" value="${escH(capFirst(r.valor))}" placeholder="Observação (ex: café sem açúcar)" oninput="dietOpcaoRowEdit(${i},${j},${k},'valor',this.value)"><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
+        ?`<div class="med-row"><input class="di" style="flex:1${(k===0&&/:$/.test(String(r.valor||'').trim()))?';font-weight:700':''}" value="${escH(capFirst(r.valor))}" placeholder="${(k===0&&/:$/.test(String(r.valor||'').trim()))?'Título da opção':'Observação (ex: café sem açúcar)'}" oninput="dietOpcaoRowEdit(${i},${j},${k},'valor',this.value)"><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
         :`<div class="med-row"><input class="di" list="dietFoodList" style="flex:1" value="${escH(capFirst(r.alimento))}" placeholder="Alimento" oninput="dietOpcaoRowEdit(${i},${j},${k},'alimento',this.value)"><input class="di" type="number" min="0" step="1" style="width:90px" value="${r.gramas}" placeholder="${ehLiquido(r.alimento)?'ml':'g'}" onchange="dietOpcaoRowEdit(${i},${j},${k},'gramas',this.value)"><span style="font-size:12px;color:var(--mu)">${ehLiquido(r.alimento)?'ml':'g'}</span><button class="rf" onclick="removeDietItemRow(${i},${j},${k})">✕</button></div>`
       ).join('');
       return `<div style="border:1px solid var(--br);border-radius:8px;padding:10px;margin-top:8px;background:var(--gp)">
@@ -4800,6 +4924,14 @@ function renderDietMealRows(){
         <div style="font-size:11px;color:var(--mu);margin-top:4px">⚠️ Consuma esta refeição somente nos dias em que treinar. Nos dias sem treino, pule esta refeição e siga direto para a próxima.</div>
       </div>`;
     }
+    let altBloco='';
+    if(!m.posTreino&&/^(ceia|lancheM|lancheT)$/.test(distKeyFromRefeicao(m.refeicao))){
+      const alPT=_arr(dietDataCache&&dietDataCache.alergias);
+      const semGl=alPT.includes('GLUTEN')||(dietOv&&dietOv.prefs&&dietOv.prefs.semGluten);
+      const semLac=alPT.some(a=>/LACTOSE|LEITE/.test(a));
+      const chipsAlt=ALT_TORRADA.map((it,ix)=>({it,ix})).filter(o=>!(o.it.gluten&&semGl)&&!(o.it.lactose&&semLac)).map(o=>`<button type="button" class="co" style="font-size:11px;padding:4px 10px" onclick="addAlternativaVolume(${i},${o.ix})">+ ${escH(o.it.nome)}</button>`).join('');
+      altBloco=`<div style="margin-top:8px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px"><div style="font-size:11px;font-weight:700;color:var(--gd);margin-bottom:6px">Mais volume por caloria — no lugar da torrada (clique pra incluir como nova opção)</div><div style="display:flex;flex-wrap:wrap;gap:6px">${chipsAlt}</div></div>`;
+    }
     return `<div class="diet-row">
       <div class="diet-row-top">
         <input class="di" style="width:170px" value="${m.refeicao}" placeholder="Nome da refeição" oninput="dietPlanEdit[${i}].refeicao=this.value;dietEditado=true">
@@ -4809,6 +4941,7 @@ function renderDietMealRows(){
         <button class="rf" onclick="removeMealRowDiet(${i})">✕ refeição</button>
       </div>
       ${posTreinoBloco}
+      ${altBloco}
       ${ops}
       <button class="btn bs" style="padding:5px 10px;font-size:11px;margin-top:6px" onclick="addOpcaoDiet(${i})">+ opção</button>
     </div>`;
@@ -4856,9 +4989,8 @@ async function expandirAlimentosDesconhecidos(){
               if(!jaExiste){FOOD_NUT_CUSTOM[nomeIt]=[it.kcal,it.prot,it.fat,it.carb,it.fiber,it.gramas||100];adicionarOpcaoFoodList(nomeIt);}
               return{tipo:'item',alimento:nomeIt,gramas:String(it.gramas),medida:''};
             });
-            const ehPrincipal=/almoco|jantar/i.test(normAlim(m.refeicao||''));
-            const comTitulo=composto&&!ehPrincipal&&k===0;
-            if(comTitulo)rows.splice(k,1,{tipo:'texto',valor:capFirst(nome)+':'},...novasLinhas);
+            const comTitulo=composto&&k===0;
+            if(comTitulo)rows.splice(k,1,{tipo:'texto',valor:nome.toUpperCase()+':'},...novasLinhas);
             else rows.splice(k,1,...novasLinhas);
             expandiu=true;mudouOpcao=true;
           }else{falhou++;}
@@ -4899,13 +5031,15 @@ async function distribuirPesosPlano(silencioso){
       livres.filter(r=>foodNut(r.alimento)[0]<25).forEach(r=>{r.gramas=String(foodNut(r.alimento)[5]||100);});
       // as calorias da refeição são divididas proporcionalmente à porção padrão de cada alimento (não igualmente),
       // então arroz, feijão e frango mantêm a proporção normal de um prato e nada dispara pra centenas de gramas
-      const porKcal=calorico.map(r=>{const n=foodNut(r.alimento);return n[0]*(n[5]||100)/100;});
+      const fC=(dietOv&&dietOv.regras&&dietOv.regras.concCarbo)?fatorCarbo(dietOv.regras.concCarbo,m.refeicao):1;
+      const fr=r=>(fC!==1&&ehFonteCarbo(r.alimento))?fC:1;
+      const porKcal=calorico.map(r=>{const n=foodNut(r.alimento);return n[0]*(n[5]||100)/100*fr(r);});
       const somaPorc=porKcal.reduce((a,b)=>a+b,0);
       if(calorico.length&&somaPorc>0){
         const esc=Math.min(1.5,Math.max(0.5,restante/somaPorc)); // teto de 1,5x a porção padrão: nunca sai quantidade absurda
         calorico.forEach(r=>{
           const n=foodNut(r.alimento),porc=n[5]||100;
-          r.gramas=String(Math.max(5,Math.round(porc*esc/5)*5));
+          r.gramas=String(Math.max(5,Math.round(porc*esc*fr(r)/5)*5));
         });
       }
       return serializeOpcaoRows(rows);
@@ -5103,6 +5237,11 @@ function calcDietaBase(d,ov,cas){
   const modeloDef=MODELOS_DIETA[modelo];
   if(modeloDef&&modeloDef.macro&&modelo!=='normal'){pP=modeloDef.macro.p/100;gP=modeloDef.macro.g/100;cP=Math.max(0,1-pP-gP);}
   if(ov&&ov.kcal){kcal=Math.round(ov.kcal);if(ov.pP!=null){pP=ov.pP;gP=ov.gP;cP=Math.max(0,1-pP-gP);}}
+  if(modelo==='lowcarb'){ // low-carb fixo em 140 g de carboidrato/dia (teto de 50% das calorias em dietas muito baixas)
+    cP=Math.min(0.5,140*4/kcal);
+    gP=Math.max(0.2,1-pP-cP);
+    cP=Math.max(0,1-pP-gP);
+  }
   const carbG=Math.round((kcal*cP)/4),protG=Math.round((kcal*pP)/4),fatG=Math.round((kcal*gP)/9);
   const fibG=(ov&&ov.fibG)?Math.round(ov.fibG):Math.max(25,Math.round(kcal/1000*14));
   const incluirSup=!(ov&&ov.incluirSup===false);
@@ -5292,7 +5431,7 @@ function aplicarExclusoes(plan,ex){
       rows.forEach(r=>{
         if(r.tipo!=='item'){saida.push(r);return;}
         const nm=normAlim(r.alimento);
-        const def=ex.defs.find(d=>d.re&&d.re.test(nm)&&!(d.k==='al_GLUTEN'&&/sem gluten/.test(nm))&&!(d.k==='laticinios'&&/soja|coco|vegetal|amendoa|aveia/.test(nm)));
+        const def=ex.defs.find(d=>d.re&&d.re.test(nm)&&!(d.k==='al_GLUTEN'&&/sem gluten|biscoito de arroz|arroz inflado/.test(nm))&&!(d.k==='laticinios'&&/soja|coco|vegetal|amendoa|aveia/.test(nm)));
         if(!def){saida.push(r);return;}
         if(def.fruta){saida.push(Object.assign({},r,{alimento:_frutaAlternativa(ex,usadas),gramas:String(r.gramas||100),medida:''}));return;}
         if(def.remover){return;}
@@ -5809,7 +5948,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       if(/\bgema(s)? de ovo\b/.test(a)){const n=Math.max(1,Math.round(g/17));return' (≈ '+n+' gema'+(n>1?'s':'')+')';}
       const n=Math.max(1,Math.round(g/50));return' (≈ '+n+' ovo'+(n>1?'s':'')+')';
     }
-    function optsCell(opts,w){
+    function optsCell(opts,w,refKey){
       const groups=(opts||[]).map(o=>parseOpcaoStr(o).filter(r=>r.tipo==='texto'?r.valor&&r.valor.trim():(r.alimento&&r.alimento.trim()))).filter(g=>g.length);
       const divBdr={style:BorderStyle.SINGLE,size:6,color:'C9A227'};
       const tabPos=Math.max(w-500,800);
@@ -5821,8 +5960,19 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           const isLastGroup=gi===groups.length-1;
           const label=groups.length>1?(gi===0?'Opção 1:':'Substituição '+gi+' — em vez da opção acima:'):'';
           if(label)children.push(new Paragraph({children:[new TextRun({text:label,bold:true,size:18,color:'8A6D00'})],spacing:{after:40,before:gi===0?0:80}}));
-          rows.forEach((r,ri)=>{
-            const isLastRow=ri===rows.length-1;
+          let tituloTxt='',rowsR=rows;
+          const r0=rows[0];
+          if(r0&&r0.tipo==='texto'){
+            const v0=String(r0.valor||'').trim();
+            if(/:$/.test(v0)){tituloTxt=v0.replace(/:$/,'');rowsR=rows.slice(1);}
+            else if(/ — /.test(v0)&&/^(Lanche|Shake|Tapioca|Panqueca|Wrap|Mingau|Bowl|Pré|Pós|Salada|Receita)/i.test(v0)){tituloTxt=v0.split(' — ').slice(1).join(' — ');rowsR=rows.slice(1);}
+          }
+          if(!tituloTxt){tituloTxt=tituloAutoOpcao(rows,refKey);}
+          if(tituloTxt){
+            children.push(new Paragraph({children:[new TextRun({text:tituloTxt.toUpperCase(),bold:true,size:18,color:'8A6D00'})],spacing:{after:60},border:(rowsR.length===0&&!isLastGroup)?{bottom:divBdr}:undefined}));
+          }
+          rowsR.forEach((r,ri)=>{
+            const isLastRow=ri===rowsR.length-1;
             const bdrBtm=(isLastRow&&!isLastGroup)?{bottom:divBdr}:undefined;
             if(r.tipo==='texto'){
               const ehTitulo=ri===0&&/:$/.test(String(r.valor||'').trim());
@@ -5846,7 +5996,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
     const mealRows=PLAN.map(m=>new TableRow({children:[
       dCell(m.refeicao,'FBF3DC',1400),
       dCell((dietOv&&dietOv.semHorario)?'—':m.horario,'F7F3E8',1000),
-      optsCell(m.opcoes,6960),
+      optsCell(m.opcoes,6960,distKeyFromRefeicao(m.refeicao)),
     ]}));
 
     const oriRows=buildOris(hasDM,hasHAS,hasDis,hasObe,d,base.modelo,base.regras).map(o=>new TableRow({children:[
@@ -6045,7 +6195,8 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new TableRow({children:[dCell(String(Math.round(repTmb.bmr)),'FDFBF3'),dCell(repCaf.toFixed(2),'FDFBF3'),dCell(String(repGet),'FDFBF3')]}),
         ]}),
         ...(dietOv&&dietOv.estrategiaKcal?[new Paragraph({children:[new TextRun({text:'Estratégia calórica escolhida: ',bold:true,size:18,color:'161616'}),new TextRun({text:(KCAL_ESTRATEGIA_ROT[dietOv.estrategiaKcal.estrategia]||'')+' — meta de '+dietOv.estrategiaKcal.kcal+' kcal/dia'+(dietOv.estrategiaKcal.pct?' ('+(dietOv.estrategiaKcal.pct>0?'+':'')+Math.round(dietOv.estrategiaKcal.pct*100)+'% sobre o GET estimado)':' (igual ao GET estimado)'),size:18})],spacing:{after:60}})]:[]),
-        ...(dietOv&&dietOv.dcaRefeicoesLivres&&dietOv.dcaRefeicoesLivres.v!=='nenhuma'?[new Paragraph({children:[new TextRun({text:'Refeições livres combinadas: ',bold:true,size:18,color:'161616'}),new TextRun({text:dietOv.dcaRefeicoesLivres.rot,size:18})],spacing:{after:60}})]:[]),
+        ...(()=>{let rl=(dietOv&&dietOv.regras)?dietOv.regras.refeicaoLivre:undefined;if(rl===undefined&&dietOv&&dietOv.dcaRefeicoesLivres)rl={'1ref':'1','2ref':'2','1dia':'dia'}[dietOv.dcaRefeicoesLivres.v]||'';rl=rl||'';const mapaRL={'1':'1 refeição livre/semana','2':'2 refeições livres/semana','3':'3 ou mais refeições livres/semana','dia':'1 dia livre/semana (todas as refeições)'};const txt=mapaRL[rl]||((dietOv&&dietOv.dcaRefeicoesLivres&&dietOv.dcaRefeicoesLivres.v==='outra')?'A definir com o Paciente/Cliente':'');return txt?[new Paragraph({children:[new TextRun({text:'Refeições livres combinadas: ',bold:true,size:18,color:'161616'}),new TextRun({text:txt,size:18})],spacing:{after:60}})]:[];})(),
+        ...(dietOv&&dietOv.regras&&dietOv.regras.concCarbo&&CONC_CARBO_ROT[dietOv.regras.concCarbo]?[new Paragraph({children:[new TextRun({text:'Carboidrato concentrado: ',bold:true,size:18,color:'161616'}),new TextRun({text:CONC_CARBO_ROT[dietOv.regras.concCarbo],size:18})],spacing:{after:60}})]:[]),
         new Paragraph({spacing:{after:160}}),
         H2('⚠️ Fatores de risco identificados'),
         ...repRisks.map(r=>new Paragraph({children:[new TextRun({text:'• '+r,size:18})],spacing:{after:60}})),
@@ -6351,7 +6502,7 @@ function aplicarPipocaLanche(plan,modelo,regras){
 // ── MODELOS DE DIETA ──
 const MODELOS_DIETA={
   normal:{nome:'Normal / habitual',macro:{p:20,g:28},desc:'Alimentação equilibrada, sem restrição de grupo alimentar.'},
-  lowcarb:{nome:'Low-carb moderada',macro:{p:28,g:35},desc:'Redução moderada de carboidratos, sem cetose.'},
+  lowcarb:{nome:'Low-carb (140 g de carboidrato/dia)',macro:{p:28,g:35},desc:'Carboidrato fixado em 140 g por dia, sem cetose.'},
   ceto:{nome:'Cetogênica',macro:{p:22,g:73},desc:'Menos de 10% de carboidrato. Avalie contraindicações: doença renal, hepática, pancreatite, DM1 ou DM2 em uso de insulina/hipoglicemiante.'},
   hiperproteica:{nome:'Hiperproteica',macro:{p:32,g:28},desc:'Maior proporção de proteína. Atenção à função renal.'},
   paleo:{nome:'Paleolítica',macro:{p:28,g:35},regras:{semLeguminosa:true,semLaticinio:true,semGrao:true},desc:'Sem grãos, laticínios e leguminosas. A proteína fica mais restrita a carne, peixe, ovo e castanhas — pode elevar o custo do plano.'},
@@ -6376,8 +6527,8 @@ const LANCHE_TEMPLATES={
   tapioca_queijo_ovo:{nome:'Tapioca com queijo coalho/minas e ovo',build:(g)=>g(40,'goma de tapioca',40,'unidade(s)')+' + '+g(30,'queijo coalho ou minas',30,'fatia(s)')+' + '+g(50,'ovo mexido (1 ovo)',50,'unidade(s)')},
   cuscuz_ovo_queijo:{nome:'Cuscuz nordestino com ovo e queijo',build:(g)=>g(60,'cuscuz de milho cozido',60,'fatia(s)')+' + '+g(50,'ovo mexido (1 ovo)',50,'unidade(s)')+' + '+g(20,'queijo muçarela',20,'fatia(s)')},
   batata_doce_ovo:{nome:'Batata doce cozida com ovo',build:(g)=>g(100,'batata doce cozida',100,'unidade pequena')+' + '+g(50,'ovo cozido (1 ovo)',50,'unidade(s)')},
-  cottage_torrada:{nome:'Queijo cottage (ou ricota temperada) com torrada',build:(g)=>g(100,'queijo cottage (ou ricota amassada e temperada)',100,'pote(s)')+' + '+g(30,'torrada integral',15,'unidade(s)')},
-  sardinha_torrada:{nome:'Sardinha em lata com torrada',build:(g)=>g(60,'sardinha em lata (escorrida)',60,'unidade(s)')+' + '+g(30,'torrada integral',15,'unidade(s)')},
+  cottage_torrada:{nome:'Queijo cottage (ou ricota temperada) com biscoito de arroz',build:(g)=>g(100,'queijo cottage (ou ricota amassada e temperada)',100,'pote(s)')+' + '+g(30,'biscoito de arroz',8,'unidade(s)')},
+  sardinha_torrada:{nome:'Sardinha em lata com biscoito de arroz',build:(g)=>g(60,'sardinha em lata (escorrida)',60,'unidade(s)')+' + '+g(30,'biscoito de arroz',8,'unidade(s)')},
   iogurte_aveia_canela:{nome:'Iogurte natural com aveia e canela',build:(g)=>g(170,'iogurte natural',170,'pote(s)')+' + '+g(20,'aveia em flocos',20,'col. sopa')+' + canela a gosto'},
   ovo_fruta:{nome:'Ovo cozido com fruta',build:(g,ml,fr)=>g(100,'ovo cozido (2 ovos)',50,'unidade(s)')+' + '+g(100,fr(),100,'unidade(s)')}
 };
@@ -6441,7 +6592,7 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
         g(300,'sopa de legumes',250,'concha(s)')+' + '+NOTA_CALDO+' + '+g(120,'tofu em cubos',120,'porção')+' + '+g(25,'pão francês sem miolo',25,'unidade pequena')+semSal
       ]},
       {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[
-        permLat?bebNoite()+' + '+g(30,'torradas',15,'unidade(s)'):bebNoite()+' + '+g(30,'torradas',15,'unidade(s)')
+        bebNoite()+' + '+g(30,'biscoito de arroz',8,'unidade(s)')
       ]}
     ];
   }
@@ -6554,7 +6705,7 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
       (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
     ]},
     {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[
-      mlCeia(200,'leite morno',200,'copo(s)')+' + '+gCeia(30,'torradas'+(semTrigo?' sem glúten':''),15,'unidade(s)'),
+      mlCeia(200,'leite morno',200,'copo(s)')+' + '+gCeia(30,'biscoito de arroz',8,'unidade(s)'),
       gCeia(170,'iogurte natural',170,'pote(s)')+' + canela a gosto',
       bebNoite()+' + '+gCeia(20,'queijo muçarela',20,'fatia(s)')
     ]}
