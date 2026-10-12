@@ -1306,6 +1306,20 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 </div><!-- end layout -->
 
 <!-- ── RECUPERAÇÃO DE FICHA E BACKUP ── -->
+<div class="pw-overlay" id="consRapidoOverlay" style="display:none">
+  <div class="big-box" style="width:520px;max-height:92vh;overflow-y:auto;text-align:left">
+    <h2 style="font-size:20px;margin-bottom:6px">📷 Antes de enviar suas fotos e exames</h2>
+    <p style="font-size:13.5px;line-height:1.6;margin-bottom:12px">Para guardar fotos e exames, precisamos da sua autorização. É rápido e você <b>continua nesta mesma tela</b>: a foto que você escolheu entra assim que confirmar.</p>
+    <label class="fl" for="crNome">Seu nome completo</label>
+    <input type="text" id="crNome" class="fc" placeholder="Nome e sobrenome" autocomplete="name" style="margin-bottom:12px">
+    <label class="cons-ck" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px"><input type="checkbox" id="crLi" style="margin-top:3px"><span style="font-size:13px;line-height:1.5">Li e concordo com o termo de consentimento (dados pessoais e de saúde, fotos e exames, e uso de Inteligência Artificial). Sei que posso revogar a qualquer momento.</span></label>
+    <button type="button" class="btn bs" style="padding:8px 14px;font-size:12px;margin-bottom:8px" onclick="crToggleTermo()">📄 Ler o termo completo</button>
+    <div class="term-box" id="crTermo" style="display:none;margin-bottom:10px"></div>
+    <div id="crErro" style="color:#c0392b;font-size:13px;font-weight:600;min-height:18px;margin-bottom:6px"></div>
+    <button type="button" class="btn bp" style="width:100%;justify-content:center;padding:14px" onclick="crConfirmar()">✅ Concordo e enviar a foto</button>
+    <div style="text-align:right;margin-top:6px"><button class="pw-cancel" onclick="crCancelar()">Agora não</button></div>
+  </div>
+</div>
 <div class="pw-overlay" id="recOverlay" style="display:none">
   <div class="pw-box" style="width:420px">
     <div class="pw-icon">📝</div>
@@ -1679,53 +1693,92 @@ let tab8Unlocked=false; // legado — Relatórios não pede mais senha própria:
 let photoData={};
 let consent=null,exameIA=null,cafDefinido=false;
 const PHOTO_FIELDS=['fotoFrente','fotoCostas','fotoLatEsq','fotoLatDir','exameArquivo'];
-function handlePhotoUpload(inputEl,field){
+const IMG_EXT=/\.(jpe?g|png|webp|heic|heif|bmp)$/i;
+function ehImagemArquivo(f){return !!f&&((f.type&&f.type.startsWith('image/')&&f.type!=='image/gif')||(!f.type&&IMG_EXT.test(f.name||'')));}
+// lê a imagem direto do arquivo e já reduz (sem criar antes o texto gigante em base64): gasta bem menos memória no celular
+function comprimirArquivoImagem(file,maxLado,q){return new Promise((res,rej)=>{
+  const url=URL.createObjectURL(file),img=new Image();
+  const fim=()=>{try{URL.revokeObjectURL(url);}catch(e){}};
+  img.onload=()=>{try{
+    const w0=img.naturalWidth||img.width,h0=img.naturalHeight||img.height;
+    const esc=Math.min(1,maxLado/Math.max(w0,h0));
+    const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w0*esc));c.height=Math.max(1,Math.round(h0*esc));
+    const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+    const out=c.toDataURL('image/jpeg',q);c.width=c.height=0;fim();res(out);
+  }catch(e){fim();rej(e);}};
+  img.onerror=()=>{fim();rej(new Error('Imagem inválida'));};
+  img.src=url;
+});}
+function lerArquivoDataUrl(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file);});}
+// converte um arquivo (foto ou PDF) no formato guardado; devolve null se não conseguir ler
+async function prepararArquivo(file,maxLado,q){
+  if(ehImagemArquivo(file)){
+    try{return{type:'image/jpeg',data:await comprimirArquivoImagem(file,maxLado,q)};}catch(err){}
+    if(file.size>8*1024*1024)return null;
+  }
+  try{return{type:file.type||'',data:await lerArquivoDataUrl(file)};}catch(err){return null;}
+}
+// ── consentimento rápido: aparece na hora em que o paciente tenta enviar foto/exame sem ter aceitado ──
+let consPendente=null;
+function pedirConsentimentoRapido(inputEl,tipo,field){
+  consPendente={inputEl,tipo,field};
+  const nm=document.getElementById('nome');
+  document.getElementById('crNome').value=((nm&&nm.value)||'').trim();
+  document.getElementById('crLi').checked=false;
+  const bx=document.getElementById('crTermo');
+  if(!bx.dataset.ok){bx.innerHTML=termoHtml();bx.dataset.ok='1';}
+  bx.style.display='none';
+  document.getElementById('crErro').textContent='';
+  document.getElementById('consRapidoOverlay').style.display='flex';
+}
+function crToggleTermo(){const b=document.getElementById('crTermo');b.style.display=(b.style.display==='none')?'block':'none';}
+function crCancelar(){
+  document.getElementById('consRapidoOverlay').style.display='none';
+  if(consPendente&&consPendente.inputEl){try{consPendente.inputEl.value='';}catch(e){}}
+  consPendente=null;
+}
+async function crConfirmar(){
+  const err=document.getElementById('crErro'),v=document.getElementById('crNome').value.trim();
+  if(v.length<3){err.textContent='Digite o seu nome completo.';return;}
+  if(!document.getElementById('crLi').checked){err.textContent='Marque a caixa para concordar com o termo.';return;}
+  document.getElementById('nome').value=v;
+  document.getElementById('consLi').checked=true;
+  await registrarConsentimento();
+  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){err.textContent='Não foi possível registrar agora. Tente de novo.';return;}
+  document.getElementById('consRapidoOverlay').style.display='none';
+  const p=consPendente;consPendente=null;
+  if(p&&p.inputEl&&p.inputEl.files&&p.inputEl.files.length){
+    if(p.tipo==='exame')handleExameUpload(p.inputEl);else handlePhotoUpload(p.inputEl,p.field);
+  }
+}
+async function handlePhotoUpload(inputEl,field){
   const file=inputEl.files[0];
   if(!file)return;
-  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){
-    inputEl.value='';
-    showToast('⚠️ Registre o consentimento (aba Identificação) antes de enviar fotos e exames','#e67e22');
-    irParaConsentimento();
-    return;
-  }
-  const maxMB=8;
+  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){pedirConsentimentoRapido(inputEl,'foto',field);return;}
+  const maxMB=ehImagemArquivo(file)?25:8;
   if(file.size>maxMB*1024*1024){showToast(`⚠️ Arquivo muito grande (máx ${maxMB}MB) — comprima antes de enviar`,'#e67e22');inputEl.value='';return;}
-  const reader=new FileReader();
-  reader.onload=async e=>{
-    let dataUrl=e.target.result,tipo=file.type;
-    if(tipo&&tipo.startsWith('image/')&&tipo!=='image/gif'){
-      try{dataUrl=await comprimirImagemDataUrl(dataUrl,1600,0.82);tipo='image/jpeg';}catch(err){}
-    }
-    photoData[field]={name:file.name,type:tipo,data:dataUrl};
-    renderPhotoPreview(field);
-    autoSave();
-  };
-  reader.readAsDataURL(file);
+  const r=await prepararArquivo(file,1600,0.82);
+  if(!r){showToast('⚠️ Não consegui ler esse arquivo. Tente outra foto.','#c0392b');inputEl.value='';return;}
+  photoData[field]={name:file.name,type:r.type,data:r.data};
+  renderPhotoPreview(field);
+  persistirRascunho();
 }
 // ── Exame laboratorial: aceita vários arquivos (a pessoa pode ter mais de um exame separado) ──
 async function handleExameUpload(inputEl){
   const files=Array.from(inputEl.files||[]);
   if(!files.length)return;
-  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){
-    inputEl.value='';
-    showToast('⚠️ Registre o consentimento (aba Identificação) antes de enviar fotos e exames','#e67e22');
-    irParaConsentimento();
-    return;
-  }
-  const maxMB=8;
+  if(!(consent&&consent.aceites&&consent.aceites.fotosExames)){pedirConsentimentoRapido(inputEl,'exame');return;}
   if(!Array.isArray(photoData.exameArquivo))photoData.exameArquivo=[];
   for(const file of files){
+    const maxMB=ehImagemArquivo(file)?25:8;
     if(file.size>maxMB*1024*1024){showToast(`⚠️ "${file.name}" muito grande (máx ${maxMB}MB) — comprima antes de enviar`,'#e67e22');continue;}
-    const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=ev=>res(ev.target.result);r.onerror=rej;r.readAsDataURL(file);});
-    let finalUrl=dataUrl,tipo=file.type;
-    if(tipo&&tipo.startsWith('image/')&&tipo!=='image/gif'){
-      try{finalUrl=await comprimirImagemDataUrl(dataUrl,2200,0.88);tipo='image/jpeg';}catch(err){}
-    }
-    photoData.exameArquivo.push({name:file.name,type:tipo,data:finalUrl});
+    const r=await prepararArquivo(file,2200,0.88);
+    if(!r){showToast(`⚠️ Não consegui ler "${file.name}".`,'#c0392b');continue;}
+    photoData.exameArquivo.push({name:file.name,type:r.type,data:r.data});
   }
   exameIA=null;renderExameIA();
   renderExameFilesPreview();
-  autoSave();
+  persistirRascunho();
   inputEl.value='';
 }
 function renderExameFilesPreview(){
@@ -1773,7 +1826,7 @@ function irParaConsentimento(){
 function iaPermitida(){
   if(!HOSTS_IA.includes(location.hostname)){showToast('🧪 A IA só funciona no site publicado (bodymapmetric.netlify.app)','#e67e22');return false;}
   if(userRole==='paciente'){showToast('🔒 Recurso disponível apenas para o(a) Nutricionista','#e67e22');return false;}
-  if(!(consent&&consent.aceites&&consent.aceites.ia)){showToast('⚠️ Registre o consentimento com a autorização de IA (aba Identificação)','#e67e22');irParaConsentimento();return false;}
+  if(!(consent&&consent.aceites&&consent.aceites.ia)){avisoFicha('Falta o consentimento para usar a IA',[],{como:'Na aba Identificação, no cartão do consentimento, marque que leu e concorda e toque em "Registrar consentimento". Só depois a IA pode ser usada.',foco:'consCard',rotIr:'Ir ao consentimento'});return false;}
   return true;
 }
 function consQuemChange(){/* campo removido — consentimento simplificado a uma única flag */}
@@ -1939,9 +1992,9 @@ async function analisarTodosExames(consideracoes){
 async function reanalisarExameIA(){
   if(!iaPermitida())return;
   const files=photoData.exameArquivo;
-  if(!Array.isArray(files)||!files.length||!exameIA){showToast('⚠️ Analise o(s) exame(s) primeiro','#e67e22');return;}
+  if(!Array.isArray(files)||!files.length||!exameIA){avisoFicha('Analise o exame primeiro',[],{como:'Envie o exame e toque em "Analisar exame por IA". Só depois dá para escrever suas considerações e pedir a reanálise.',foco:'btnAnalisarExame',rotIr:'Ir ao botão de análise'});return;}
   const consideracoes=(document.getElementById('exameDiscussao')?.value||'').trim();
-  if(!consideracoes){showToast('⚠️ Escreva suas considerações antes de pedir a reanálise','#e67e22');return;}
+  if(!consideracoes){avisoFicha('Escreva suas considerações',[],{como:'Escreva no campo de considerações do exame o que você quer que a IA reveja e peça a reanálise de novo.'});return;}
   const btn=document.getElementById('btnReanalisarExame'),box=document.getElementById('exameIAResultado');
   if(btn)btn.disabled=true;
   showToast('⏳ Reanalisando com suas considerações...');
@@ -1958,7 +2011,7 @@ async function reanalisarExameIA(){
 async function analisarExameIA(){
   if(!iaPermitida())return;
   const files=photoData.exameArquivo;
-  if(!Array.isArray(files)||!files.length){showToast('⚠️ Envie primeiro o(s) exame(s) (PDF ou imagem)','#e67e22');return;}
+  if(!Array.isArray(files)||!files.length){avisoFicha('Envie o exame primeiro',[],{como:'Escolha o arquivo do exame (PDF ou foto) no campo de exames e depois toque em "Analisar exame por IA".',foco:'exameInput',rotIr:'Ir ao envio do exame'});return;}
   const btn=document.getElementById('btnAnalisarExame'),box=document.getElementById('exameIAResultado');
   const sx=document.querySelector('input[name="sexo"]:checked')?.value;
   const sexo=(sx==='M'||sx==='F')?sx:'';
@@ -2201,8 +2254,11 @@ function ocultarBanner(){const b=document.getElementById('bannerNovaAval');if(b)
 // ── rascunho e recuperação ──
 function persistirRascunho(){
   const d=collectData();
-  try{sessionStorage.setItem(DK,JSON.stringify(d));}
-  catch(e){try{const l={...d};PHOTO_FIELDS.forEach(k=>delete l[k]);sessionStorage.setItem(DK,JSON.stringify(l));}catch(_){}}
+  try{
+    const js=JSON.stringify(d);
+    if(js.length>2500000)throw new Error('grande'); // fotos pesadas ficam só no armazenamento maior (IndexedDB)
+    sessionStorage.setItem(DK,js);
+  }catch(e){try{const l={...d};PHOTO_FIELDS.forEach(k=>delete l[k]);sessionStorage.setItem(DK,JSON.stringify(l));}catch(_){}}
   salvarRascunhoDieta();
   return salvarRecuperacao(d);
 }
@@ -2265,6 +2321,7 @@ const RADIOS_RESET=['sexo','praticaAf','alcool','sonoQual','taba','refFora','pos
 const CHECKGRUPOS_RESET=['doencas','alergias','histFam','queixasGI'];
 // zera a ficha inteira na hora, sem depender de recarregar a página (o visualizador de teste do Claude não recarrega de verdade)
 async function resetFormularioCompleto(){
+  try{sessionStorage.removeItem('bm_tab');}catch(e){}
   CAMPOS_TEXTO_RESET.forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   RADIOS_RESET.forEach(n=>{document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{r.checked=false;const lb=r.closest('.ro');if(lb)lb.classList.remove('selected');});});
   CHECKGRUPOS_RESET.forEach(g=>{document.querySelectorAll(`#cg_${g} input`).forEach(i=>{i.checked=false;const lb=i.closest('.co');if(lb)lb.classList.remove('selected');});});
@@ -2910,7 +2967,7 @@ function abrirBariatrica(d){
 function fecharBariatrica(){document.getElementById('bariatricaOverlay').style.display='none';bariCtx=null;}
 async function bariatricaGerar(){
   const sel=document.querySelector('input[name="bariFase"]:checked');
-  if(!sel){showToast('⚠️ Escolha a fase','#e67e22');return;}
+  if(!sel){avisoFicha('Escolha a fase',[],{como:'Marque uma das fases da lista e toque em gerar de novo.'});return;}
   const fase=FASES_BARIATRICA.find(f=>f.id===parseInt(sel.value,10));
   const obs=(document.getElementById('bariObs').value||'').trim();
   const d=bariCtx.d;
@@ -2996,7 +3053,7 @@ async function estimarGorduraIA(){
   const box=document.getElementById('iaResultado');
   const btn=document.getElementById('btnEstimarIA');
   const foto=photoData.fotoFrente;
-  if(!foto||!foto.type||!foto.type.startsWith('image/')){showToast('⚠️ Envie primeiro a foto de frente','#e67e22');return;}
+  if(!foto||!foto.type||!foto.type.startsWith('image/')){avisoFicha('Envie a foto de frente primeiro',[],{como:'Envie a foto de frente no campo de fotos e toque de novo para estimar.',foco:'fotoFrenteInput',rotIr:'Ir ao envio da foto'});return;}
   const sx=document.querySelector('input[name="sexo"]:checked')?.value;
   const sexo=(sx==='M'||sx==='F')?sx:'';
   const idade=document.getElementById('idade').value||'';
@@ -3122,6 +3179,7 @@ function goTab(n){
   document.querySelectorAll('.sec').forEach((s,i)=>s.classList.toggle('active',i===n));
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
   updatePB(n);
+  try{sessionStorage.setItem('bm_tab',String(n));}catch(e){}
   window.scrollTo({top:0,behavior:'smooth'});
   if(n===8){resetRelatoriosUI();refreshPtList();}
   marcarAbasPendentes();
@@ -3888,36 +3946,39 @@ function saveData(){persistirRascunho();showToast('✅ Dados salvos!');}
 
 function faltasFicha(d){
   const f=[];
-  if(!d.dataNasc&&!d.idade)f.push({rot:'Data de nascimento',tab:0});
-  if(!d.sexo)f.push({rot:'Sexo',tab:0});
-  if(!(parseFloat(d.peso)>0))f.push({rot:'Peso',tab:0});
-  if(!(parseFloat(d.altura)>0))f.push({rot:'Altura',tab:0});
-  if(!d.objetivo)f.push({rot:'Objetivo',tab:0});
+  if(!d.dataNasc&&!d.idade)f.push({rot:'Data de nascimento',tab:0,foco:'dataNasc',como:'Preencha a data de nascimento (ou a idade) no começo da ficha.'});
+  if(!d.sexo)f.push({rot:'Sexo',tab:0,foco:'input[name="sexo"]',como:'Marque o sexo no começo da ficha.'});
+  if(!(parseFloat(d.peso)>0))f.push({rot:'Peso',tab:0,foco:'peso',como:'Digite o peso em kg no começo da ficha.'});
+  if(!(parseFloat(d.altura)>0))f.push({rot:'Altura',tab:0,foco:'altura',como:'Digite a altura em cm no começo da ficha.'});
+  if(!d.objetivo)f.push({rot:'Objetivo',tab:0,foco:'objetivo',como:'Escolha o objetivo na lista, no começo da ficha.'});
   const q=FREQ_GROUPS.filter((_,gi)=>d.freqTable&&d.freqTable[gi]!==null&&d.freqTable[gi]!==undefined).length;
-  if(q<FREQ_GROUPS.length)f.push({rot:'Frequência alimentar ('+q+'/'+FREQ_GROUPS.length+' grupos respondidos)',tab:4});
+  if(q<FREQ_GROUPS.length)f.push({rot:'Frequência alimentar ('+q+'/'+FREQ_GROUPS.length+' grupos respondidos)',tab:4,como:'Na aba da frequência alimentar, responda cada grupo de alimentos da lista até completar todos.'});
   const n=(d.dcaSel||[]).filter(x=>x&&x.name).length;
-  if(n<3&&!d.dcaNaoHouve)f.push({rot:'Dia Calórico Atípico ('+n+' item(ns); preencha ao menos 3 ou marque "Não houve dia atípico")',tab:3});
+  if(n<3&&!d.dcaNaoHouve)f.push({rot:'Dia Calórico Atípico ('+n+' item(ns); preencha ao menos 3 ou marque "Não houve dia atípico")',tab:3,como:'Na aba do dia calórico atípico, informe ao menos 3 itens do dia em que você mais se alimentou fora da rotina, ou marque "Não houve dia atípico".'});
   return f;
 }
 async function avisarFaltas(falt,d){
   const ehPac=userRole==='paciente';
   const botoes=falt.filter((x,i)=>falt.findIndex(y=>y.tab===x.tab)===i).map(x=>({v:'tab:'+x.tab,rot:'➡️ Ir para '+(x.tab===0?'Identificação':x.tab===3?'DCA':'Frequência'),cls:'bp'}));
   if(!ehPac)botoes.push({v:'assim',rot:'Finalizar assim mesmo — o Paciente/Cliente não consegue responder',cls:'bs'});
-  const corpo='<p>'+(ehPac?'Para gerar o seu arquivo, é preciso responder tudo. Esses dados são usados para montar o seu plano alimentar com segurança — sem eles, o plano sairia com valores genéricos.':'Faltam dados que o PLANNER usa para montar a dieta com segurança.')+'</p><p><b>Falta preencher:</b></p><ul style="margin:6px 0 0 18px">'+falt.map(x=>'<li>'+escH(x.rot)+'</li>').join('')+'</ul>';
+  const corpo='<p>'+(ehPac?'Para gerar o seu arquivo, é preciso responder tudo. Esses dados são usados para montar o seu plano alimentar com segurança — sem eles, o plano sairia com valores genéricos.':'Faltam dados que o PLANNER usa para montar a dieta com segurança.')+'</p><p><b>Falta preencher:</b></p><ul style="margin:6px 0 0 18px">'+falt.map(x=>'<li>'+escH(x.rot)+(x.como?'<br><span style="font-size:12px;color:var(--mu)">Como resolver: '+escH(x.como)+'</span>':'')+'</li>').join('')+'</ul>';
   const r=await dlgEscolha('Ainda não dá para gerar o arquivo',corpo,botoes);
-  if(r&&r.indexOf('tab:')===0){goTab(parseInt(r.slice(4)));return false;}
+  if(r&&r.indexOf('tab:')===0){const tn=parseInt(r.slice(4));goTab(tn);const p1=falt.find(x=>x.tab===tn&&x.foco);if(p1)irAoCampo(p1.foco);return false;}
   if(r==='assim'){d.semResposta=true;return true;}
   return false;
 }
 async function finalizar(){
   const d=collectData();
-  if(!d.nome){showToast('⚠️ Preencha o nome antes de finalizar','#e67e22');goTab(0);return false;}
+  if(!d.nome){avisoFicha('Falta o nome',[],{como:'Preencha o nome completo no começo da ficha (aba Identificação) e toque em finalizar de novo.',foco:'nome'});return false;}
   {const _falt=faltasFicha(d);if(_falt.length&&!d.semResposta){if(!(await avisarFaltas(_falt,d)))return false;}}
   if(userRole==='paciente'&&gorduraPctFromData(d)===null){
     const semCintura=!d.cintura,semPescoco=!d.pescoco,semQuadril=(d.sexo==='F')&&!d.quadril;
     if(semCintura||semPescoco||semQuadril){
-      showToast('⚠️ Meça e preencha cintura, pescoço'+(d.sexo==='F'?' e quadril':'')+' (logo no início da ficha) antes de finalizar','#e67e22');
-      goTab(0);
+      const falta=[];
+      if(semCintura)falta.push('Cintura (cm)');
+      if(semPescoco)falta.push('Pescoço (cm)');
+      if(semQuadril)falta.push('Quadril (cm)');
+      avisoFicha('Faltam medidas para finalizar',falta,{como:'Meça com uma fita métrica e digite os valores em centímetros. Os campos ficam logo no começo da ficha (aba Identificação). Suas respostas, fotos e exames continuam salvos.',foco:semCintura?'cintura':(semPescoco?'pescoco':'quadril')});
       return false;
     }
   }
@@ -4027,7 +4088,7 @@ function refreshPtList(){
 }
 function delPt(i){const p=PTS[i];if(p)excluirAvaliacao(p.id);}
 function carregarRelInd(i){if(PTS[i])renderRel(PTS[i]);}
-function gerarRelInd(){const d=collectData();if(!d.nome){showToast('⚠️ Preencha o nome','#e67e22');goTab(0);return;}renderRel(d);}
+function gerarRelInd(){const d=collectData();if(!d.nome){avisoFicha('Falta o nome',[],{como:'Preencha o nome completo no começo da ficha (aba Identificação).',foco:'nome'});return;}renderRel(d);}
 function fecharInd(){
   document.getElementById('indRpt').style.display='none';
   if(pacAbertoKey){document.getElementById('pacPage').style.display='block';}
@@ -4277,7 +4338,7 @@ function dlgEscolha(titulo,corpoHtml,botoes){
   if(window.__dlgAuto!==undefined)return Promise.resolve(window.__dlgAuto);
   return new Promise(res=>{
     const ov=document.createElement('div');ov.className='pw-overlay';ov.style.cssText='display:flex;z-index:10050';
-    ov.innerHTML='<div class="big-box" style="width:540px;max-width:94vw"><h2 style="font-size:18px;margin-bottom:10px">'+escH(titulo)+'</h2><div style="font-size:13.5px;line-height:1.55;margin-bottom:16px">'+corpoHtml+'</div><div id="dlgEscBtns" style="display:flex;flex-direction:column;gap:8px"></div></div>';
+    ov.innerHTML='<div class="big-box" style="width:540px;max-width:94vw;max-height:92vh;overflow-y:auto"><h2 style="font-size:18px;margin-bottom:10px">'+escH(titulo)+'</h2><div style="font-size:13.5px;line-height:1.55;margin-bottom:16px">'+corpoHtml+'</div><div id="dlgEscBtns" style="display:flex;flex-direction:column;gap:8px;position:sticky;bottom:-6px;background:#fff;padding:10px 0 4px;margin-top:6px"></div></div>';
     const box=ov.querySelector('#dlgEscBtns');
     const fechar=v=>{ov.remove();window._dlgCancel=null;res(v);};
     window._dlgCancel=()=>fechar('cancelar');
@@ -4314,13 +4375,13 @@ async function perguntarNovaOuContinuar(d){
 }
 function iniciarGeracaoDieta(dataOverride,opts){
   const d=dataOverride||collectData();
-  if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
+  if(!d.nome){avisoFicha('Falta o nome',[],{como:'Preencha o nome completo no começo da ficha (aba Identificação) e gere a dieta de novo.',foco:'nome'});return;}
   if(!(opts&&opts.pular)&&_lerRascunhoDieta(d))return perguntarNovaOuContinuar(d);
   return _iniciarWizardDieta(d);
 }
 function _iniciarWizardDieta(d){
   const _fb=faltasFicha(d).filter(x=>x.tab===0);
-  if(_fb.length){showToast('⚠️ Antes do PLANNER, preencha na aba Identificação: '+_fb.map(x=>x.rot).join(', ')+'. Sem isso o sistema usaria valores padrão e o plano sairia errado.','#e67e22');goTab(0);return;}
+  if(_fb.length){avisoFicha('Faltam dados para montar a dieta',_fb.map(x=>x.rot),{como:'Preencha na aba Identificação. Sem isso o sistema usaria valores padrão e o plano sairia errado.',foco:_fb[0].foco});return;}
   const base=calcDietaBase(d);
   let ajusteInfo=null;
   if(d.id){
@@ -4571,7 +4632,7 @@ function dietWizProximo2(){
   const sup=document.querySelector('input[name="dwSup"]:checked');
   const eaa=document.querySelector('input[name="dwEAA"]:checked');
   const farm=document.querySelector('input[name="dwFarm"]:checked');
-  if(!sup||!eaa||!farm){showToast('⚠️ Responda as três perguntas de suplementação/EAA/fármacos','#e67e22');return;}
+  if(!sup||!eaa||!farm){const fl=[];if(!sup)fl.push('Suplementos');if(!eaa)fl.push('EAA (esteroides anabolizantes androgênicos)');if(!farm)fl.push('Fármacos');avisoFicha('Faltam respostas nesta tela',fl,{como:'Marque Sim ou Não em cada pergunta e toque em Próximo de novo.'});return;}
   dietWizCtx.incluirSup=sup.value==='S';dietWizCtx.incluirEAA=eaa.value==='S';dietWizCtx.incluirFarm=farm.value==='S';
   dietWizRenderStep3();
   document.getElementById('dwStep2').style.display='none';
@@ -4618,7 +4679,7 @@ async function dietWizGerar(){
     if(saindo||!armado)return;
     const rearmar=()=>{try{history.pushState({bm:'guard'},'');}catch(e){}};
     if(window._dlgCancel){window._dlgCancel();rearmar();return;}
-    const abertos=[['dietEditorOverlay',()=>cancelarDietEditor()],['dietWizardOverlay',()=>fecharDietWizard()],['tpcOverlay',()=>{document.getElementById('tpcOverlay').style.display='none';}],['expOverlay',()=>fecharExp()]];
+    const abertos=[['dietEditorOverlay',()=>cancelarDietEditor()],['dietWizardOverlay',()=>fecharDietWizard()],['tpcOverlay',()=>{document.getElementById('tpcOverlay').style.display='none';}],['expOverlay',()=>fecharExp()],['consRapidoOverlay',()=>crCancelar()]];
     for(const[id,fn]of abertos){const e=document.getElementById(id);if(e&&e.style.display&&e.style.display!=='none'){fn();rearmar();return;}}
     const ativa=Array.from(document.querySelectorAll('.tab')).findIndex(t=>t.classList.contains('active'));
     if(ativa>0){goTab(ativa-1);rearmar();return;}
@@ -4660,7 +4721,7 @@ function _arr(x){return Array.isArray(x)?x:(x?String(x).split(/[,;|]+/).map(t=>t
 function _abrirEditorDietaInterno(dataOverride,ov,modo){
   const ovNovo=ov;
   const d=dataOverride||collectData();
-  if(!d.nome){showToast('⚠️ Preencha o nome do Paciente/Cliente antes de gerar a dieta','#e67e22');return;}
+  if(!d.nome){avisoFicha('Falta o nome',[],{como:'Preencha o nome completo no começo da ficha (aba Identificação) e gere a dieta de novo.',foco:'nome'});return;}
   dietDataCache=d;dietOv=ov||null;dietCas=false;dietEditado=false;
   dietPesosLocked={};dietPesosStale=false;dietExcecoes=new Set();
   const cbc=document.getElementById('dietCaseiras');if(cbc)cbc.checked=false;
@@ -7268,7 +7329,7 @@ function buildReceitas(fatG,hasHAS,cas){
 function showToast(msg,bg='#0d4f2e'){
   const b=document.getElementById('sb');
   const t=document.createElement('div');t.className='stoast';t.style.background=bg;t.textContent=msg;
-  b.appendChild(t);setTimeout(()=>t.remove(),3200);
+  b.appendChild(t);setTimeout(()=>t.remove(),Math.min(7000,3200+Math.max(0,String(msg).length-40)*45));
 }
 function mostrarProgressoWord(pct,texto){
   const ov=document.getElementById('dietProgressOverlay');if(!ov)return;
@@ -7281,6 +7342,51 @@ function mostrarProgressoWord(pct,texto){
 function esconderProgressoWord(){
   const ov=document.getElementById('dietProgressOverlay');if(ov)ov.style.display='none';
 }
+
+// ── janela de aviso: explica o que falta e COMO resolver, e leva direto ao campo ──
+async function avisoFicha(titulo,itens,op){
+  op=op||{};
+  let corpo='';
+  if(itens&&itens.length)corpo+='<p><b>O que falta:</b></p><ul style="margin:4px 0 10px 18px;font-weight:700">'+itens.map(i=>'<li>'+escH(i)+'</li>').join('')+'</ul>';
+  if(op.como)corpo+='<p style="background:var(--gp);border-radius:8px;padding:9px 11px;margin:0"><b>Como resolver:</b> '+escH(op.como)+'</p>';
+  const botoes=[];
+  if(op.foco)botoes.push({v:'ir',rot:'➡️ '+(op.rotIr||'Ir preencher agora'),cls:'bp'});
+  botoes.push({v:'fechar',rot:op.foco?'Fechar':'Entendi',cls:op.foco?'link':'bp'});
+  const r=await dlgEscolha(titulo,corpo,botoes);
+  if(r==='ir')irAoCampo(op.foco);
+  return r;
+}
+function irAoCampo(foco){
+  if(!foco)return;
+  let el=document.getElementById(foco);
+  if(!el){try{el=document.querySelector(foco);}catch(e){el=null;}}
+  if(!el)return;
+  const sec=el.closest&&el.closest('.sec');
+  if(sec){const n=parseInt(String(sec.id).replace('s',''),10);if(!isNaN(n))goTab(n);}
+  setTimeout(()=>{try{el.scrollIntoView({behavior:'smooth',block:'center'});if(el.focus)el.focus({preventScroll:true});}catch(_){}},500);
+}
+// ── depois de uma recarga da página (o iPhone descarta a aba em segundo plano): volta na mesma aba e recupera fotos e exames ──
+document.addEventListener('DOMContentLoaded',async()=>{
+  try{
+    if(sessionStorage.getItem(RK_ROLE)!=='paciente')return;
+    await storeInit();
+    for(let i=0;i<40&&userRole!=='paciente';i++)await new Promise(r=>setTimeout(r,100));
+    if(userRole!=='paciente')return;
+    let cur=null;try{cur=JSON.parse(sessionStorage.getItem(DK)||'null');}catch(e){}
+    const rd=REC&&REC.role==='paciente'?REC.data:null;
+    if(rd&&cur&&cur.nome&&normNome(rd.nome)===normNome(cur.nome)){
+      let mudou=false;
+      PHOTO_FIELDS.forEach(k=>{
+        if(k==='exameArquivo'){
+          if((!Array.isArray(photoData.exameArquivo)||!photoData.exameArquivo.length)&&Array.isArray(rd.exameArquivo)&&rd.exameArquivo.length){photoData.exameArquivo=rd.exameArquivo;mudou=true;}
+        }else if(!photoData[k]&&rd[k]){photoData[k]=rd[k];mudou=true;}
+      });
+      if(mudou){PHOTO_FIELDS.forEach(k=>{if(k!=='exameArquivo')renderPhotoPreview(k);});renderExameFilesPreview();showToast('✅ Fotos e exames recuperados');}
+    }
+    const t=parseInt(sessionStorage.getItem('bm_tab'),10);
+    if(t>0&&t<8)goTab(t);
+  }catch(e){}
+});
 </script>
 <script>
 const VIDEO_INTRO_SRC={
