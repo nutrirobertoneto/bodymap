@@ -218,6 +218,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
 .cons-ck{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--br);border-radius:8px;font-size:13px;line-height:1.45;cursor:pointer;background:#fff}
 .cons-ck input{margin-top:3px;width:16px;height:16px;accent-color:#c79a12;flex-shrink:0}
 .cons-ck.dis{opacity:.5;cursor:not-allowed}
+.rot-sub{font-size:12.5px;color:var(--mu);margin:6px 0 10px}
+.rot-chips{display:flex;flex-wrap:wrap;gap:8px}
+.rot-chip{padding:8px 13px;border:1.5px solid var(--br);border-radius:99px;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:#161616}
+.rot-chip.on{background:#E8B923;border-color:#c79a12;font-weight:700}
+.rot-meal{padding:9px 0;border-bottom:1px solid var(--br)}
 .cons-grid{display:grid;gap:8px}
 .cons-done{padding:14px 16px;background:var(--gp);border:1.5px solid var(--gl);border-radius:var(--rs);font-size:13px;line-height:1.7}
 .ex-alert{padding:12px 14px;background:#fdecea;border:1.5px solid #f5b7b1;border-radius:var(--rs);font-size:13px;line-height:1.6;margin-top:10px}
@@ -1211,6 +1216,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
       <div class="fg"><label class="fl">Observações gerais</label><textarea id="obsGerais" class="fc" style="min-height:80px" placeholder="Informações adicionais relevantes..." oninput="autoSave()"></textarea></div>
       <div class="fg" style="margin-top:12px"><label class="fl">📝 Notas de atendimento (rascunho da consulta)</label><textarea id="notasAtendimento" class="fc" style="min-height:100px" placeholder="Anotações livres da consulta — vai mudando enquanto você pensa, sem virar dado clínico formal. Só fica salvo com este Paciente/Cliente." oninput="autoSave()"></textarea></div>
     </div>
+  </div>
+  <div class="card" id="rotCard">
+    <div class="ch"><div class="chi ib">🕒</div><div><h3>Minha rotina <span id="rotStatus" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#FFF8E6;border:1px solid #E8B923;margin-left:6px"></span></h3><p>Horários, refeições e o que você não come — para o plano combinar com o seu dia</p></div></div>
+    <div class="cb"><div id="rotResumo"></div></div>
   </div>
   <div class="nav-btns"><button class="btn bs" onclick="goTab(5)">← Voltar</button><button class="btn bp" onclick="goTab(7)">📷 Fotos e Exames</button></div>
 </div>
@@ -2345,6 +2354,7 @@ async function resetFormularioCompleto(){
   photoData={};consent=null;exameIA=null;cafDefinido=false;
   PHOTO_FIELDS.forEach(f=>renderPhotoPreview(f));
   document.querySelectorAll('input[type=file]').forEach(i=>{i.value='';});
+  rotResetar();
   renderConsent();renderExameIA();
   atualizarMedPorDoenca();atualizarAnticonVisibilidade();atualizarQuadrilVisibilidade();renderMedidasEssenciaisSvg();atualizarGuiaFotos();
   updateDCA();updDcaCnt();
@@ -2389,6 +2399,7 @@ async function importarArquivo(file){
   if(j&&j.tipo==='bodymap-backup'&&Array.isArray(j.pacientes))return importarLote(j.pacientes,'backup');
   if(j&&j.tipo==='bodymap-paciente'&&Array.isArray(j.avaliacoes))return importarLote(j.avaliacoes,'arquivo do paciente');
   if(!j||!j.nome){showToast('⚠️ Arquivo inválido — sem nome de Paciente/Cliente','#e67e22');return;}
+  if(!j.origem)j.origem='importada';
   const entry={...j,id:Date.now()};
   const m=mesclarPts(PTS,[entry]);
   await gravarPts(m.lista);
@@ -3191,6 +3202,575 @@ function goTab(n){
   if(n===8){resetRelatoriosUI();refreshPtList();}
   marcarAbasPendentes();
 }
+// ═══════════════ MINHA ROTINA (consultoria online): pop-ups, conferência e gravação na ficha ═══════════════
+const ROT_REFS=[['cafe','☕ Café da manhã'],['lancheM','🍎 Lanche da manhã'],['almoco','🍽️ Almoço'],['lancheT','🥪 Lanche da tarde'],['jantar','🌙 Jantar'],['ceia','🥛 Ceia']];
+const ROT_DIAS=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+const ROT_LOCAL=['Em casa','Em local fixo (escritório, loja…)','Na rua / externo','Dirigindo'];
+const ROT_VET=[['bovina','Carne bovina'],['frango','Frango'],['suina','Carne suína'],['peixe','Peixe'],['frutos_mar','Frutos do mar'],['ovo','Ovo'],['leite','Leite'],['laticinios','Queijo, iogurte e requeijão'],['feijao','Feijão'],['castanhas','Castanhas e nozes'],['visceras','Fígado e vísceras'],['gluten','Glúten (pão, massa, trigo)']];
+const ROT_ONDE=['Casa','Marmita','Rua / restaurante','Trabalho'];
+const ROT_QUEM=['Eu mesmo(a)','Outra pessoa','Compro pronto'];
+var ROT=rotVazia();
+var ORIGEM_ONLINE=false;
+function rotVazia(){return{v:1,dia:{acorda:'',dorme:'',trab:'',local:[],noturno:'',noturnoTxt:'',fds:''},refs:{},treino:{treina:null,dias:[],ini:'',fim:'',de:'',antes:'',depois:'',jejum:''},vet:{nada:false,cats:[],txt:''},det:{prepara:'',preparaOque:'',fomeMais:'',fomeNunca:'',semFome:'',doce:'',ama:'',intol:'',relig:'',bebidas:'',orc:'',supl:'',livre:'',livre2:'',voz:''},ok:{dia:false,refs:false,treino:false,vet:false},emBranco:true};}
+function rotClone(){return JSON.parse(JSON.stringify(ROT));}
+function rotTemAlgo(r){
+  r=r||ROT;
+  if(!r)return false;
+  if(r.dia&&(r.dia.acorda||r.dia.dorme||r.dia.trab||(r.dia.local||[]).length||r.dia.noturno||r.dia.fds))return true;
+  if(Object.keys(r.refs||{}).some(k=>r.refs[k]&&(r.refs[k].faz===true||r.refs[k].faz===false)))return true;
+  if(r.treino&&(r.treino.treina!==null||(r.treino.dias||[]).length||r.treino.ini))return true;
+  if(r.vet&&(r.vet.nada||(r.vet.cats||[]).length||String(r.vet.txt||'').trim()))return true;
+  return Object.values(r.det||{}).some(v=>String(v||'').trim());
+}
+function rotPraticaAf(d){return(d?d.praticaAf:_valRadioForm('praticaAf'))==='S';}
+function _valRadioForm(n){const e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:'';}
+// lista do que falta (vazia = completa). Mesma regra para a trava do paciente e para o assistente.
+function rotFaltas(r,d){
+  const f=[];
+  r=r||{};
+  const di=r.dia||{};
+  if(!di.acorda||!di.dorme||!String(di.trab||'').trim())f.push({k:'dia',rot:'Meu dia: hora que acorda, hora que dorme e horário de trabalho/estudo'});
+  const rf=r.refs||{};
+  const semResp=ROT_REFS.filter(x=>!rf[x[0]]||(rf[x[0]].faz!==true&&rf[x[0]].faz!==false)).map(x=>x[1].replace(/^\S+\s/,''));
+  const semHora=ROT_REFS.filter(x=>rf[x[0]]&&rf[x[0]].faz===true&&!rf[x[0]].hora).map(x=>x[1].replace(/^\S+\s/,''));
+  if(semResp.length||semHora.length)f.push({k:'refs',rot:'Minhas refeições: '+(semResp.length?'responda "faço" ou "não faço" em '+semResp.join(', '):'')+(semResp.length&&semHora.length?'; ':'')+(semHora.length?'informe o horário de '+semHora.join(', '):'')});
+  if(rotPraticaAf(d)){
+    const t=r.treino||{};
+    if(t.treina!==true&&t.treina!==false)f.push({k:'treino',rot:'Treino: diga se treina e, se treinar, os dias e o horário'});
+    else if(t.treina===true&&(!(t.dias||[]).length||!t.ini))f.push({k:'treino',rot:'Treino: marque os dias e o horário de início'});
+  }
+  const v=r.vet||{};
+  if(!(v.nada||(v.cats||[]).length||String(v.txt||'').trim()))f.push({k:'vet',rot:'Não como de jeito nenhum: marque o que não come ou "como de tudo"'});
+  return f;
+}
+function rotRefKeys(r){return ROT_REFS.map(x=>x[0]).filter(k=>r&&r.refs&&r.refs[k]&&r.refs[k].faz===true);}
+function rotHoraTxt(h){
+  const m=String(h||'').match(/^(\d{1,2}):(\d{2})$/);
+  if(!m)return String(h||'');
+  return parseInt(m[1],10)+'h'+(m[2]==='00'?'':m[2]);
+}
+function rotMin(h){const m=String(h||'').match(/^(\d{1,2}):(\d{2})$/);return m?parseInt(m[1],10)*60+parseInt(m[2],10):null;}
+function rotMinTxt(min){min=((min%1440)+1440)%1440;const h=Math.floor(min/60),m=min%60;return h+'h'+(m?String(m).padStart(2,'0'):'');}
+// ── cartão na aba Hábitos ──
+function rotRender(){
+  const box=document.getElementById('rotResumo');
+  if(!box)return;
+  const ehPac=userRole==='paciente';
+  const d={praticaAf:_valRadioForm('praticaAf')};
+  const falt=rotFaltas(ROT,d),faltK=falt.map(x=>x.k);
+  const pas=[['dia','Meu dia'],['refs','Minhas refeições']].concat(rotPraticaAf(d)?[['treino','Treino']]:[]).concat([['vet','Não como de jeito nenhum']]);
+  let h='<div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0">'+pas.map(p=>{
+    const ok=!faltK.includes(p[0]);
+    return '<span style="padding:6px 11px;border-radius:99px;font-size:12.5px;font-weight:600;border:1.5px solid '+(ok?'#27ae60':'#E8B923')+';background:'+(ok?'#EAF7EE':'#FFF8E6')+'">'+(ok?'✔ ':'⏳ ')+p[1]+'</span>';
+  }).join('')+'</div>';
+  h+='<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +'<button type="button" class="btn bp" onclick="rotAbrir(0)">'+(rotTemAlgo(ROT)?'✏️ Revisar / continuar minha rotina':'🕒 Responder minha rotina')+'</button>'
+    +'<button type="button" class="btn bs" onclick="rotAbrirVoz()">🎤 Prefiro contar falando</button></div>';
+  if(!ehPac)h+='<div style="font-size:11.5px;color:var(--mu);margin-top:8px">Atendimento presencial: preenchimento opcional. Na consultoria online, o Paciente/Cliente precisa responder antes de gerar o arquivo.</div>';
+  box.innerHTML=h;
+  const st=document.getElementById('rotStatus');
+  if(st)st.textContent=falt.length?(ehPac?'Obrigatório':'Opcional (presencial)'):'Completa';
+}
+function rotSet(n,v){ROT.emBranco=false;if(typeof autoSave==='function')autoSave();}
+// ── pop-up em passos ──
+let rotPasso=0,rotVozAnterior=null;
+const ROT_PASSOS=[
+  {id:'dia',tit:'1/5 — Meu dia',req:true},
+  {id:'refs',tit:'2/5 — Minhas refeições',req:true},
+  {id:'treino',tit:'3/5 — Treino',req:true},
+  {id:'vet',tit:'4/5 — Não como de jeito nenhum',req:true},
+  {id:'det',tit:'5/5 — Quero detalhar mais (opcional)',req:false}
+];
+function _rotChips(grupo,opcoes,marcados,multi){
+  return '<div class="rot-chips" data-g="'+grupo+'" data-m="'+(multi?1:0)+'">'+opcoes.map(o=>{
+    const v=Array.isArray(o)?o[0]:o,r=Array.isArray(o)?o[1]:o;
+    return '<button type="button" class="rot-chip'+((marcados||[]).includes(v)?' on':'')+'" data-v="'+escH(v)+'" onclick="rotChip(this)">'+escH(r)+'</button>';
+  }).join('')+'</div>';
+}
+function rotChip(b){
+  const g=b.parentNode,multi=g.dataset.m==='1';
+  if(multi)b.classList.toggle('on');
+  else{const on=b.classList.contains('on');g.querySelectorAll('.rot-chip').forEach(x=>x.classList.remove('on'));if(!on)b.classList.add('on');}
+  const ev=g.dataset.change;if(ev){try{window[ev](g);}catch(e){}}
+}
+function _rotLer(g){return Array.from(document.querySelectorAll('#rotCorpo .rot-chips[data-g="'+g+'"] .rot-chip.on')).map(b=>b.dataset.v);}
+function _rotV(id){const e=document.getElementById(id);return e?String(e.value||'').trim():'';}
+function _rotTxt(id,rot,ph,v,rows){return '<div class="fg" style="margin-top:12px"><label class="fl">'+rot+'</label><textarea id="'+id+'" class="fc" rows="'+(rows||2)+'" placeholder="'+escH(ph||'')+'">'+escH(v||'')+'</textarea></div>';}
+function rotRenderPasso(){
+  const p=ROT_PASSOS[rotPasso],r=ROT,c=document.getElementById('rotCorpo');
+  document.getElementById('rotTitulo').textContent='🕒 '+p.tit;
+  document.getElementById('rotBarIn').style.width=Math.round((rotPasso+1)/ROT_PASSOS.length*100)+'%';
+  document.getElementById('rotErro').style.display='none';
+  let h='';
+  if(rotVozAnterior&&rotPasso===0)h+='<div style="padding:10px 12px;background:#EAF7EE;border:1px solid #27ae60;border-radius:8px;font-size:12.5px;margin-bottom:12px">🎤 Organizei o que você contou. <b>Confira cada tela</b> e corrija o que estiver errado.</div>';
+  if(p.id==='dia'){
+    h+='<p class="rot-sub">Só o essencial, para montar os horários do seu plano.</p>'
+     +'<div style="display:flex;gap:14px;flex-wrap:wrap"><div class="fg"><label class="fl">Que horas você acorda?</label><input id="rotAcorda" type="time" class="fc" style="width:140px" value="'+escH(r.dia.acorda)+'"></div>'
+     +'<div class="fg"><label class="fl">Que horas você dorme?</label><input id="rotDorme" type="time" class="fc" style="width:140px" value="'+escH(r.dia.dorme)+'"></div></div>'
+     +'<div class="fg" style="margin-top:12px"><label class="fl">Horário de trabalho ou estudo</label><input id="rotTrab" class="fc" placeholder="Ex.: 8h às 17h (se não trabalha nem estuda: escreva \'não\')" value="'+escH(r.dia.trab)+'"></div>'
+     +'<div class="fg" style="margin-top:12px"><label class="fl">Onde você trabalha? (pode marcar mais de um)</label>'+_rotChips('local',ROT_LOCAL,r.dia.local,true)+'</div>'
+     +'<div class="fg" style="margin-top:12px"><label class="fl">Trabalha à noite, em plantão ou escala?</label>'+_rotChips('noturno',[['N','Não'],['S','Sim']],[r.dia.noturno],false)+'<input id="rotNoturnoTxt" class="fc" style="margin-top:8px" placeholder="Se sim, explique (ex.: plantão 12x36 das 19h às 7h)" value="'+escH(r.dia.noturnoTxt)+'"></div>'
+     +_rotTxt('rotFds','Sábado, domingo e feriado são diferentes? Como?','Ex.: acordo mais tarde e almoço às 14h',r.dia.fds);
+  }else if(p.id==='refs'){
+    h+='<p class="rot-sub">Toque em <b>Faço</b> ou <b>Não faço</b> em cada refeição. Se fizer, diga o horário.</p>';
+    ROT_REFS.forEach(([k,rot])=>{
+      const x=r.refs[k]||{};
+      h+='<div class="rot-meal" data-k="'+k+'"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b style="min-width:140px">'+rot+'</b>'
+       +_rotChips('faz_'+k,[['S','Faço'],['N','Não faço']],[x.faz===true?'S':(x.faz===false?'N':'')],false).replace('class="rot-chips"','class="rot-chips" data-change="rotRefToggle"')
+       +'<input type="time" id="rotH_'+k+'" class="fc" style="width:130px;'+(x.faz===true?'':'display:none')+'" value="'+escH(x.hora||'')+'"></div>'
+       +'<div id="rotM_'+k+'" class="rot-extra" style="display:none"></div></div>';
+    });
+    h+='<p class="rot-sub" style="margin-top:10px">Os detalhes (o que come, onde, quem prepara) são opcionais, no passo 5.</p>';
+  }else if(p.id==='treino'){
+    const d={praticaAf:_valRadioForm('praticaAf')};
+    if(!rotPraticaAf(d)){
+      h+='<p class="rot-sub">Na aba Atividade Física você não marcou que pratica exercício, então não precisa preencher este passo. Se isso mudou, volte nessa aba e marque "Sim".</p>';
+    }else{
+      const t=r.treino;
+      h+='<p class="rot-sub">As modalidades, a frequência e a duração você já respondeu na aba Atividade Física. Aqui só os horários.</p>'
+       +'<div class="fg"><label class="fl">Você treina atualmente?</label>'+_rotChips('treina',[['S','Sim'],['N','Não, no momento']],[t.treina===true?'S':(t.treina===false?'N':'')],false).replace('class="rot-chips"','class="rot-chips" data-change="rotTreinaToggle"')+'</div>'
+       +'<div id="rotTreinoBox" style="display:'+(t.treina===true?'block':'none')+'">'
+       +'<div class="fg" style="margin-top:12px"><label class="fl">Dias da semana do treino</label>'+_rotChips('dias',ROT_DIAS,t.dias,true)+'</div>'
+       +'<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:12px"><div class="fg"><label class="fl">Início</label><input id="rotTrIni" type="time" class="fc" style="width:130px" value="'+escH(t.ini)+'"></div><div class="fg"><label class="fl">Fim</label><input id="rotTrFim" type="time" class="fc" style="width:130px" value="'+escH(t.fim)+'"></div></div>'
+       +'<div class="fg" style="margin-top:12px"><label class="fl">Vai direto de onde para o treino?</label>'+_rotChips('trDe',['De casa','Do trabalho','Outro'],[t.de],false)+'</div>'
+       +'<div class="fg" style="margin-top:12px"><label class="fl">Treina em jejum?</label>'+_rotChips('trJejum',[['S','Sim'],['N','Não']],[t.jejum],false)+'</div>'
+       +_rotTxt('rotTrAntes','O que você come ou toma antes do treino hoje?','Ex.: banana com aveia 1h antes',t.antes)
+       +_rotTxt('rotTrDepois','E depois do treino?','Ex.: shake de whey no carro',t.depois)+'</div>';
+    }
+  }else if(p.id==='vet'){
+    const v=r.vet;
+    h+='<div style="padding:11px 13px;background:#FDECEA;border:2px solid #c0392b;border-radius:10px;margin-bottom:12px"><b style="color:#c0392b">🚫 Isso é importante: me diga o que você NÃO come de jeito nenhum</b><div style="font-size:12.5px;margin-top:4px">O que você marcar aqui <b>não vai aparecer</b> no seu plano alimentar. (Alergias já informadas na ficha de saúde entram sozinhas.)</div></div>'
+     +'<label class="cons-ck"><input type="checkbox" id="rotVetNada" '+(v.nada?'checked':'')+' onchange="rotVetNadaChange()"><span><b>Como de tudo</b> — não tenho nenhum alimento que eu não coma</span></label>'
+     +'<div id="rotVetBox" style="margin-top:10px;'+(v.nada?'opacity:.4;pointer-events:none':'')+'"><label class="fl">Marque o que você não come</label>'+_rotChips('vet',ROT_VET,v.cats,true)
+     +_rotTxt('rotVetTxt','Outros alimentos que você não come (escreva)','Ex.: não como coentro, nem beterraba, nem peixe de água doce',v.txt)+'</div>';
+  }else if(p.id==='det'){
+    const t=r.det;
+    h+='<p class="rot-sub">Este passo é opcional, mas quanto mais você me contar, mais o plano combina com a sua rotina. Pode pular.</p>'
+     +_rotTxt('rotFomeMais','Em quais horários você sente mais fome?','Ex.: ao acordar e às 17h',t.fomeMais)
+     +_rotTxt('rotFomeNunca','Em quais horários você NÃO sente fome nenhuma?','Ex.: às 15h nunca tenho fome',t.fomeNunca)
+     +_rotTxt('rotSemFome','Quando você belisca ou come sem fome? O que come?','Ex.: à noite, vendo TV, chocolate',t.semFome)
+     +_rotTxt('rotDoce','Sente vontade de doce? Em que horário?','',t.doce)
+     +'<div class="fg" style="margin-top:12px"><label class="fl">Você prepara a comida de uma vez para vários dias (marmitas)?</label>'+_rotChips('prepara',[['S','Sim'],['N','Não']],[t.prepara],false)+'<input id="rotPrepOque" class="fc" style="margin-top:8px" placeholder="Se sim, o que prepara? (ex.: arroz, feijão e frango para a semana)" value="'+escH(t.preparaOque)+'"></div>'
+     +_rotTxt('rotAma','Quais alimentos você ama e não abre mão?','',t.ama)
+     +_rotTxt('rotIntol','Quais alimentos não tolera (passa mal)?','',t.intol)
+     +_rotTxt('rotRelig','Religião ou jejum com períodos em que não pode comer certos alimentos?','Ex.: jejum às sextas, sem carne na quaresma',t.relig)
+     +_rotTxt('rotBebidas','Bebidas do dia, com horário','Ex.: café às 7h e 15h; refrigerante no almoço',t.bebidas)
+     +_rotTxt('rotOrc','Orçamento apertado ou dificuldade para cozinhar/comprar?','',t.orc)
+     +_rotTxt('rotSupl','Horário de suplementos e medicamentos (a lista já está na ficha)','Ex.: vitamina D no café, creatina depois do treino',t.supl)
+     +_rotTxt('rotLivre','O que não perguntamos e é importante para você?','',t.livre,3)
+     +_rotTxt('rotLivre2','Se pudesse mudar uma coisa na sua alimentação, qual seria?','',t.livre2);
+  }
+  c.innerHTML=h;
+  c.scrollTop=0;
+  document.getElementById('rotVoltar').style.display=rotPasso>0?'inline-flex':'none';
+  document.getElementById('rotProx').textContent=rotPasso===ROT_PASSOS.length-1?'✅ Concluir':'Próximo →';
+  ROT_REFS.forEach(([k])=>rotRefToggle(null,k));
+}
+function rotRefToggle(g,kk){
+  const ks=kk?[kk]:[g&&g.dataset.g?g.dataset.g.replace('faz_',''):null];
+  ks.forEach(k=>{
+    if(!k)return;
+    const grp=document.querySelector('#rotCorpo .rot-chips[data-g="faz_'+k+'"]');
+    if(!grp)return;
+    const on=(grp.querySelector('.rot-chip.on')||{dataset:{}}).dataset.v;
+    const hi=document.getElementById('rotH_'+k);if(hi)hi.style.display=on==='S'?'inline-block':'none';
+  });
+}
+function rotTreinaToggle(){
+  const on=(document.querySelector('#rotCorpo .rot-chips[data-g="treina"] .rot-chip.on')||{dataset:{}}).dataset.v;
+  const b=document.getElementById('rotTreinoBox');if(b)b.style.display=on==='S'?'block':'none';
+}
+function rotVetNadaChange(){
+  const on=document.getElementById('rotVetNada').checked;
+  const b=document.getElementById('rotVetBox');if(!b)return;
+  b.style.opacity=on?'.4':'';b.style.pointerEvents=on?'none':'';
+  if(on){b.querySelectorAll('.rot-chip.on').forEach(x=>x.classList.remove('on'));const t=document.getElementById('rotVetTxt');if(t)t.value='';}
+}
+function rotColetarPasso(){
+  const id=ROT_PASSOS[rotPasso].id,r=ROT;
+  r.emBranco=false;
+  if(id==='dia'){
+    r.dia.acorda=_rotV('rotAcorda');r.dia.dorme=_rotV('rotDorme');r.dia.trab=_rotV('rotTrab');
+    r.dia.local=_rotLer('local');r.dia.noturno=(_rotLer('noturno')[0])||'';r.dia.noturnoTxt=_rotV('rotNoturnoTxt');r.dia.fds=_rotV('rotFds');
+  }else if(id==='refs'){
+    ROT_REFS.forEach(([k])=>{
+      const on=(_rotLer('faz_'+k)[0])||'';
+      const x=r.refs[k]=r.refs[k]||{};
+      x.faz=on==='S'?true:(on==='N'?false:undefined);
+      x.hora=on==='S'?_rotV('rotH_'+k):'';
+    });
+  }else if(id==='treino'){
+    if(rotPraticaAf({praticaAf:_valRadioForm('praticaAf')})){
+      const t=r.treino,on=(_rotLer('treina')[0])||'';
+      t.treina=on==='S'?true:(on==='N'?false:null);
+      if(t.treina===true){t.dias=_rotLer('dias');t.ini=_rotV('rotTrIni');t.fim=_rotV('rotTrFim');t.de=(_rotLer('trDe')[0])||'';t.jejum=(_rotLer('trJejum')[0])||'';t.antes=_rotV('rotTrAntes');t.depois=_rotV('rotTrDepois');}
+      else{t.dias=[];t.ini='';t.fim='';}
+    }
+  }else if(id==='vet'){
+    const v=r.vet;v.nada=document.getElementById('rotVetNada').checked;v.cats=v.nada?[]:_rotLer('vet');v.txt=v.nada?'':_rotV('rotVetTxt');
+  }else if(id==='det'){
+    const t=r.det;
+    t.fomeMais=_rotV('rotFomeMais');t.fomeNunca=_rotV('rotFomeNunca');t.semFome=_rotV('rotSemFome');t.doce=_rotV('rotDoce');
+    t.prepara=(_rotLer('prepara')[0])||'';t.preparaOque=_rotV('rotPrepOque');t.ama=_rotV('rotAma');t.intol=_rotV('rotIntol');t.relig=_rotV('rotRelig');
+    t.bebidas=_rotV('rotBebidas');t.orc=_rotV('rotOrc');t.supl=_rotV('rotSupl');t.livre=_rotV('rotLivre');t.livre2=_rotV('rotLivre2');
+  }
+}
+function rotValidaPasso(){
+  const id=ROT_PASSOS[rotPasso].id,f=rotFaltas(ROT,{praticaAf:_valRadioForm('praticaAf')}).filter(x=>x.k===id);
+  return f;
+}
+function rotErro(msg){const e=document.getElementById('rotErro');e.textContent=msg;e.style.display='block';}
+function rotProximo(){
+  rotColetarPasso();
+  const f=rotValidaPasso();
+  if(f.length){rotErro('Falta responder: '+f.map(x=>x.rot).join(' · '));return;}
+  if(rotPasso<ROT_PASSOS.length-1){rotPasso++;rotRenderPasso();return;}
+  rotFechar(true);
+}
+function rotVoltarPasso(){rotColetarPasso();if(rotPasso>0){rotPasso--;rotRenderPasso();}}
+function rotAbrir(p){
+  rotGarantirOverlay();
+  rotPasso=p||0;
+  document.getElementById('rotOverlay').style.display='flex';
+  rotRenderPasso();
+}
+function rotFechar(concluiu){
+  if(!concluiu){try{rotColetarPasso();}catch(e){}}
+  document.getElementById('rotOverlay').style.display='none';
+  rotVozAnterior=null;
+  rotRender();
+  if(typeof autoSave==='function')autoSave();
+  if(concluiu&&typeof showToast==='function')showToast('✅ Rotina salva. Obrigado!');
+}
+function rotGarantirOverlay(){
+  if(document.getElementById('rotOverlay'))return;
+  const ov=document.createElement('div');ov.className='pw-overlay';ov.id='rotOverlay';ov.style.cssText='display:none;z-index:9000';
+  ov.innerHTML='<div class="diet-editor-box" style="width:640px;max-width:96vw;max-height:94vh;display:flex;flex-direction:column">'
+    +'<h2 id="rotTitulo" style="font-size:19px;margin-bottom:6px"></h2>'
+    +'<div style="height:5px;background:#eee;border-radius:3px;margin-bottom:12px"><div id="rotBarIn" style="height:5px;background:#E8B923;border-radius:3px;width:0"></div></div>'
+    +'<div id="rotCorpo" style="overflow-y:auto;flex:1;padding-right:4px"></div>'
+    +'<div id="rotErro" style="display:none;margin-top:10px;padding:9px 11px;background:#FDECEA;border:1px solid #c0392b;border-radius:8px;font-size:12.5px;color:#9b2c20"></div>'
+    +'<div style="display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap">'
+    +'<div style="display:flex;gap:8px"><button type="button" class="pw-cancel" onclick="rotFechar(false)">Salvar e sair</button><button type="button" id="rotVoltar" class="pw-cancel" onclick="rotVoltarPasso()">← Voltar</button></div>'
+    +'<button type="button" id="rotProx" class="btn bp" onclick="rotProximo()">Próximo →</button></div></div>';
+  document.body.appendChild(ov);
+}
+// ── contar falando: ditado + IA organiza ──
+let rotRec=null;
+function rotAbrirVoz(){
+  rotGarantirOverlay();
+  let ov=document.getElementById('rotVozOverlay');
+  if(!ov){
+    ov=document.createElement('div');ov.className='pw-overlay';ov.id='rotVozOverlay';ov.style.cssText='display:none;z-index:9100';
+    ov.innerHTML='<div class="diet-editor-box" style="width:620px;max-width:96vw">'
+      +'<h2 style="font-size:19px;margin-bottom:6px">🎤 Conte a sua rotina falando</h2>'
+      +'<p class="rot-sub">Fale como se estivesse numa consulta: do acordar ao dormir, com horários, o que come, quando sente fome, se treina (dia e horário) e o que <b>não</b> come de jeito nenhum.</p>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><button type="button" id="rotMicBtn" class="btn bs" onclick="rotMic()">🎤 Começar a falar</button><span id="rotMicInfo" style="font-size:12px;color:var(--mu);align-self:center"></span></div>'
+      +'<textarea id="rotVozTxt" class="fc" rows="9" placeholder="O texto aparece aqui. Você também pode digitar, ou usar o microfone do teclado do celular."></textarea>'
+      +'<div id="rotVozErro" style="display:none;margin-top:10px;padding:9px 11px;background:#FDECEA;border:1px solid #c0392b;border-radius:8px;font-size:12.5px;color:#9b2c20"></div>'
+      +'<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px"><button type="button" class="pw-cancel" onclick="rotFecharVoz()">Cancelar</button><button type="button" id="rotVozOk" class="btn bp" onclick="rotOrganizarVoz()">✨ Organizar o que eu contei</button></div></div>';
+    document.body.appendChild(ov);
+  }
+  document.getElementById('rotVozTxt').value=ROT.det.voz||'';
+  document.getElementById('rotVozErro').style.display='none';
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  document.getElementById('rotMicBtn').style.display=SR?'inline-flex':'none';
+  document.getElementById('rotMicInfo').textContent=SR?'':'Neste aparelho, toque no microfone do teclado para ditar.';
+  ov.style.display='flex';
+}
+function rotFecharVoz(){
+  if(rotRec){try{rotRec.stop();}catch(e){}rotRec=null;}
+  const ov=document.getElementById('rotVozOverlay');if(ov)ov.style.display='none';
+}
+function rotMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
+  const btn=document.getElementById('rotMicBtn'),ta=document.getElementById('rotVozTxt');
+  if(rotRec){try{rotRec.stop();}catch(e){}rotRec=null;btn.textContent='🎤 Começar a falar';return;}
+  const rec=new SR();rec.lang='pt-BR';rec.continuous=true;rec.interimResults=false;
+  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){if(ev.results[i].isFinal)ta.value=(ta.value+' '+ev.results[i][0].transcript).trim();}};
+  rec.onerror=()=>{rotRec=null;btn.textContent='🎤 Começar a falar';const i=document.getElementById('rotMicInfo');if(i)i.textContent='Não consegui usar o microfone. Use o microfone do teclado ou digite.';};
+  rec.onend=()=>{rotRec=null;btn.textContent='🎤 Começar a falar';};
+  try{rec.start();rotRec=rec;btn.textContent='⏹️ Parar';}catch(e){}
+}
+async function rotOrganizarVoz(){
+  const ta=document.getElementById('rotVozTxt'),er=document.getElementById('rotVozErro'),ok=document.getElementById('rotVozOk');
+  const txt=ta.value.trim();
+  er.style.display='none';
+  if(txt.length<30){er.textContent='Conte um pouco mais da sua rotina (pelo menos duas ou três frases).';er.style.display='block';return;}
+  if(rotRec){try{rotRec.stop();}catch(e){}rotRec=null;}
+  ok.disabled=true;ok.textContent='⏳ Organizando…';
+  try{
+    const resp=await fetch('/.netlify/functions/organizar-rotina',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto:txt.slice(0,5000)})});
+    const j=await resp.json();
+    if(!resp.ok||!j||j.erro)throw new Error((j&&j.erro)||'sem resposta');
+    rotMesclarIA(j.rotina||{},txt);
+    rotFecharVoz();rotVozAnterior=true;rotAbrir(0);
+  }catch(e){
+    er.textContent='Não consegui organizar agora. Seu texto ficou guardado: você pode responder pelos passos, ou tentar de novo em instantes.';er.style.display='block';
+    ROT.det.voz=txt;if(typeof autoSave==='function')autoSave();
+  }finally{ok.disabled=false;ok.textContent='✨ Organizar o que eu contei';}
+}
+const _rotHhmm=s=>/^\d{1,2}:\d{2}$/.test(String(s||''))?String(s).replace(/^(\d):/,'0$1:'):'';
+function rotMesclarIA(n,txt){
+  const r=ROT;r.emBranco=false;r.det.voz=txt;
+  const di=n.dia||{};
+  if(_rotHhmm(di.acorda))r.dia.acorda=_rotHhmm(di.acorda);
+  if(_rotHhmm(di.dorme))r.dia.dorme=_rotHhmm(di.dorme);
+  if(di.trab)r.dia.trab=String(di.trab).slice(0,120);
+  if(Array.isArray(di.local))r.dia.local=di.local.filter(x=>ROT_LOCAL.includes(x));
+  if(di.noturno==='S'||di.noturno==='N')r.dia.noturno=di.noturno;
+  if(di.noturnoTxt)r.dia.noturnoTxt=String(di.noturnoTxt).slice(0,160);
+  if(di.fds)r.dia.fds=String(di.fds).slice(0,300);
+  const rf=n.refs||{};
+  ROT_REFS.forEach(([k])=>{
+    const x=rf[k];if(!x||(x.faz!==true&&x.faz!==false))return;
+    r.refs[k]=Object.assign(r.refs[k]||{},{faz:x.faz,hora:x.faz?_rotHhmm(x.hora):''});
+    if(x.oque)r.refs[k].oque=String(x.oque).slice(0,160);
+  });
+  const t=n.treino||{};
+  if(t.treina===true||t.treina===false){
+    r.treino.treina=t.treina;
+    if(t.treina){
+      if(Array.isArray(t.dias))r.treino.dias=t.dias.filter(x=>ROT_DIAS.includes(x));
+      if(_rotHhmm(t.ini))r.treino.ini=_rotHhmm(t.ini);
+      if(_rotHhmm(t.fim))r.treino.fim=_rotHhmm(t.fim);
+      if(t.antes)r.treino.antes=String(t.antes).slice(0,160);
+      if(t.depois)r.treino.depois=String(t.depois).slice(0,160);
+      if(t.jejum==='S'||t.jejum==='N')r.treino.jejum=t.jejum;
+    }
+  }
+  const v=n.vet||{};
+  if(Array.isArray(v.cats)){r.vet.cats=v.cats.filter(x=>ROT_VET.some(y=>y[0]===x));if(r.vet.cats.length)r.vet.nada=false;}
+  if(v.txt)r.vet.txt=String(v.txt).slice(0,300);
+  if(v.nada===true&&!r.vet.cats.length&&!r.vet.txt)r.vet.nada=true;
+  const de=n.det||{};
+  ['fomeMais','fomeNunca','semFome','doce','ama','intol','relig','bebidas','orc','supl','livre','livre2','preparaOque'].forEach(k=>{if(de[k])r.det[k]=String(de[k]).slice(0,400);});
+  if(de.prepara==='S'||de.prepara==='N')r.det.prepara=de.prepara;
+}
+
+// ═══════════════ MINHA ROTINA ↔ ASSISTENTE DE DIETA, PAINEL DE ATENÇÃO E TRAVAS ═══════════════
+var ORIGEM_FICHA='';
+function rotNormaliza(x){
+  const b=rotVazia();
+  if(!x||typeof x!=='object')return b;
+  ['dia','treino','vet','det','ok','refs'].forEach(k=>{if(x[k]&&typeof x[k]==='object')b[k]=Object.assign(b[k],JSON.parse(JSON.stringify(x[k])));});
+  b.emBranco=false;
+  return b;
+}
+function rotCarregar(d){
+  ROT=d&&d.rotina?rotNormaliza(d.rotina):rotVazia();
+  ORIGEM_FICHA=(d&&d.origem)||'';
+  try{rotRender();}catch(e){}
+}
+function rotResetar(){ROT=rotVazia();ORIGEM_FICHA='';try{rotRender();}catch(e){}}
+// ── vetados da rotina → exclusões do assistente ──
+const ROT_VET_MAPA={bovina:'bovina',frango:'frango',suina:'suina',peixe:'peixe',frutos_mar:'frutos_mar',ovo:'ovo',laticinios:'laticinios',feijao:'feijao',castanhas:'castanhas',visceras:'visceras'};
+function rotAplicarVetados(p,r){
+  const v=r.vet||{};
+  const ks=[];
+  (v.cats||[]).forEach(c=>{
+    if(ROT_VET_MAPA[c])ks.push(ROT_VET_MAPA[c]);
+    if(c==='leite'){ks.push('laticinios');p.leite=Object.assign({},p.leite,{usa:false});}
+    if(c==='gluten')p.semGluten=true;
+  });
+  const txt=String(v.txt||'').trim();
+  if(ks.length||txt){
+    p.aversoes=p.aversoes||{ativo:false,marcados:[],texto:''};
+    p.aversoes.ativo=true;
+    p.aversoes.marcados=Array.from(new Set((p.aversoes.marcados||[]).concat(ks)));
+    if(txt&&String(p.aversoes.texto||'').indexOf(txt)<0)p.aversoes.texto=(String(p.aversoes.texto||'').trim()+(p.aversoes.texto?'\n':'')+txt);
+  }
+}
+function rotAplicarNoWizard(ctx){
+  ctx.rotAbertas={};ctx._fechadaIdx=-1;ctx.rotFechadas=false;
+  const d=ctx.d,r=d&&d.rotina;
+  if(!r||!rotTemAlgo(r))return;
+  const p=ctx.prefs;
+  const respondidas=ROT_REFS.every(x=>r.refs&&r.refs[x[0]]&&(r.refs[x[0]].faz===true||r.refs[x[0]].faz===false));
+  const ks=rotRefKeys(r);
+  if(respondidas&&ks.length>=2){
+    p.refsRot=ks;p.nRef=Math.min(6,Math.max(3,ks.length));
+    p.horasRot={};ks.forEach(k=>{if(r.refs[k].hora)p.horasRot[k]=r.refs[k].hora;});
+  }else{p.refsRot=null;p.horasRot=null;}
+  p.preparaTudo=r.det&&r.det.prepara==='S';
+  if(p.preparaTudo)p.nOp=1;
+  rotAplicarVetados(p,r);
+  const online=d.origem==='online';
+  ctx.rotFechadas=online&&rotFaltas(r,d).length===0;
+}
+function rotPrefillTreino(ctx){
+  const r=ctx.d&&ctx.d.rotina;
+  if(!r||!r.treino||r.treino.treina!==true||!r.treino.ini)return;
+  const T=rotMin(r.treino.ini);if(T==null)return;
+  const g=id=>document.getElementById(id);
+  const pos=document.querySelector('input[name="dwqPos"][value="S"]');if(pos)pos.checked=true;
+  if(r.treino.jejum!=='S'&&T>=120){ // pré-treino: consumir até 1 h antes do treino (a regra geral é até ~2 h antes)
+    const pre=document.querySelector('input[name="dwqPre"][value="S"]');
+    if(pre){
+      pre.checked=true;dwTreinoToggle(true);
+      const h=T-60,hh=String(Math.floor(h/60)).padStart(2,'0')+':'+String(h%60).padStart(2,'0');
+      const ih=g('dwT_pre_sem_h');if(ih)ih.value=hh;
+      let ent='inicio';
+      const ordem=['cafe','lancheM','almoco','lancheT','jantar','ceia'];
+      ordem.forEach(k=>{const x=r.refs&&r.refs[k];if(x&&x.faz===true&&rotMin(x.hora)!=null&&rotMin(x.hora)<=h)ent=k;});
+      const se=g('dwT_pre_sem_ent');if(se)se.value=ent;
+    }
+  }else{dwTreinoToggle(true);}
+  if(typeof dwPainelAtualizar==='function')dwPainelAtualizar();
+}
+function rotAplicarHorarios(plan,prefs){
+  const h=prefs&&prefs.horasRot;if(!h)return;
+  plan.forEach(m=>{
+    if(m.posTreino||(typeof ehTreinoM==='function'&&ehTreinoM(m)))return;
+    const k=distKeyFromRefeicao(m.refeicao);
+    if(h[k])m.horario=rotHoraTxt(h[k]);
+  });
+}
+// ── telas já respondidas pelo paciente: fechadas, com "ver / ajustar" ──
+function rotResumoTela(rotKey){
+  const ctx=dietWizCtx,r=ctx.d.rotina;
+  let h='<div style="padding:12px 14px;background:#EAF7EE;border:1.5px solid #27ae60;border-radius:10px;font-size:13.5px;line-height:1.6">✅ <b>O Paciente/Cliente já respondeu isto em "Minha rotina".</b><div style="margin-top:8px">';
+  if(rotKey==='refs'){
+    const lin=ROT_REFS.map(([k,rot])=>{const x=r.refs[k]||{};return x.faz===true?'<div>'+escH(rot)+(x.hora?' — <b>'+escH(rotHoraTxt(x.hora))+'</b>':'')+'</div>':'<div style="color:#8a8a8a">'+escH(rot)+' — não faz</div>';}).join('');
+    h+=lin+'<div style="margin-top:8px">Quantidade de opções: <b>'+(ctx.prefs.preparaTudo?'1 por refeição (ele prepara tudo de uma vez)':ctx.prefs.nOp+' por refeição')+'</b></div>';
+  }else{
+    const v=r.vet||{};
+    const nomes=(v.cats||[]).map(c=>(ROT_VET.find(x=>x[0]===c)||[c,c])[1]);
+    h+=v.nada?'Come de tudo.':('Não come: <b>'+escH(nomes.join(', ')||'—')+'</b>'+(v.txt?'<div>Escreveu: “'+escH(v.txt)+'”</div>':''));
+  }
+  h+='</div></div><div style="margin-top:12px"><button type="button" class="btn bs" onclick="rotAbrirTela()">✏️ Ver / ajustar</button></div>';
+  return h;
+}
+function rotAbrirTela(){dietWizCtx.rotAbertas[dietWizCtx.qIdx]=true;dwQAbrir(dietWizCtx.qIdx);}
+function rotTelaFechada(t,i){return!!(t&&t.rotKey&&dietWizCtx&&dietWizCtx.rotFechadas&&!(dietWizCtx.rotAbertas||{})[i]);}
+// ── painel de atenção ──
+function rotClinCampos(d){
+  const r=d&&d.rotina;if(!r)return[];
+  const t=r.det||{};
+  return[
+    {rot:'Rotina — não come (escrito)',txt:r.vet&&r.vet.txt},
+    {rot:'Rotina — religião/jejum',txt:t.relig},
+    {rot:'Rotina — não tolera',txt:t.intol},
+    {rot:'Rotina — suplementos e medicamentos (horários)',txt:t.supl},
+    {rot:'Rotina — trabalho noturno/plantão',txt:r.dia&&r.dia.noturno==='S'?(r.dia.noturnoTxt||'sim'):''},
+    {rot:'Rotina — fim de semana',txt:r.dia&&r.dia.fds},
+    {rot:'Rotina — o que não perguntamos',txt:t.livre}
+  ];
+}
+function rotItensPainel(d,ctx,itens){
+  const FR=['Minha rotina (Paciente/Cliente)'];
+  if(!d)return;
+  const r=d.rotina;
+  if(d.origem==='online'&&(!r||rotFaltas(r,d).length))itens.push({k:'R_SEM_ROTINA',ico:'🕒',rot:'Ficha online sem a rotina completa',msg:'Sem a rotina, os horários, as refeições e o que o Paciente/Cliente não come ficam incertos. Peça que ele conclua a aba Hábitos > Minha rotina.',fontes:['Origem do arquivo']});
+  if(d.origem==='importada'&&!r)itens.push({k:'R_ARQ_ANTIGO',ico:'🕒',rot:'Arquivo sem a rotina',msg:'Este arquivo foi feito antes da aba "Minha rotina" (ou é presencial). Confirme horários, refeições e o que não come com o Paciente/Cliente.',fontes:['Origem do arquivo']});
+  if(!r)return;
+  const tr=ctx&&ctx.treino||{};
+  const t=r.treino||{};
+  if(t.treina===true&&t.ini&&!(tr.pre||tr.pos))itens.push({k:'R_TREINO',ico:'🏋️',rot:'Treina '+(t.dias||[]).join(', ')+' às '+rotHoraTxt(t.ini),msg:'Confira o pré-treino (até cerca de 2 h antes) e o pós-treino (em até 1 h depois) na parte "Treino" desta tela.'+(t.jejum==='S'?' Ele treina em jejum.':''),fontes:FR});
+  const sup=_semAc((r.det&&r.det.supl)||'');
+  if(/vitamina d|vitamina a\b|vitamina e\b|vitamina k|\bd3\b|\bk2\b|omega|coq10|luteina/.test(sup))itens.push({k:'R_LIPOSSOL',ico:'💊',rot:'Suplemento lipossolúvel (vitaminas A, D, E, K, ômega-3)',msg:'Orientar a tomar junto de uma refeição com gordura, para melhorar a absorção. Horário informado: '+(r.det.supl||'').slice(0,160),fontes:FR});
+  if(String((r.det&&r.det.relig)||'').trim())itens.push({k:'R_RELIG',ico:'🕊️',rot:'Religião ou jejum com restrições',msg:'Ele informou: “'+String(r.det.relig).slice(0,200)+'”. Ajuste o plano nesses períodos.',fontes:FR});
+  if(r.dia&&r.dia.noturno==='S')itens.push({k:'R_NOTURNO',ico:'🌙',rot:'Trabalho noturno, plantão ou escala',msg:'Os horários variam conforme a escala'+(r.dia.noturnoTxt?' ('+String(r.dia.noturnoTxt).slice(0,120)+')':'')+'. Considere um plano para dia de plantão e outro para folga.',fontes:FR});
+  if(r.det&&r.det.prepara==='S')itens.push({k:'R_PREPARA',ico:'🍱',rot:'Prepara a comida de uma vez para vários dias',msg:'Plano com 1 opção por refeição, para facilitar as marmitas'+(r.det.preparaOque?' (prepara: '+String(r.det.preparaOque).slice(0,100)+')':'')+'.',fontes:FR});
+}
+// ── trava: refeições do plano x refeições da rotina ──
+function rotDivergenciaPlano(d,plan){
+  const r=d&&d.rotina;
+  if(!r||!ROT_REFS.every(x=>r.refs&&r.refs[x[0]]&&(r.refs[x[0]].faz===true||r.refs[x[0]].faz===false)))return[];
+  const faz=rotRefKeys(r);
+  const noPlano=Array.from(new Set((plan||[]).filter(m=>!m.posTreino&&!(typeof ehTreinoM==='function'&&ehTreinoM(m))).map(m=>distKeyFromRefeicao(m.refeicao)).filter(Boolean)));
+  const nome=k=>(ROT_REFS.find(x=>x[0]===k)||[k,k])[1].replace(/^\S+\s/,'');
+  const out=[];
+  noPlano.filter(k=>!faz.includes(k)).forEach(k=>out.push('O plano tem <b>'+nome(k)+'</b>, mas o Paciente/Cliente disse que não faz essa refeição.'));
+  faz.filter(k=>!noPlano.includes(k)).forEach(k=>out.push('O Paciente/Cliente faz <b>'+nome(k)+'</b>, mas o plano não tem essa refeição.'));
+  return out;
+}
+(function(){
+  const g0=goTab;
+  goTab=function(n){g0.apply(this,arguments);if(n===6)try{rotRender();}catch(e){}};
+  window.addEventListener('load',()=>{try{rotRender();}catch(e){}});
+})();
+
+// ═══════════════ FORMATO B DO PLANNER: quantidades por GRUPO + TABELA DE TROCAS ═══════════════
+const B_LABEL={C:'Carboidratos',P:'Proteínas',F:'Fruta',L:'Leite ou iogurte'};
+const B_RE_G=/azeite|oleo|óleo|manteiga|margarina|pasta de amendoim|pasta de castanha|castanha|nozes|noz\b|amendoa|amêndoa|abacate|coco\b|chia|linhaca|linhaça|gergelim|semente/i;
+const B_RE_L=/^(leite|iogurte|kefir|coalhada|bebida l[aá]ctea)(?!.*condensado)/i;
+const B_RE_P=/frango|carne|bife|patinho|file\b|filé|peixe|atum|sardinha|salm[aã]o|til[aá]pia|ovo|clara|peru|presunto|queijo|cottage|ricota|requeij|whey|camar[aã]o|lingui[cç]a|hamb[uú]rguer|prote[ií]na|tofu|pernil|lombo|bacalhau|merluza|f[ií]gado|coxa|sobrecoxa|fraldinha|alcatra|ac[eé]m|cox[aã]o|maminha/i;
+const B_RE_CL=/feij[aã]o|lentilha|gr[aã]o.de.bico|ervilha/i;
+const B_RE_C=/arroz|macarr|massa|p[aã]o\b|torrada|tapioca|cuscuz|aveia|granola|batata|mandioca|aipim|inhame|milho|polenta|farinha|biscoito|bolacha|cereal|pamonha|panqueca|nhoque|mingau|canjica|beiju|quinoa|crepioca|bolo/i;
+const B_RE_F=/banana|ma[cç][aã]|laranja|mam[aã]o|melancia|uva|abacaxi|manga|morango|pera\b|goiaba|mel[aã]o|tangerina|mexerica|kiwi|ameixa|p[eê]ssego|acerola|caju|maracuj|fruta|cereja|framboesa|mirtilo|figo|lim[aã]o|amora|jabuticaba|pitaya|caqui|rom[aã]|graviola|jaca\b|lichia/i;
+function grupoB(nome){
+  const n=String(nome||'').trim();
+  if(B_RE_G.test(n))return'G';
+  if(B_RE_L.test(n))return'L';
+  if(B_RE_P.test(n))return'P';
+  if(B_RE_CL.test(n)||B_RE_C.test(n))return'C';
+  if(B_RE_F.test(n))return'F';
+  return'O';
+}
+function _unB(nome){return(typeof ehLiquido==='function'&&ehLiquido(nome))?'ml':'g';}
+function agruparRefeicaoB(m){
+  const opc=(m.opcoes||[]).find(o=>String(o||'').trim())||'';
+  const rows=parseOpcaoStr(opc);
+  const r={refeicao:m.refeicao,horario:m.horario||'',key:distKeyFromRefeicao(m.refeicao),C:{itens:[]},P:{itens:[]},F:{itens:[]},L:{itens:[]},G:[],O:[]};
+  rows.forEach((x,i)=>{
+    if(x.tipo==='texto'){
+      const v=String(x.valor||'').trim();
+      if(!v||(i===0&&/:$/.test(v))||/^(sem bacon|preparo sem)/i.test(v))return;
+      r.O.push(v);return;
+    }
+    const nome=String(x.alimento||'').trim(),g=parseFloat(x.gramas)||0;
+    if(!nome||!(g>0))return;
+    const grp=grupoB(nome);
+    const un=_unB(nome);
+    if(grp==='G'){r.G.push(Math.round(g)+' '+un+' de '+nome.toLowerCase());return;}
+    if(grp==='O'){r.O.push(Math.round(g)+' '+un+' de '+nome.toLowerCase());return;}
+    r[grp].itens.push({nome,g,un});
+  });
+  ['C','P','F','L'].forEach(k=>{
+    const t=r[k];t.g=t.itens.reduce((s,i)=>s+i.g,0);
+    t.un=t.itens.length&&t.itens.every(i=>i.un==='ml')?'ml':'g';
+    t.carb=t.itens.reduce((s,i)=>s+i.g*foodNut(i.nome)[3]/100,0);
+    t.prot=t.itens.reduce((s,i)=>s+i.g*foodNut(i.nome)[1]/100,0);
+    t.kcal=t.itens.reduce((s,i)=>s+i.g*foodNut(i.nome)[0]/100,0);
+  });
+  r.vazia=!['C','P','F','L'].some(k=>r[k].g>0)&&!r.G.length&&!r.O.length;
+  return r;
+}
+// [rótulo, chave na base de alimentos, parte da meta]
+const BT_C_PRINC=[[['Arroz branco cozido','Arroz branco',1]],[['Arroz branco cozido','Arroz branco',.6],['Feijão cozido','Feijão carioca',.4]],[['Macarrão (cru, antes de cozinhar)','Macarrão',1]],[['Batata cozida','Batata',1]],[['Batata-doce cozida','Batata doce',1]],[['Mandioca cozida','Mandioca',1]],[['Cuscuz','Cuscuz',1]],[['Arroz integral cozido','Arroz integral',1]]];
+const BT_C_LANCHE=[[['Pão francês','Pão francês',1]],[['Pão integral','Pão integral',1]],[['Pão de forma','Pão de forma',1]],[['Tapioca','Tapioca',1]],[['Cuscuz','Cuscuz',1]],[['Aveia','Aveia',1]],[['Biscoito cream cracker','Biscoito cream cracker',1]]];
+const BT_P_PRINC=[[['Frango grelhado','Frango grelhado',1]],[['Carne bovina grelhada','Carne bovina grelhada',1]],[['Peixe grelhado','Peixe grelhado',1]],[['Ovo cozido','Ovo cozido',1]],[['Carne moída','Carne moída',1]]];
+const BT_P_LANCHE=[[['Ovo cozido','Ovo cozido',1]],[['Queijo minas frescal','Queijo minas frescal',1]],[['Queijo muçarela','Queijo muçarela',1]],[['Peito de peru','Peito de peru',1]],[['Atum em lata (em água)','Atum em lata',1]],[['Frango grelhado','Frango grelhado',1]]];
+const BT_F=[[['Banana','Banana',1]],[['Maçã','Maçã',1]],[['Laranja','Laranja',1]],[['Mamão','Mamão',1]],[['Morango','Morango',1]],[['Uva','Uva',1]],[['Abacaxi','Abacaxi',1]],[['Melancia','Melancia',1]]];
+const BT_L=[[['Leite desnatado','Leite desnatado',1]],[['Iogurte natural','Iogurte natural',1]],[['Leite sem lactose','Leite sem lactose',1]],[['Iogurte grego','Iogurte grego',1]]];
+function combosTrocaB(grp,tot,principal){
+  const orig=tot.itens.map(i=>Math.round(i.g)+' '+i.un+' de '+i.nome.toLowerCase()).join(' + ');
+  const out=[orig];
+  const meta=grp==='P'?tot.prot:grp==='L'?tot.kcal:tot.carb;
+  const idx=grp==='P'?1:grp==='L'?0:3;
+  const minimo=grp==='P'?6:grp==='L'?30:8;
+  if(!(meta>=minimo))return out;
+  const T=grp==='C'?(principal?BT_C_PRINC:BT_C_LANCHE):grp==='P'?(principal?BT_P_PRINC:BT_P_LANCHE):grp==='F'?BT_F:BT_L;
+  const un=grp==='L'?tot.un:'g';
+  const nomesOrig=tot.itens.map(i=>i.nome.toLowerCase());
+  const mesmoConjunto=t=>t.length===nomesOrig.length&&t.every(([lab])=>nomesOrig.some(n=>n.indexOf(lab.toLowerCase().replace(/ cozid[oa]| grelhad[oa]/g,''))>=0||lab.toLowerCase().indexOf(n)>=0));
+  T.forEach(t=>{
+    if(mesmoConjunto(t))return;
+    let ok=true;
+    const partes=t.map(([lab,key,share])=>{
+      const n=(FOOD_NUT[key]||(FOOD_NUT_CUSTOM&&FOOD_NUT_CUSTOM[key]));
+      if(!n||!(n[idx]>0)){ok=false;return'';}
+      const g=_round5(meta*share/(n[idx]/100));
+      if(g<10){ok=false;return'';}
+      const ovo=(key==='Ovo cozido')?' (≈ '+Math.max(1,Math.round(g/50))+' ovo'+(Math.round(g/50)>1?'s':'')+')':'';
+      return g+' '+un+' de '+lab.toLowerCase()+ovo;
+    });
+    if(ok){const s=partes.join(' + ');if(!out.some(o=>o.toLowerCase()===s.toLowerCase()))out.push(s);}
+  });
+  return out.slice(0,6);
+}
+
 function enterAsPaciente(){
   userRole='paciente';sessionStorage.setItem(RK_ROLE,'paciente');
   document.getElementById('roleGate').style.display='none';
@@ -3934,6 +4514,8 @@ function collectData(){
   d.caf=cafDefinido?document.getElementById('caf').value:'';
   if(consent)d.consent=consent;
   if(exameIA)d.exameIA=exameIA;
+  if(rotTemAlgo(ROT)){const _r=rotClone();delete _r.emBranco;d.rotina=_r;}
+  {const _o=(userRole==='paciente')?'online':ORIGEM_FICHA;if(_o)d.origem=_o;}
   d.savedAt=new Date().toISOString();
   return d;
 }
@@ -3945,7 +4527,7 @@ function objetivoOutroToggle(){
 function marcarAbasPendentes(){
   try{
     const f=faltasFicha(collectData()),tabs=document.querySelectorAll('.tab');
-    [3,4].forEach(ix=>{const t=tabs[ix];if(!t)return;const pend=f.some(x=>x.tab===ix);t.classList.toggle('pend',pend);t.classList.toggle('okk',!pend);});
+    [3,4,6].forEach(ix=>{const t=tabs[ix];if(!t)return;const pend=f.some(x=>x.tab===ix);t.classList.toggle('pend',pend);t.classList.toggle('okk',!pend);});
   }catch(e){}
 }
 function autoSave(){clearTimeout(asTimer);asTimer=setTimeout(()=>{persistirRascunho();marcarAbasPendentes();},800);}
@@ -3962,11 +4544,12 @@ function faltasFicha(d){
   if(q<FREQ_GROUPS.length)f.push({rot:'Frequência alimentar ('+q+'/'+FREQ_GROUPS.length+' grupos respondidos)',tab:4,como:'Na aba da frequência alimentar, responda cada grupo de alimentos da lista até completar todos.'});
   const n=(d.dcaSel||[]).filter(x=>x&&x.name).length;
   if(n<3&&!d.dcaNaoHouve)f.push({rot:'Dia Calórico Atípico ('+n+' item(ns); preencha ao menos 3 ou marque "Não houve dia atípico")',tab:3,como:'Na aba do dia calórico atípico, informe ao menos 3 itens do dia em que você mais se alimentou fora da rotina, ou marque "Não houve dia atípico".'});
+  if(userRole==='paciente'){const _fr=rotFaltas(d.rotina||{},d);if(_fr.length)f.push({rot:'Minha rotina ('+_fr.length+' parte(s) sem resposta)',tab:6,como:'Na aba Hábitos, abra "Minha rotina" e responda: '+_fr.map(x=>x.rot).join(' · ')});}
   return f;
 }
 async function avisarFaltas(falt,d){
   const ehPac=userRole==='paciente';
-  const botoes=falt.filter((x,i)=>falt.findIndex(y=>y.tab===x.tab)===i).map(x=>({v:'tab:'+x.tab,rot:'➡️ Ir para '+(x.tab===0?'Identificação':x.tab===3?'DCA':'Frequência'),cls:'bp'}));
+  const botoes=falt.filter((x,i)=>falt.findIndex(y=>y.tab===x.tab)===i).map(x=>({v:'tab:'+x.tab,rot:'➡️ Ir para '+(x.tab===0?'Identificação':x.tab===3?'DCA':x.tab===6?'Hábitos (Minha rotina)':'Frequência'),cls:'bp'}));
   if(!ehPac)botoes.push({v:'assim',rot:'Finalizar assim mesmo — o Paciente/Cliente não consegue responder',cls:'bs'});
   const corpo='<p>'+(ehPac?'Para gerar o seu arquivo, é preciso responder tudo. Esses dados são usados para montar o seu plano alimentar com segurança — sem eles, o plano sairia com valores genéricos.':'Faltam dados que o PLANNER usa para montar a dieta com segurança.')+'</p><p><b>Falta preencher:</b></p><ul style="margin:6px 0 0 18px">'+falt.map(x=>'<li>'+escH(x.rot)+(x.como?'<br><span style="font-size:12px;color:var(--mu)">Como resolver: '+escH(x.como)+'</span>':'')+'</li>').join('')+'</ul>';
   const r=await dlgEscolha('Ainda não dá para gerar o arquivo',corpo,botoes);
@@ -4021,6 +4604,7 @@ function loadData(dov){
   const raw=dov?null:sessionStorage.getItem(DK);if(!dov&&!raw)return;
   try{
     const d=dov||JSON.parse(raw);
+    rotCarregar(d);
     ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno','notasAtendimento'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
     ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{
       if(d[n]){
@@ -4386,9 +4970,13 @@ function iniciarGeracaoDieta(dataOverride,opts){
   if(!(opts&&opts.pular)&&_lerRascunhoDieta(d))return perguntarNovaOuContinuar(d);
   return _iniciarWizardDieta(d);
 }
-function _iniciarWizardDieta(d){
+async function _iniciarWizardDieta(d){
   const _fb=faltasFicha(d).filter(x=>x.tab===0);
   if(_fb.length){avisoFicha('Faltam dados para montar a dieta',_fb.map(x=>x.rot),{como:'Preencha na aba Identificação. Sem isso o sistema usaria valores padrão e o plano sairia errado.',foco:_fb[0].foco});return;}
+  if(d.origem==='online'){const _fr=rotFaltas(d.rotina||{},d);if(_fr.length){avisoFicha('Faltam dados da rotina do Paciente/Cliente',_fr.map(x=>x.rot),{como:'Esta ficha veio da consultoria online e a rotina é obrigatória: sem ela os horários, as refeições e o que ele não come ficariam incertos. Peça que ele conclua a aba Hábitos > Minha rotina e envie o arquivo de novo.'});return;}}
+  const _fm=await dlgEscolha('Qual formato terá o planner?','<p><b>A — Cardápio com opções</b> (o formato de sempre): cada refeição traz cardápios prontos para o Paciente/Cliente escolher. Indicado para atletas e para quem precisa de precisão.</p><p><b>B — Por grupos + Tabela de trocas:</b> cada refeição diz quantos gramas de carboidrato e de proteína (sem citar alimento) e o Paciente/Cliente escolhe na Tabela de trocas, no final do documento. Indicado para emagrecimento e para quem é leigo. O documento usa a 1ª opção de cada refeição como base das quantidades.</p>',[{v:'A',rot:'A — Cardápio com opções',cls:'bp'},{v:'B',rot:'B — Por grupos + Tabela de trocas',cls:'bp'},{v:'cancelar',rot:'Cancelar',cls:'link'}]);
+  if(_fm==='cancelar')return;
+  const _formato=_fm==='B'?'B':'A';
   const base=calcDietaBase(d);
   let ajusteInfo=null;
   if(d.id){
@@ -4401,9 +4989,12 @@ function _iniciarWizardDieta(d){
     gP:ajusteInfo?ajusteInfo.sugestao.gP:base.gP,
     fibG:ajusteInfo?ajusteInfo.sugestao.fibG:base.fibG,
     ajusteInfo};
+  dietWizCtx.formato=_formato;
+  rotAplicarNoWizard(dietWizCtx);
   dietWizRenderModelos();
   const _on=document.getElementById('dwObsNutri');if(_on)_on.value='';
   dwTreinoRender();
+  rotPrefillTreino(dietWizCtx);
   dwPainelAtualizar();
   renderDwAjusteInfo();
   dietWizRenderKcalEstrategia();
@@ -4681,7 +5272,7 @@ async function dietWizGerar(){
     showToast('⏳ A IA está montando os lanches com as suas respostas…');
     try{prefsIA=await buscarLanchesIA(ctx);}catch(e){showToast('ℹ️ A IA não respondeu agora — usei os lanches padrão. Você pode ajustar na prévia.','#e67e22');}
   }
-  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino,treino:ctx.treino,obsNutri:ctx.obsNutri||''},'nova');
+  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino,treino:ctx.treino,obsNutri:ctx.obsNutri||'',formato:ctx.formato||'A'},'nova');
 }
 
 // ── Botão Voltar do navegador: fecha a tela aberta, volta de aba e só então pergunta se quer sair ──
@@ -4694,7 +5285,7 @@ async function dietWizGerar(){
     if(saindo||!armado)return;
     const rearmar=()=>{try{history.pushState({bm:'guard'},'');}catch(e){}};
     if(window._dlgCancel){window._dlgCancel();rearmar();return;}
-    const abertos=[['dietEditorOverlay',()=>cancelarDietEditor()],['dietWizardOverlay',()=>fecharDietWizard()],['tpcOverlay',()=>{document.getElementById('tpcOverlay').style.display='none';}],['expOverlay',()=>fecharExp()],['consRapidoOverlay',()=>crCancelar()]];
+    const abertos=[['dietEditorOverlay',()=>cancelarDietEditor()],['dietWizardOverlay',()=>fecharDietWizard()],['tpcOverlay',()=>{document.getElementById('tpcOverlay').style.display='none';}],['expOverlay',()=>fecharExp()],['consRapidoOverlay',()=>crCancelar()],['rotVozOverlay',()=>rotFecharVoz()],['rotOverlay',()=>rotFechar(false)]];
     for(const[id,fn]of abertos){const e=document.getElementById(id);if(e&&e.style.display&&e.style.display!=='none'){fn();rearmar();return;}}
     const ativa=Array.from(document.querySelectorAll('.tab')).findIndex(t=>t.classList.contains('active'));
     if(ativa>0){goTab(ativa-1);rearmar();return;}
@@ -4744,7 +5335,7 @@ function clinCampos(d,ctx){
     {rot:'Objetivo (outro)',txt:d.objOutroTxt},
     {rot:'Sua anotação para esta dieta',txt:ctx.obsNutri},
     {rot:'Observação importante',txt:ctx.obsImportante}
-  ].map(c=>({rot:c.rot,txt:String(c.txt||'').trim()})).filter(c=>c.txt);
+  ].concat(rotClinCampos(d)).map(c=>({rot:c.rot,txt:String(c.txt||'').trim()})).filter(c=>c.txt);
 }
 function painelAtencao(d,ctx){
   d=d||{};ctx=ctx||{};
@@ -4767,6 +5358,7 @@ function painelAtencao(d,ctx){
   if(treina&&(tem('INSULINA')||tem('SULFONILUREIA')))itens.push({k:'C_HIPO_TREINO',ico:'⚠️',rot:'Treino com insulina ou sulfonilureia',msg:'Risco de hipoglicemia durante e depois do treino: garanta carboidrato no pré-treino e oriente o monitoramento da glicemia.',fontes:FC});
   if(tr.pre&&(tem('HAS')||tem('CARD')))itens.push({k:'C_HAS_PRE',ico:'⚠️',rot:'Pré-treino com hipertensão ou doença cardíaca',msg:'Evite pré-treino com muita cafeína ou estimulantes; prefira carboidrato simples sem estimulante.',fontes:FC});
   if(treina&&tem('RENAL'))itens.push({k:'C_RENAL_TREINO',ico:'⚠️',rot:'Treino com doença renal',msg:'Cuidado com proteína extra e suplementos no pós-treino; confirme com o nefrologista.',fontes:FC});
+  try{rotItensPainel(d,ctx,itens);}catch(e){}
   return{itens,campos};
 }
 function painelAtencaoHtml(p){
@@ -5101,6 +5693,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
     dietIncluirSup=base.incluirSup;dietIncluirEAA=base.incluirEAA;dietIncluirFarm=base.incluirFarm;
   }
   dietResumoLinha(base);
+  {const _el=document.getElementById('dietResumoLinha');if(_el&&dietOv&&dietOv.formato==='B')_el.innerHTML+=' · <b>Formato B (por grupos + Tabela de trocas)</b>';}
   if(!restaurado){
     dietPlanEdit=JSON.parse(JSON.stringify(base.PLAN));
     dietSupEdit=JSON.parse(JSON.stringify(base.SUP));
@@ -5110,6 +5703,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
     if(concP)aplicarConcentracaoCarbo(dietPlanEdit,concP);
     if(ovNovo&&ovNovo.treino)inserirRefeicoesTreino(dietPlanEdit,ovNovo.treino);
     if(ovNovo&&ovNovo.semHorario)dietPlanEdit.forEach(m=>{m.horario='';});
+    else if(ovNovo&&ovNovo.prefs)rotAplicarHorarios(dietPlanEdit,ovNovo.prefs);
     dietPlanEdit.forEach(m=>{if(ehTreinoM(m))return;const key=distKeyFromRefeicao(m.refeicao);m.opcoes=(m.opcoes||[]).map(o=>comTituloAuto(o,key));});
   }
   // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
@@ -5827,6 +6421,7 @@ function removeFarmRowDiet(i){dietFarmEdit.splice(i,1);renderDietFarmRows();}
 async function confirmarGerarDieta(){
   const _cf=detectarConflitosPlano();
   if(_cf.length){verificarConflitosDieta();showToast('🚫 '+_cf.length+' item(ns) contrariam as restrições deste Paciente/Cliente — remova ou marque "manter por decisão minha" para gerar','#c0392b');const _ov=document.getElementById('dietEditorOverlay');if(_ov)_ov.scrollTop=0;return;}
+  {const _dv=rotDivergenciaPlano(dietDataCache,dietPlanEdit);if(_dv.length){const _rr=await dlgEscolha('As refeições do plano não batem com a rotina','<p>Conforme a aba "Minha rotina" do Paciente/Cliente:</p><ul style="margin:6px 0 0 18px">'+_dv.map(x=>'<li style="margin-bottom:5px">'+x+'</li>').join('')+'</ul>',[{v:'voltar',rot:'Voltar e ajustar o plano',cls:'bp'},{v:'assim',rot:'Gerar assim mesmo — decisão minha',cls:'bs'}]);if(_rr!=='assim'){const _ov2=document.getElementById('dietEditorOverlay');if(_ov2)_ov2.scrollTop=0;return;}}}
   const _vaz=(dietPlanEdit||[]).filter(m=>ehTreinoM(m)&&!(m.opcoes||[]).some(o=>parseOpcaoStr(o).some(r=>r.tipo==='item'&&r.alimento&&String(r.alimento).trim())));
   if(_vaz.length){await avisoFicha('Falta preencher o treino',_vaz.map(m=>m.refeicao.replace(/^[^A-Za-zÀ-ú]+/,'')+': nenhum alimento escolhido'),{como:'Clique nos alimentos sugeridos dentro da refeição (ou digite os seus) e coloque as quantidades. Se não quiser essa refeição, use "✕ refeição".'});const _ov0=document.getElementById('dietEditorOverlay');if(_ov0)_ov0.scrollTop=0;return;}
   const _pa=painelAtencao(dietDataCache,editorPainelCtx());
@@ -6046,8 +6641,8 @@ function escalarOpcao(str,f){
 }
 const REFEICOES_POR_N={3:['cafe','almoco','jantar'],4:['cafe','almoco','lancheT','jantar'],5:['cafe','lancheM','almoco','lancheT','jantar'],6:['cafe','lancheM','almoco','lancheT','jantar','ceia']};
 // 3, 4 ou 5 refeições: tira as que sobram e reparte as calorias entre as que ficam
-function selecionarRefeicoes(plan,n){
-  const chaves=REFEICOES_POR_N[n]||REFEICOES_POR_N[6];
+function selecionarRefeicoes(plan,n,custom){
+  const chaves=(custom&&custom.length>=2)?custom:(REFEICOES_POR_N[n]||REFEICOES_POR_N[6]);
   const ficam=plan.filter(m=>chaves.includes(distKeyFromRefeicao(m.refeicao)));
   if(ficam.length===plan.length||!ficam.length)return plan;
   const soma=ficam.reduce((s,m)=>s+(DIST_BASE[distKeyFromRefeicao(m.refeicao)]||20),0);
@@ -6241,7 +6836,7 @@ function aplicarSobremesaPrefs(plan,prefs,ex,fctx){
 // lanches: escritos pelo profissional + sugestões da IA (rotulados) entram antes das opções padrão
 function kcalDaRefeicao(kcalDia,key,prefs,regras){
   const dist=Object.assign({},DIST_PRESETS.padrao,(regras&&regras.distCal)||{});
-  const chaves=REFEICOES_POR_N[(prefs&&prefs.nRef)||6]||REFEICOES_POR_N[6];
+  const chaves=(prefs&&prefs.refsRot&&prefs.refsRot.length>=2)?prefs.refsRot:(REFEICOES_POR_N[(prefs&&prefs.nRef)||6]||REFEICOES_POR_N[6]);
   const soma=chaves.reduce((s,k)=>s+(dist[k]!=null?dist[k]:DIST_BASE[k]),0)||100;
   return kcalDia*((dist[key]!=null?dist[key]:DIST_BASE[key])/soma);
 }
@@ -6434,7 +7029,7 @@ function aplicarPreferencias(plan,prefs,d,ov,kcalDia,regras){
   _chaIdx=_hashTxt((d&&(d.id||d.nome))||'')%CHAS_DIA.length;
   const fctx=ctxFrutas(prefs,d,ex,(ov&&ov.modelo)||'normal');
   let p=JSON.parse(JSON.stringify(plan));
-  p=selecionarRefeicoes(p,prefs.nRef||6);
+  p=selecionarRefeicoes(p,prefs.nRef||6,prefs.refsRot);
   p=p.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>ajustarTextoBebidas(o,prefs,ex,true))}));
   p=aplicarExclusoes(p,ex);
   p=aplicarInclusoes(p,prefs,ex);
@@ -6459,12 +7054,12 @@ function _valRadio(name){const e=document.querySelector('input[name="'+name+'"]:
 function dwQToggle(id,mostrar){const e=document.getElementById(id);if(e)e.style.display=mostrar?'block':'none';}
 function _alergiasReg(){return _arr(dietWizCtx&&dietWizCtx.d&&dietWizCtx.d.alergias).filter(a=>ALERGIA_EXCL[a]);}
 const DWQ_TELAS=[
-  {titulo:'Rotina do dia',sub:'Quantas refeições por dia e quantas opções de escolha em cada uma.',
+  {rotKey:'refs',titulo:'Rotina do dia',sub:'Quantas refeições por dia e quantas opções de escolha em cada uma.',
    render:p=>`<div class="fg"><label class="fl">Refeições por dia</label><div class="cons-grid">${[3,4,5,6].map(n=>_radio('dwqNRef',n,p.nRef===n,n+' refeições'+(n===6?' (café, lanche, almoço, lanche, jantar, ceia)':n===5?' (sem ceia)':n===4?' (café, almoço, lanche da tarde, jantar)':' (café, almoço, jantar)'))).join('')}</div></div>
      <div class="fg" style="margin-top:14px"><label class="fl">Opções de escolha por refeição</label><div class="cons-grid">${[1,2,3].map(n=>_radio('dwqNOp',n,p.nOp===n,n+(n===1?' opção (cardápio fechado)':' opções'))).join('')}</div></div>`,
-   coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||3;},
-   padrao:p=>{p.nRef=6;p.nOp=3;}},
-  {titulo:'O que o Paciente/Cliente não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
+   coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||3;if(p.refsRot&&p.refsRot.length!==p.nRef){p.refsRot=null;p.horasRot=null;}},
+   padrao:p=>{p.nRef=6;p.nOp=3;p.refsRot=null;}},
+  {rotKey:'vet',titulo:'O que o Paciente/Cliente não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
    render:p=>{
      const auto=_alergiasReg().map(a=>ALERGIA_EXCL[a].rot||AVERSOES_CAT.find(x=>x.k===ALERGIA_EXCL[a].k).rot);
      const sug=(!p.aversoes.ativo&&!(p.aversoes.marcados||[]).length)?aversoesSugeridasQFA(dietWizCtx.d):[];
@@ -6579,10 +7174,12 @@ function dwQAbrir(i){
   document.getElementById('dwQTitulo').textContent='🍽️ '+(i+2)+'/'+DWQ_TOTAL+' — '+t.titulo;
   document.getElementById('dwQSub').textContent=t.sub;
   document.getElementById('dwQBarIn').style.width=Math.round((i+1)/DWQ_TELAS.length*100)+'%';
-  document.getElementById('dwQCorpo').innerHTML=t.render(dietWizCtx.prefs);
-  if(t.bind)t.bind();
+  dietWizCtx._fechadaIdx=-1;
+  if(rotTelaFechada(t,i)){document.getElementById('dwQCorpo').innerHTML=rotResumoTela(t.rotKey);dietWizCtx._fechadaIdx=i;}
+  else{document.getElementById('dwQCorpo').innerHTML=t.render(dietWizCtx.prefs);
+  if(t.bind)t.bind();}
 }
-function dwQColetar(){const t=DWQ_TELAS[dietWizCtx.qIdx];try{t.coletar(dietWizCtx.prefs);}catch(e){}prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);}
+function dwQColetar(){const t=DWQ_TELAS[dietWizCtx.qIdx];if(dietWizCtx._fechadaIdx!==dietWizCtx.qIdx){try{t.coletar(dietWizCtx.prefs);}catch(e){}}prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);}
 async function dwQProximo(){
   dwQColetar();
   const _tl=DWQ_TELAS[dietWizCtx.qIdx];
@@ -6603,7 +7200,7 @@ function dwQVoltar(){
   document.getElementById('dwStepQ').style.display='none';
   document.getElementById('dwStep0').style.display='block';
 }
-function dwQPular(){const t=DWQ_TELAS[dietWizCtx.qIdx];t.padrao(dietWizCtx.prefs);prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);dwQProximo2();}
+function dwQPular(){const t=DWQ_TELAS[dietWizCtx.qIdx];if(dietWizCtx._fechadaIdx!==dietWizCtx.qIdx)t.padrao(dietWizCtx.prefs);prefsSalvar(dietWizCtx.d,dietWizCtx.prefs);dwQProximo2();}
 function dwQProximo2(){ // avança sem recoletar (depois de "Pular")
   if(dietWizCtx.qIdx<DWQ_TELAS.length-1){dwQAbrir(dietWizCtx.qIdx+1);return;}
   document.getElementById('dwStepQ').style.display='none';dietWizRenderStep1();document.getElementById('dwStep1').style.display='block';
@@ -6911,6 +7508,51 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
       optsCell(m.opcoes,6960,distKeyFromRefeicao(m.refeicao),m.posTreino?'pos':(m.preTreino?'pre':false)),
     ]}));
 
+    const FMT_B=!!(dietOv&&dietOv.formato==='B');
+    const mealsB=FMT_B?PLAN_MAIN.map(m=>agruparRefeicaoB(m)):[];
+    const REF_B=t=>new TextRun({text:'  ➜ Tabela de trocas: '+t,size:16,bold:true,color:'9A7B0A'});
+    const bCell=(mB,w)=>{
+      const ps=[];
+      ['C','P','F','L'].forEach(k=>{const t=mB[k];if(!(t.g>0))return;
+        ps.push(new Paragraph({children:[new TextRun({text:B_LABEL[k]+': ',bold:true,size:20}),new TextRun({text:Math.round(t.g)+' '+t.un,bold:true,size:20,color:'161616'}),REF_B(B_LABEL[k])],spacing:{after:50}}));});
+      if(mB.G.length)ps.push(new Paragraph({children:[new TextRun({text:'Gordura: ',bold:true,size:20}),new TextRun({text:mB.G.join(' + '),size:18})],spacing:{after:50}}));
+      mB.O.forEach(t=>ps.push(new Paragraph({children:[new TextRun({text:t,size:17,color:'5A5A52'})],spacing:{after:30}})));
+      if(!ps.length)ps.push(new Paragraph({children:[new TextRun({text:'—',size:18})],spacing:{after:0}}));
+      return new TableCell({borders:bdrAll,shading:{fill:'FDFBF3',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:w,type:WidthType.DXA},children:ps});
+    };
+    const mealRowsB=mealsB.map(mB=>new TableRow({children:semHor?[dCell(mB.refeicao,'FBF3DC',1400),bCell(mB,7960)]:[dCell(mB.refeicao,'FBF3DC',1400),dCell(mB.horario,'F7F3E8',1000),bCell(mB,6960)]}));
+    const blocoB=FMT_B?[
+      H1N('PLANO DO DIA — QUANTIDADES POR GRUPO'),
+      new Paragraph({children:[new TextRun({text:'Em cada refeição, as quantidades abaixo são de cada GRUPO de alimentos. Escolha os alimentos na ',size:18,color:'8A7F5C'}),new TextRun({text:'TABELA DE TROCAS (no final deste documento)',bold:true,size:18,color:'9A7B0A'}),new TextRun({text:(semHor?'':', siga os horários sugeridos')+' e some tudo no prato. A gordura (azeite e similares) vai sempre como indicado.',size:18,color:'8A7F5C'})],keepNext:true,spacing:{after:120}}),
+      new Table({width:{size:9360,type:WidthType.DXA},columnWidths:semHor?[1400,7960]:[1400,1000,6960],rows:[
+        new TableRow({children:semHor?[hCell('Refeição',1400),hCell('Quantidades de cada grupo',7960)]:[hCell('Refeição',1400),hCell('Horário',1000),hCell('Quantidades de cada grupo',6960)]}),
+        ...mealRowsB,
+      ]}),
+      new Paragraph({spacing:{after:200}}),
+    ]:[];
+    const trocasBlocks=(()=>{
+      if(!FMT_B)return[];
+      const out=[H1N('TABELA DE TROCAS'),
+        new Paragraph({children:[new TextRun({text:'Para cada refeição do plano, escolha UMA combinação da lista do grupo. A primeira linha é a sugestão do plano; as outras são equivalentes. Os gramas mudam de um alimento para outro porque cada um tem uma quantidade diferente de carboidrato, proteína ou calorias: use sempre os gramas da combinação escolhida. Os pesos valem para o alimento como está indicado (cozido, salvo quando estiver escrito "cru").',size:18,color:'8A7F5C'})],keepNext:true,spacing:{after:120}})];
+      ['C','P','F','L'].forEach(k=>{
+        const ms=mealsB.filter(m=>m[k].g>0);if(!ms.length)return;
+        out.push(H2(B_LABEL[k]));
+        out.push(new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2400,6960],rows:[
+          new TableRow({children:[hCell('Refeição e quantidade do plano',2400),hCell('Combinações equivalentes — escolha uma',6960)]}),
+          ...ms.map(m=>{
+            const principal=(m.key==='almoco'||m.key==='jantar');
+            const cs=combosTrocaB(k,m[k],principal);
+            return new TableRow({cantSplit:true,children:[
+              dCell(m.refeicao.replace(/^[^A-Za-zÀ-ú]+/,'')+' — '+Math.round(m[k].g)+' '+m[k].un,'FBF3DC',2400),
+              new TableCell({borders:bdrAll,shading:{fill:'FDFBF3',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:6960,type:WidthType.DXA},children:cs.map((c,i)=>new Paragraph({children:i===0?[new TextRun({text:'Sugestão do plano: ',bold:true,size:18,color:'9A7B0A'}),new TextRun({text:c,size:18})]:[new TextRun({text:'• '+c,size:18})],spacing:{after:40}}))})
+            ]});
+          })
+        ]}));
+        out.push(new Paragraph({spacing:{after:160}}));
+      });
+      return out;
+    })();
+
     const oriRows=buildOris(hasDM,hasHAS,hasDis,hasObe,d,base.modelo,base.regras,{metaMl:metaAguaMl(prefsW,d),ex:exW,fibG:base.fibG}).map(o=>new TableRow({children:[
       dCell(o.cat,'FBF3DC',1800),
       new TableCell({borders:bdrAll,shading:{fill:'FFFFFF',type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},width:{size:7560,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:o.txt,size:18})],spacing:{after:0}})]}),
@@ -7182,6 +7824,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ]}),
           new Paragraph({spacing:{after:200}}),
           ...secEvolucao,
+          ...(FMT_B?blocoB:[
           H1N('CARDÁPIO — EXEMPLO DE DISTRIBUIÇÃO DIÁRIA'),
           new Paragraph({children:[new TextRun({text:(semHor?'':'Siga os horários sugeridos. ')+'Adapte as opções conforme sua preferência e disponibilidade.',size:18,color:'8A7F5C'})],keepNext:true,spacing:{after:120}}),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:semHor?[1400,7960]:[1400,1000,6960],rows:[
@@ -7189,6 +7832,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             ...mealRows,
           ]}),
           new Paragraph({spacing:{after:200}}),
+          ]),
           ...secPos,
           ...(secFdsDados.length?[
             H1N('TREINO: FIM DE SEMANA E FERIADOS'),
@@ -7291,7 +7935,7 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
             const ls=lanchesIADoPlan(PLAN,dietOv&&dietOv.prefsIA);
             if(!ls.length)return[];
             return[H1N('LANCHES INTERMEDIÁRIOS — INGREDIENTES E MODO DE PREPARO'),
-              new Paragraph({children:[new TextRun({text:'Cada lanche já aparece no cardápio com o nome abaixo. Pesos em gramas (líquidos em ml).',size:18,color:'8A7F5C'})],spacing:{after:100}}),
+              new Paragraph({children:[new TextRun({text:(FMT_B?'Receitas dos lanches do plano. Pesos em gramas (líquidos em ml).':'Cada lanche já aparece no cardápio com o nome abaixo. Pesos em gramas (líquidos em ml).'),size:18,color:'8A7F5C'})],spacing:{after:100}}),
               ...ls.flatMap(l=>[H2(l.tipo+' — '+l.titulo),
                 new Paragraph({children:[new TextRun({text:'Ingredientes: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.itensTxt.join(' · '),size:18})],spacing:{after:60}}),
                 new Paragraph({children:[new TextRun({text:'Modo de preparo: ',bold:true,size:18,color:'161616'}),new TextRun({text:l.preparo||'Misture os ingredientes e sirva.',size:18})],spacing:{after:140}})]),
@@ -7302,9 +7946,10 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ...receitasBlocks,
           new Paragraph({spacing:{after:240}}),
           H1N('RECEITAS FIT — SUBSTITUIÇÕES DE LANCHE E SOBREMESA'),
-          new Paragraph({children:[new TextRun({text:'Pode usar no lugar de qualquer lanche ou sobremesa marcada como "Receitas Fit" no cardápio acima.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
+          new Paragraph({children:[new TextRun({text:'Pode usar no lugar de qualquer lanche ou sobremesa marcada como "Receitas Fit" no '+(FMT_B?'plano do dia':'cardápio')+' acima.',size:18,color:'8A7F5C'})],spacing:{after:120}}),
           ...receitasFitBlocks,
           new Paragraph({spacing:{after:240}}),
+          ...trocasBlocks,
           HR(),
           ...fechoBlocks
         ]
