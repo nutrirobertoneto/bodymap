@@ -1585,7 +1585,7 @@ const FOOD_NUT={
  'Sopa de legumes':[35,1.5,0.8,5.5,1.2,250],'Torrada':[380,11.0,4.0,72.0,5.0,15],'Biscoito de arroz':[387,8.2,2.8,81.5,3.5,30],'Suco de laranja natural':[45,0.7,0.2,10.4,0.2,200],
  'Gelatina zero':[10,2.0,0,0.5,0,100],'Suspiro':[380,2.0,0,93.0,0,10],'Mousse de whey':[90,12.0,2.0,6.0,0,120],'Whey com água':[27,5.5,0.4,0.6,0,300],
  'Vinagre':[18,0,0,0.9,0,10],'Creme de leite light':[130,3.0,8.0,8.5,0,20],'Leite condensado light':[257,7.0,4.5,49.0,0,20],
- 'Azeite de coco':[862,0,100.0,0,0,10],'Mostarda dijon':[66,4.2,3.3,5.0,3.3,10],'Molho barbecue':[172,1.5,0.3,40.0,1.0,15]
+ 'Azeite de coco':[862,0,100.0,0,0,10],'Banana-maçã':[87,1.8,0.1,22.3,2.6,100],'Queijo minas frescal':[264,17.4,20.2,3.2,0,30],'Cream cheese light':[135,6.5,10.5,4.5,0,20],'Patê de atum light':[146,21.7,5.5,1.0,0,30],'Mostarda dijon':[66,4.2,3.3,5.0,3.3,10],'Molho barbecue':[172,1.5,0.3,40.0,1.0,15]
 };
 function normAlim(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
 function _sing(w){return w.length>3&&w.endsWith('s')?w.slice(0,-1):w;}
@@ -1617,7 +1617,17 @@ function achaFoodKey(nome){
   }
   return contida||melhor||null;
 }
-function foodNut(name){const k=achaFoodKey(name);return k?(FOOD_NUT[k]||FOOD_NUT_CUSTOM[k]):[0,0,0,0,0,100];}
+function foodNut(name){
+  const s=String(name||'');
+  if(/\s+ou\s+/i.test(s)){
+    const pt=s.split(/\s+ou\s+/i).map(x=>achaFoodKey(x.trim()));
+    if(pt.length>=2&&pt.every(Boolean)){
+      const arr=pt.map(k=>FOOD_NUT[k]||FOOD_NUT_CUSTOM[k]);
+      return [0,1,2,3,4].map(i=>Math.round(arr.reduce((a,v)=>a+v[i],0)/arr.length*100)/100).concat([arr[0][5]]);
+    }
+  }
+  const k=achaFoodKey(name);return k?(FOOD_NUT[k]||FOOD_NUT_CUSTOM[k]):[0,0,0,0,0,100];
+}
 let FOOD_NUT_CUSTOM={};
 try{FOOD_NUT_CUSTOM=JSON.parse(localStorage.getItem('bm_food_custom')||'{}');}catch(e){FOOD_NUT_CUSTOM={};}
 function salvarFoodCustom(){try{localStorage.setItem('bm_food_custom',JSON.stringify(FOOD_NUT_CUSTOM));}catch(e){}}
@@ -3704,6 +3714,7 @@ function grupoB(nome){
   const n=String(nome||'').trim();
   if(B_RE_G.test(n))return'G';
   if(B_RE_L.test(n))return'L';
+  if(/requeij|cottage|cream cheese/i.test(n))return'O'; // complemento: não conta como proteína
   if(B_RE_P.test(n))return'P';
   if(B_RE_CL.test(n)||B_RE_C.test(n))return'C';
   if(B_RE_F.test(n))return'F';
@@ -3740,10 +3751,10 @@ function agruparRefeicaoB(m){
 }
 // [rótulo, chave na base de alimentos, parte da meta]
 const BT_C_PRINC=[[['Arroz branco cozido','Arroz branco',1]],[['Arroz branco cozido','Arroz branco',.6],['Feijão cozido','Feijão carioca',.4]],[['Macarrão (cru, antes de cozinhar)','Macarrão',1]],[['Batata cozida','Batata',1]],[['Batata-doce cozida','Batata doce',1]],[['Mandioca cozida','Mandioca',1]],[['Cuscuz','Cuscuz',1]],[['Arroz integral cozido','Arroz integral',1]]];
-const BT_C_LANCHE=[[['Pão francês','Pão francês',1]],[['Pão integral','Pão integral',1]],[['Pão de forma','Pão de forma',1]],[['Tapioca','Tapioca',1]],[['Cuscuz','Cuscuz',1]],[['Aveia','Aveia',1]],[['Biscoito cream cracker','Biscoito cream cracker',1]]];
+const BT_C_LANCHE=[[['Pão francês','Pão francês',1]],[['Pão de forma','Pão de forma',1]],[['Tapioca','Tapioca',1]],[['Cuscuz','Cuscuz',1]],[['Aveia','Aveia',1]],[['Biscoito cream cracker','Biscoito cream cracker',1]]];
 const BT_P_PRINC=[[['Frango grelhado','Frango grelhado',1]],[['Carne bovina grelhada','Carne bovina grelhada',1]],[['Peixe grelhado','Peixe grelhado',1]],[['Ovo cozido','Ovo cozido',1]],[['Carne moída','Carne moída',1]]];
-const BT_P_LANCHE=[[['Ovo cozido','Ovo cozido',1]],[['Queijo minas frescal','Queijo minas frescal',1]],[['Queijo muçarela','Queijo muçarela',1]],[['Peito de peru','Peito de peru',1]],[['Atum em lata (em água)','Atum em lata',1]],[['Frango grelhado','Frango grelhado',1]]];
-const BT_F=[[['Banana','Banana',1]],[['Maçã','Maçã',1]],[['Laranja','Laranja',1]],[['Mamão','Mamão',1]],[['Morango','Morango',1]],[['Uva','Uva',1]],[['Abacaxi','Abacaxi',1]],[['Melancia','Melancia',1]]];
+const BT_P_LANCHE=[[['Ovo cozido','Ovo cozido',1]],[['Queijo minas frescal','Queijo minas frescal',1]],[['Queijo muçarela','Queijo muçarela',1]],[['Atum em lata (em água)','Atum em lata',1]],[['Whey protein (pó)','Whey protein (pó)',1]],[['Patê de atum light','Patê de atum light',1]]];
+const BT_F=[[['Banana-maçã','Banana-maçã',1]],[['Maçã','Maçã',1]],[['Laranja','Laranja',1]],[['Mamão','Mamão',1]],[['Morango','Morango',1]],[['Uva','Uva',1]],[['Abacaxi','Abacaxi',1]],[['Melancia','Melancia',1]]];
 const BT_L=[[['Leite desnatado','Leite desnatado',1]],[['Iogurte natural','Iogurte natural',1]],[['Leite sem lactose','Leite sem lactose',1]],[['Iogurte grego','Iogurte grego',1]]];
 function combosTrocaB(grp,tot,principal){
   const orig=tot.itens.map(i=>Math.round(i.g)+' '+i.un+' de '+i.nome.toLowerCase()).join(' + ');
@@ -3754,6 +3765,7 @@ function combosTrocaB(grp,tot,principal){
   if(!(meta>=minimo))return out;
   const T=grp==='C'?(principal?BT_C_PRINC:BT_C_LANCHE):grp==='P'?(principal?BT_P_PRINC:BT_P_LANCHE):grp==='F'?BT_F:BT_L;
   const un=grp==='L'?tot.un:'g';
+  if(grp==='F'&&tot.itens.some(i=>/\s+ou\s+/i.test(i.nome)))return[orig]; // a linha de frutas já traz as equivalências
   const nomesOrig=tot.itens.map(i=>i.nome.toLowerCase());
   const mesmoConjunto=t=>t.length===nomesOrig.length&&t.every(([lab])=>nomesOrig.some(n=>n.indexOf(lab.toLowerCase().replace(/ cozid[oa]| grelhad[oa]/g,''))>=0||lab.toLowerCase().indexOf(n)>=0));
   T.forEach(t=>{
@@ -5989,6 +6001,7 @@ function aplicarConcentracaoCarbo(plan,periodo){
 const TIT_IGNORA=/\b(cafe|cha|agua|adocante|sucralose|stevia|temperos?|sal|pimenta|azeite|oleo|limao|canela|ervas|vinagre|gelatina)\b/;
 const TIT_PROTEINA=/\b(frango|peixe|carne|bovina|suina|atum|sardinha|ovo|ovos|clara|peru|tofu|camarao|salmao|tilapia|whey|albumina|figado|moela|bacalhau|merluza)\b/;
 function _limpaNomeTitulo(n){
+  if(/\s+ou\s+/i.test(String(n||''))&&String(n).split(/\s+ou\s+/i).every(x=>_ehFruta(x.trim())))return 'frutas';
   return String(n||'').replace(/\s*\([^)]*\)/g,'').replace(/\b(cozid[oa]s?|sem miolo|pasteurizad[oa]|escorrid[oa],?|conservad[oa] em [áa]gua|em lata)\b/gi,'').replace(/\s{2,}/g,' ').replace(/[,\s]+$/,'').trim();
 }
 function tituloAutoOpcao(rows,refKey){
@@ -6031,9 +6044,10 @@ function comTituloAuto(o,refKey){
     if(/:$/.test(v)||/ — /.test(v))return o;
     const mv=v.match(/^Vitamina:\s*(?:(\d+(?:[.,]\d+)?)\s*ml\s+de\s+(.+))?$/i);
     if(mv){
-      const frutas=rows.slice(1).filter(r=>r.tipo==='item'&&r.alimento).map(r=>_limpaNomeTitulo(r.alimento).toLowerCase());
+      const frutas=rows.slice(1).filter(r=>r.tipo==='item'&&r.alimento&&!/whey/i.test(r.alimento)).map(r=>_limpaNomeTitulo(r.alimento).toLowerCase());
+      const temWhey=rows.some(r=>r.tipo==='item'&&/whey/i.test(r.alimento||''));
       const leite=mv[2]?mv[2].trim().toLowerCase():'';
-      const t=('VITAMINA'+(frutas.length?' DE '+frutas.join(' E '):'')+(leite?' COM '+leite:'')).toUpperCase();
+      const t=('VITAMINA'+(frutas.length?' DE '+frutas.join(' E '):'')+(leite?' COM '+leite:'')+(temWhey?' E WHEY':'')).toUpperCase();
       const novo=rows.slice();
       if(mv[2])novo[0]={tipo:'item',alimento:mv[2].trim(),gramas:mv[1].replace(',','.'),medida:''};else novo.shift();
       return serializeOpcaoRows([{tipo:'texto',valor:t+':'}].concat(novo));
@@ -6116,7 +6130,7 @@ function _renderDietMealRowsBase(){
       const temGluten=alergiasPT.includes('GLUTEN');
       const temLactose=alergiasPT.some(a=>/LACTOSE|LEITE/.test(a));
       const itensOk=POS_TREINO_ITENS.filter(it=>!(it.gluten&&temGluten)&&!(it.lactose&&temLactose));
-      const chips=itensOk.map(it=>`<button type="button" class="co" style="font-size:11px;padding:4px 10px" onclick="addPosTreinoAlimento(${i},0,${JSON.stringify(it.nome)},${it.gramas})">+ ${escH(it.nome)}</button>`).join('');
+      const chips=itensOk.map(it=>`<button type="button" class="co" style="font-size:11px;padding:4px 10px" onclick="addPosTreinoAlimento(${i},0,${escH(JSON.stringify(it.nome))},${it.gramas})">+ ${escH(it.nome)}</button>`).join('');
       let kcalEsc=0;
       (m.opcoes[0]?parseOpcaoStr(m.opcoes[0]):[]).forEach(r=>{if(r.tipo==='item'&&r.alimento)kcalEsc+=foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;});
       const gasto=gastoEstimadoPosTreino(dietDataCache);
@@ -6443,6 +6457,88 @@ async function confirmarGerarDieta(){
   registrarDietaNaAval(dietDataCache);
 }
 
+// ── REGRAS v9: linha de frutas equivalentes, vitaminas (sem melancia/melão, com whey), banana-maçã ──
+const FR_LINHA_A=['Melão','Morangos','Melancia','Tangerina','Mamão','Laranja','Abacaxi','Kiwi'];
+const FR_LINHA_B=['Mamão','Laranja','Abacaxi','Kiwi','Goiaba','Pera','Uvas','Maçã','Manga'];
+function _frutaSimpleV9(a){
+  const n=normAlim(a);
+  if(!n||/\sou\s/.test(n)||/abacate|limao|coco|maracuja|acerola|frutas vermelhas|salada/.test(n))return false;
+  return _ehFruta(a);
+}
+function _ehLinhaFrutaV9(a){
+  const s=String(a||'');
+  return /\s+ou\s+/i.test(s)&&s.split(/\s+ou\s+/i).every(x=>_ehFruta(x.trim()));
+}
+// monta a linha "Melão ou Morangos ou ..." (da menos para a mais calórica), respeitando exclusões do paciente
+function linhaFrutasV9(d,ex,regras,modelo){
+  if(modelo==='ceto')return null;
+  const obj=normAlim((d&&d.objetivo)||'');
+  let lista=/ganho|massa magra|bulk/.test(obj)?FR_LINHA_B:FR_LINHA_A;
+  if(modelo==='lowcarb')lista=['Melão','Morangos','Melancia','Tangerina'];
+  if(regras&&regras.lowFodmap)lista=lista.filter(n=>!/melancia|manga|maçã|pera|goiaba|uva/i.test(n));
+  const ok=lista.filter(n=>!ex.defs.some(df=>_defConflita(df,normAlim(n))));
+  if(ok.length<2)return null;
+  ok.sort((a,b)=>foodNut(a)[0]-foodNut(b)[0]);
+  const media=ok.reduce((s,n)=>s+foodNut(n)[0],0)/ok.length;
+  return{nome:ok.join(' ou '),media};
+}
+function _opcaoV9(o,ctx){
+  let rows=parseOpcaoStr(o);
+  let mudou=false;
+  // whey é laticínio: sai se o paciente não pode laticínio; com intolerância à lactose vira whey isolado
+  if(!ctx.wheyOk){const n0=rows.length;rows=rows.filter(r=>!(r.tipo==='item'&&/whey/i.test(r.alimento||'')));if(rows.length!==n0)mudou=true;}
+  else if(ctx.semLactose){rows.forEach(r=>{if(r.tipo==='item'&&/^whey/.test(normAlim(r.alimento||''))&&!/isolado/.test(normAlim(r.alimento||''))){r.alimento='Whey protein isolado';r.medida='pó';mudou=true;}});}
+  const r0=rows[0];
+  const ehVit=!!(r0&&r0.tipo==='texto'&&/^(vitamina|shake|batida)/i.test(String(r0.valor||'').trim()));
+  let temLinha=rows.some(r=>r.tipo==='item'&&_ehLinhaFrutaV9(r.alimento));
+  const out=[];
+  rows.forEach(r=>{
+    if(r.tipo==='texto'){
+      const v=String(r.valor||'');
+      if(/vitamina|batida|shake/i.test(v)&&/melancia|mel[aã]o/i.test(v)){r.valor=v.replace(/melancia|mel[aã]o/gi,'mamão');mudou=true;}
+      out.push(r);return;
+    }
+    if(!r.alimento){out.push(r);return;}
+    const nm=normAlim(r.alimento);
+    if(ehVit){
+      if(/^(melancia|melao)$/.test(nm)){
+        const kc=foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;
+        r.alimento='Mamão';r.gramas=String(Math.max(50,_round5(kc*100/foodNut('Mamão')[0])));r.medida='';mudou=true;
+      }else if(/^banana( prata| nanica| maca)?$/.test(nm)){r.alimento='Banana-maçã';mudou=true;}
+      out.push(r);return;
+    }
+    if(_ehLinhaFrutaV9(r.alimento)){
+      const L=linhaFrutasV9(ctx.d,ctx.ex,ctx.regras,ctx.modelo);
+      if(L){
+        const kc=foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;
+        const nn=L.nome;
+        if(nn!==r.alimento){r.alimento=nn;r.gramas=String(Math.max(30,_round5(kc*100/L.media)));r.medida='';mudou=true;}
+      }
+      out.push(r);return;
+    }
+    if(_frutaSimpleV9(r.alimento)&&ctx.modelo!=='ceto'){
+      if(temLinha){mudou=true;return;}
+      const L=linhaFrutasV9(ctx.d,ctx.ex,ctx.regras,ctx.modelo);
+      if(!L){out.push(r);return;}
+      const kc=foodNut(r.alimento)[0]*(parseFloat(r.gramas)||0)/100;
+      out.push({tipo:'item',alimento:L.nome,gramas:String(Math.max(30,_round5(kc*100/L.media))),medida:''});
+      temLinha=true;mudou=true;return;
+    }
+    out.push(r);
+  });
+  if(ehVit&&ctx.wheyOk&&!out.some(r=>r.tipo==='item'&&/whey/i.test(r.alimento||''))){
+    out.push({tipo:'item',alimento:'Whey protein (pó)',gramas:'20',medida:''});mudou=true;
+  }
+  return mudou?serializeOpcaoRows(out):o;
+}
+function aplicarRegrasV9(plan,d,prefs,regras,modelo){
+  if(!plan)return plan;
+  const ex=exclusoesAtivas(d,prefs||prefsPadrao(d),regras||{});
+  const wheyOk=!(ex.laticinioProibido||ex.leiteForcado==='vegetal'||(regras&&regras.semLaticinio));
+  const ctx={d,ex,regras:regras||{},modelo,wheyOk,semLactose:ex.leiteForcado==='semlactose'};
+  return plan.map(m=>Object.assign({},m,{opcoes:(m.opcoes||[]).map(o=>_opcaoV9(o,ctx))}));
+}
+
 function calcDietaBase(d,ov,cas){
   const peso=parseFloat(d.peso)||70,altura=parseFloat(d.altura)||170,idade=parseInt(d.idade)||30;
   const sexo=d.sexo||'M',dn=d.doencas||[],obj=d.objetivo||'';
@@ -6478,6 +6574,7 @@ function calcDietaBase(d,ov,cas){
   if(prefs&&prefs.semGluten)regras.semGluten=true;
   let PLAN=buildMealPlan(modelo,regras,hasDM,hasHAS,hasDis,hasObe,kcal,false); // sempre em gramas
   PLAN=prefs?aplicarPreferencias(aplicarPipocaLanche(PLAN,modelo,regras),prefs,d,ov,kcal,regras):aplicarPipocaLanche(aplicarSobremesaFixa(PLAN),modelo,regras);
+  try{PLAN=aplicarRegrasV9(PLAN,d,prefs,regras,modelo);}catch(e){console.error('regras v9',e);}
   const SUP=incluirSup?buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj):[];
   const EAA=incluirEAA?buildEAATable(d):[];
   const FARM=incluirFarm?buildFarmTable(d):[];
@@ -6526,7 +6623,7 @@ const NUT_KEYS=['castanha de caju','castanha do para','macadamia','nozes','amend
 
 function prefsPadrao(d){
   return{
-    nRef:6,nOp:3,
+    nRef:6,nOp:5,
     aversoes:{ativo:false,marcados:[],texto:''},
     leite:{usa:true,tipo:'desnatado'},
     semGluten:false,
@@ -7065,7 +7162,7 @@ function aplicarChaLanche(plan,prefs){
 function aplicarPreferencias(plan,prefs,d,ov,kcalDia,regras){
   if(!prefs)return plan;
   const ex=exclusoesAtivas(d,prefs,regras);
-  const nOp=prefs.nOp||3;
+  const nOp=prefs.nOp||5;
   _chaIdx=_hashTxt((d&&(d.id||d.nome))||'')%CHAS_DIA.length;
   const fctx=ctxFrutas(prefs,d,ex,(ov&&ov.modelo)||'normal');
   let p=JSON.parse(JSON.stringify(plan));
@@ -7096,9 +7193,9 @@ function _alergiasReg(){return _arr(dietWizCtx&&dietWizCtx.d&&dietWizCtx.d.alerg
 const DWQ_TELAS=[
   {rotKey:'refs',titulo:'Rotina do dia',sub:'Quantas refeições por dia e quantas opções de escolha em cada uma.',
    render:p=>`<div class="fg"><label class="fl">Refeições por dia</label><div class="cons-grid">${[3,4,5,6].map(n=>_radio('dwqNRef',n,p.nRef===n,n+' refeições'+(n===6?' (café, lanche, almoço, lanche, jantar, ceia)':n===5?' (sem ceia)':n===4?' (café, almoço, lanche da tarde, jantar)':' (café, almoço, jantar)'))).join('')}</div></div>
-     <div class="fg" style="margin-top:14px"><label class="fl">Opções de escolha por refeição</label><div class="cons-grid">${[1,2,3].map(n=>_radio('dwqNOp',n,p.nOp===n,n+(n===1?' opção (cardápio fechado)':' opções'))).join('')}</div></div>`,
-   coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||3;if(p.refsRot&&p.refsRot.length!==p.nRef){p.refsRot=null;p.horasRot=null;}},
-   padrao:p=>{p.nRef=6;p.nOp=3;p.refsRot=null;}},
+     <div class="fg" style="margin-top:14px"><label class="fl">Opções de escolha por refeição</label><div class="cons-grid">${[1,2,3,4,5].map(n=>_radio('dwqNOp',n,p.nOp===n,n+(n===1?' opção (cardápio fechado)':' opções'))).join('')}</div></div>`,
+   coletar:p=>{p.nRef=parseInt(_valRadio('dwqNRef'))||6;p.nOp=parseInt(_valRadio('dwqNOp'))||5;if(p.refsRot&&p.refsRot.length!==p.nRef){p.refsRot=null;p.horasRot=null;}},
+   padrao:p=>{p.nRef=6;p.nOp=5;p.refsRot=null;}},
   {rotKey:'vet',titulo:'O que o Paciente/Cliente não come ou quer diminuir',sub:'Marque só o que realmente vale — as alergias do cadastro já entram sozinhas.',
    render:p=>{
      const auto=_alergiasReg().map(a=>ALERGIA_EXCL[a].rot||AVERSOES_CAT.find(x=>x.k===ALERGIA_EXCL[a].k).rot);
@@ -8290,31 +8387,63 @@ function buildMealPlan(modelo,regrasIn,dm,has,dis,obe,kcal,cas){
   const frutaLanche=regras.lowFodmap?gLancheM(100,fr(),100,'unidade/porção'):gLancheM(120,fr(),120,'unidade média');
   const paoForma=semTrigo?gLancheT(50,'pão de forma sem glúten',25,'fatia(s)'):gLancheT(50,'pão de forma',25,'fatia(s)');
   const sanduicheAtum=paoForma+' + '+gLancheT(50,'atum em lata (conservado em água), escorrido',80,'lata(s) pequena(s)')+' + '+gLancheT(10,'requeijão light',10,'col. sopa')+' + tomate, cenoura ralada e alface a gosto, temperados com sal e pimenta-do-reino';
+  // ── v9: 5 opções por refeição; frutas em linha equivalente; café = 1 proteína + 1 carboidrato + 1 fruta (+ complemento) + linha de bebidas ──
+  const LIN_FR='Melão ou Morangos ou Melancia ou Tangerina ou Mamão ou Laranja ou Abacaxi ou Kiwi';
+  const linhaFr=(gfn,kcal)=>gfn(Math.round(kcal*100/39.9),LIN_FR,0,'');
+  const bebLinha='café sem açúcar (ou adoçar com sucralose) ou chá mate, verde ou branco, ou café com '+porMl(150,1,'leite desnatado',cas,200,'copo(s)')+' (sem açúcar, ou adoçar com sucralose)';
+  const mlLancheM=(b,n,uMl,uN)=>porMl(b,kM('lancheM'),n,cas,uMl,uN);
+  const vit=(gfn,mlfn,fruta,gF,uF)=>'Vitamina: '+mlfn(200,'leite desnatado',200,'copo(s)')+' + '+gfn(gF,fruta,gF,'porção')+' + '+gfn(20,'whey protein (pó)',10,'col. sopa');
+  const cafe=(carb,prot,comp)=>[carb,prot,comp,linhaFr(gCafe,70),bebLinha].filter(Boolean).join(' + ');
+  const paoFormaM=semTrigo?gLancheM(50,'pão de forma sem glúten',25,'fatia(s)'):gLancheM(50,'pão de forma',25,'fatia(s)');
+  const granola=(gfn)=>gfn(20,'granola sem açúcar'+(semTrigo?' sem glúten':''),10,'col. sopa');
+  const principal=(prot,carb)=>carb+prot;
   return[
     {refeicao:'☕ Café da Manhã',horario:'7h–8h',opcoes:[
-      paoBase+' + '+gCafe(20,'requeijão light',10,'col. sopa')+' + '+bebManha(),
-      paoBase+' + '+gCafe(15,'geleia sem açúcar',15,'col. sopa')+' + '+gCafe(20,'queijo muçarela',20,'fatia(s)')+' + '+bebManha(),
-      ovoCafe2()+' + '+paoBase+' + '+bebManha(),
-      gCafe(170,'iogurte natural',170,'pote(s)')+' + '+gCafe(20,'granola sem açúcar'+(semTrigo?' sem glúten':''),10,'col. sopa')+' + '+gCafe(100,'banana',100,'unidade(s)')
+      cafe(paoBase,ovoCafe2(),gCafe(20,'requeijão light',10,'col. sopa')),
+      cafe(gCafe(50,'tapioca',50,'unidade(s)'),gCafe(50,'queijo muçarela',30,'fatia(s)'),gCafe(20,'cream cheese light',20,'col. sopa')),
+      cafe(granola(gCafe),gCafe(170,'iogurte natural',170,'pote(s)')+' + '+gCafe(30,'whey protein (pó)',10,'col. sopa'),''),
+      cafe(paoBase,gCafe(60,'patê de atum light',30,'col. sopa'),''),
+      cafe(gCafe(100,'cuscuz de milho cozido',100,'fatia(s)'),gCafe(50,'queijo minas frescal',30,'fatia(s)'),gCafe(30,'cottage',15,'col. sopa'))
     ]},
-    {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:regras.lancheManha&&LANCHE_TEMPLATES[regras.lancheManha]?[LANCHE_TEMPLATES[regras.lancheManha].build(gLancheM,gLancheM,fr)]:[frutaLanche+' + '+gLancheM(170,'iogurte natural',170,'pote(s)'),RECEITAS_FIT_REF]},
+    {refeicao:'🍌 Lanche Manhã',horario:'10h',opcoes:regras.lancheManha&&LANCHE_TEMPLATES[regras.lancheManha]?[LANCHE_TEMPLATES[regras.lancheManha].build(gLancheM,gLancheM,fr)]:[
+      linhaFr(gLancheM,70)+' + '+gLancheM(170,'iogurte natural',170,'pote(s)'),
+      vit(gLancheM,mlLancheM,'mamão',150,'fatia(s)'),
+      paoFormaM+' + '+gLancheM(40,'queijo minas frescal',30,'fatia(s)'),
+      gLancheM(100,'banana-maçã',100,'unidade(s)')+' + '+(semTrigo?gLancheM(10,'chia',10,'col. sopa'):gLancheM(20,'aveia em flocos',20,'col. sopa')),
+      gLancheM(40,'tapioca',50,'unidade(s)')+' + '+gLancheM(50,'cottage',15,'col. sopa'),
+      RECEITAS_FIT_REF
+    ]},
     {refeicao:'🍽 '+primProt+'Almoço',horario:'12h–13h',opcoes:[
       arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(low?100:120,'frango grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+azAlmoco(12),
       arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(low?100:120,'carne bovina magra',100,'porção')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+azAlmoco(12)+semSal,
-      (cortarCarb?'':gAlmoco(low?75:100,'macarrão comum cozido',25,'col. sopa')+' + ')+gAlmoco(80,'molho de tomate caseiro',40,'col. de servir')+' + '+NOTA_CALDO+' + '+gAlmoco(80,'atum em lata (conservado em água), escorrido',80,'lata(s) pequena(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
+      (cortarCarb?'':gAlmoco(low?75:100,'macarrão comum cozido',25,'col. sopa')+' + ')+gAlmoco(80,'molho de tomate caseiro',40,'col. de servir')+' + '+NOTA_CALDO+' + '+gAlmoco(80,'atum em lata (conservado em água), escorrido',80,'lata(s) pequena(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
+      arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(low?100:120,'peixe grelhado',120,'filé médio')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+azAlmoco(12),
+      arrozAlmoco+feijaoAlmoco+' + '+gAlmoco(100,'ovo cozido (2 ovos inteiros)',50,'unidade(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+' + '+LEGUMES_LIVRE+' + '+azAlmoco(12)
     ]},
-    {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:regras.lancheTarde&&LANCHE_TEMPLATES[regras.lancheTarde]?[LANCHE_TEMPLATES[regras.lancheTarde].build(gLancheT,mlLancheT,fr)]:['Vitamina: '+mlLancheT(200,'leite desnatado',200,'copo(s)')+' + '+gLancheT(100,fr(),100,'unidade(s)'),sanduicheAtum,RECEITAS_FIT_REF]},
+    {refeicao:'🍎 Lanche Tarde',horario:'15h–16h',opcoes:regras.lancheTarde&&LANCHE_TEMPLATES[regras.lancheTarde]?[LANCHE_TEMPLATES[regras.lancheTarde].build(gLancheT,mlLancheT,fr)]:[
+      vit(gLancheT,mlLancheT,'morango',120,'unidade(s)'),
+      sanduicheAtum,
+      linhaFr(gLancheT,70)+' + '+gLancheT(170,'iogurte natural',170,'pote(s)')+' + '+granola(gLancheT),
+      gLancheT(40,'tapioca',50,'unidade(s)')+' + '+gLancheT(40,'patê de atum light',30,'col. sopa'),
+      vit(gLancheT,mlLancheT,'manga',100,'unidade(s)'),
+      RECEITAS_FIT_REF
+    ]},
     {refeicao:'🌙 '+primProt+'Jantar',horario:'19h–20h',opcoes:[
       (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(100,'peixe grelhado',100,'filé(s)')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
       gJantar(300,'sopa de legumes',250,'concha(s)')+' + '+NOTA_CALDO+' + '+gJantar(low?80:100,'frango desfiado',100,'porção')+(semTrigo?'':' + '+gJantar(25,'pão francês sem miolo',25,'unidade pequena'))+semSal,
-      (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO
+      (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(90,'sardinha grelhada ou assada',90,'unidade(s)')+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
+      gJantar(low?80:100,'frango grelhado',120,'filé médio')+' + '+(cortarCarb?'':gJantar(100,'batata-doce cozida',100,'unidade pequena')+' + ')+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO,
+      (cortarCarb?'':gJantar(low?50:75,'arroz branco cozido',25,'col. sopa')+' + ')+gJantar(100,'carne bovina magra',100,'porção')+' + '+LEGUMES_LIVRE+' + Salada/Hortaliças (consumir primeiro): '+LIVRE_PRATO+semSal
     ]},
     {refeicao:'🌛 Ceia',horario:'21h–22h',opcoes:[
       mlCeia(200,'leite morno',200,'copo(s)')+' + '+gCeia(30,'biscoito de arroz',8,'unidade(s)'),
       gCeia(170,'iogurte natural',170,'pote(s)')+' + canela a gosto',
-      bebNoite()+' + '+gCeia(20,'queijo muçarela',20,'fatia(s)')
+      bebNoite()+' + '+gCeia(20,'queijo muçarela',20,'fatia(s)'),
+      linhaFr(gCeia,50)+' + '+gCeia(50,'cottage',50,'pote(s)'),
+      gCeia(170,'iogurte natural',170,'pote(s)')+' + '+gCeia(20,'whey protein (pó)',10,'col. sopa')+' + canela a gosto'
     ]}
   ];
+
 }
 
 function buildOris(dm,has,dis,obe,d,modelo,regras,ctx){
