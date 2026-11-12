@@ -587,12 +587,57 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
           <textarea id="suplementoDetalhe" class="fc" placeholder="Ex: Ashwagandha 600mg/dia..." oninput="autoSave()"></textarea>
         </div>
       </div>
+      <div id="supInteresse" class="fg" style="display:none;margin-top:10px">
+        <label class="fl">Tem interesse em começar a usar suplemento?</label>
+        <div class="rg" id="rg_interesseSup">
+          <label class="ro" onclick="clickRadio(this,'interesseSup','S');refreshProtocoloDet(true)"><input type="radio" name="interesseSup" value="S">Sim</label>
+          <label class="ro" onclick="clickRadio(this,'interesseSup','N');refreshProtocoloDet(true)"><input type="radio" name="interesseSup" value="N">Não</label>
+        </div>
+        <div id="supIncInteresse" style="display:none;margin-top:12px">
+          <label class="fl">Devo incluir isso no plano/consultoria? <span style="font-weight:400;color:var(--mu)">(a pessoa pode ter outro profissional cuidando)</span></label>
+          <div class="rg" id="rg_incluirInteresseSup">
+            <label class="ro" onclick="clickRadio(this,'incluirInteresseSup','S')"><input type="radio" name="incluirInteresseSup" value="S">Sim</label>
+            <label class="ro" onclick="clickRadio(this,'incluirInteresseSup','N')"><input type="radio" name="incluirInteresseSup" value="N">Não</label>
+          </div>
+        </div>
+      </div>
+      <div id="supProtocoloDet" style="display:none;margin-top:12px;padding:12px 14px;border:1px solid var(--br);border-radius:10px;background:var(--gp)">
+        <div style="font-size:13px;font-weight:700;color:var(--gd);margin-bottom:10px">💊 Uso de suplementos</div>
+        <div class="fg">
+          <label class="fl">Pretende continuar usando?</label>
+          <div class="rg" id="rg_continuaSup">
+            <label class="ro" onclick="clickRadio(this,'continuaSup','S');refreshProtocoloDet(true)"><input type="radio" name="continuaSup" value="S">Sim</label>
+            <label class="ro" onclick="clickRadio(this,'continuaSup','N');refreshProtocoloDet(true)"><input type="radio" name="continuaSup" value="N">Não</label>
+          </div>
+        </div>
+        <div class="fg" id="supIncluirBox" style="display:none;margin-top:12px">
+          <label class="fl">Devo incluir isso na consultoria? <span style="font-weight:400;color:var(--mu)">(administração, dose e fracionamento)</span></label>
+          <div class="rg" id="rg_incluirSupConsult">
+            <label class="ro" onclick="clickRadio(this,'incluirSupConsult','S')"><input type="radio" name="incluirSupConsult" value="S">Sim</label>
+            <label class="ro" onclick="clickRadio(this,'incluirSupConsult','N')"><input type="radio" name="incluirSupConsult" value="N">Não</label>
+          </div>
+        </div>
+      </div>
       <div class="div"></div>
       <div class="fg">
         <label class="fl">Usa recursos ergogênicos / EAA (Esteroides Anabolizantes Androgênicos)?</label>
         <div class="rg" id="rg_usaEAA">
           <label class="ro" onclick="clickRadio(this,'usaEAA','S');toggleEAA(true)"><input type="radio" name="usaEAA" value="S">Sim</label>
           <label class="ro" onclick="clickRadio(this,'usaEAA','N');toggleEAA(false)"><input type="radio" name="usaEAA" value="N">Não</label>
+        </div>
+      </div>
+      <div id="eaaInteresse" class="fg" style="display:none;margin-top:10px">
+        <label class="fl">Tem interesse em começar a usar?</label>
+        <div class="rg" id="rg_interesseEAA">
+          <label class="ro" onclick="clickRadio(this,'interesseEAA','S');refreshProtocoloDet(true)"><input type="radio" name="interesseEAA" value="S">Sim</label>
+          <label class="ro" onclick="clickRadio(this,'interesseEAA','N');refreshProtocoloDet(true)"><input type="radio" name="interesseEAA" value="N">Não</label>
+        </div>
+        <div id="eaaIncInteresse" style="display:none;margin-top:12px">
+          <label class="fl">Devo incluir isso no plano/consultoria? <span style="font-weight:400;color:var(--mu)">(a pessoa pode ter outro profissional cuidando)</span></label>
+          <div class="rg" id="rg_incluirInteresseEAA">
+            <label class="ro" onclick="clickRadio(this,'incluirInteresseEAA','S')"><input type="radio" name="incluirInteresseEAA" value="S">Sim</label>
+            <label class="ro" onclick="clickRadio(this,'incluirInteresseEAA','N')"><input type="radio" name="incluirInteresseEAA" value="N">Não</label>
+          </div>
         </div>
       </div>
       <div id="eaaDet" style="display:none;margin-top:10px"><div id="eaaListaBox" style="margin-top:10px"><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Ésteres de testosterona</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Cipionato de testosterona" onchange="autoSave()"><span>Cipionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Cipionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Enantato de testosterona" onchange="autoSave()"><span>Enantato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Enantato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Propionato de testosterona" onchange="autoSave()"><span>Propionato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Propionato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Undecanoato de testosterona" onchange="autoSave()"><span>Undecanoato de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Undecanoato de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Suspensão de testosterona" onchange="autoSave()"><span>Suspensão de testosterona</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Suspensão de testosterona" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Sustanon (mix de ésteres)" onchange="autoSave()"><span>Sustanon / Durateston (mix de ésteres)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Sustanon (mix de ésteres)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Derivados de DHT</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Masteron (Drostanolona)" onchange="autoSave()"><span>Masteron (Drostanolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Masteron (Drostanolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Winstrol (Stanozolol)" onchange="autoSave()"><span>Winstrol (Stanozolol)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Winstrol (Stanozolol)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Primobolan (Metenolona)" onchange="autoSave()"><span>Primobolan (Metenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Primobolan (Metenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anavar (Oxandrolona)" onchange="autoSave()"><span>Anavar (Oxandrolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anavar (Oxandrolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Proviron (Mesterolona)" onchange="autoSave()"><span>Proviron (Mesterolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Proviron (Mesterolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">19-nor (Nandrolonas/Trembolonas)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Deca-Durabolin (Nandrolona Decanoato)" onchange="autoSave()"><span>Deca-Durabolin (Nandrolona Decanoato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Deca-Durabolin (Nandrolona Decanoato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="NPP (Nandrolona Fenilpropionato)" onchange="autoSave()"><span>NPP (Nandrolona Fenilpropionato)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="NPP (Nandrolona Fenilpropionato)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Acetato" onchange="autoSave()"><span>Trembolona Acetato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Acetato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Trembolona Enantato" onchange="autoSave()"><span>Trembolona Enantato</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Trembolona Enantato" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">17-alfa-alquilados (orais)</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Dianabol (Metandrostenolona)" onchange="autoSave()"><span>Dianabol (Metandrostenolona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Dianabol (Metandrostenolona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Anadrol (Oxymetholona)" onchange="autoSave()"><span>Anadrol (Oxymetholona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Anadrol (Oxymetholona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Halotestin (Fluoximesterona)" onchange="autoSave()"><span>Halotestin (Fluoximesterona)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Halotestin (Fluoximesterona)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div><div style="margin-top:10px;padding:10px 12px;border:1px solid var(--br);border-radius:8px;background:var(--gp)"><div style="font-size:12px;font-weight:600;color:var(--gd);margin-bottom:6px">Adjuntos / outros</div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="hCG" onchange="autoSave()"><span>hCG</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="hCG" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Hormônio do Crescimento (GH)" onchange="autoSave()"><span>Hormônio do Crescimento (GH)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Hormônio do Crescimento (GH)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Insulina (uso para performance)" onchange="autoSave()"><span>Insulina (uso para performance)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Insulina (uso para performance)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="Clembuterol" onchange="autoSave()"><span>Clembuterol</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="Clembuterol" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div><div class="med-row"><label class="cons-ck" style="flex:1"><input type="checkbox" class="medChk" data-cat="EAA" value="T3 (Liotironina)" onchange="autoSave()"><span>T3 (Liotironina)</span></label><input type="text" class="di medDose" data-cat="EAA" data-item="T3 (Liotironina)" placeholder="Dose (mg/ml, frequência)" oninput="autoSave()"></div></div></div>
@@ -602,16 +647,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         </div>
       </div>
       <div id="protocoloDet" style="display:none;margin-top:12px;padding:12px 14px;border:1px solid var(--br);border-radius:10px;background:var(--gp)">
-        <div style="font-size:13px;font-weight:700;color:var(--gd);margin-bottom:10px">💊 Sobre o uso de suplementos, hormônios e fármacos</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gd);margin-bottom:10px">💊 Uso de hormônios / ergogênicos</div>
         <div class="fg">
-          <label class="fl">Pretende continuar usando esses suplementos, hormônios ou fármacos?</label>
+          <label class="fl">Pretende continuar usando?</label>
           <div class="rg" id="rg_continuaUso">
-            <label class="ro" onclick="clickRadio(this,'continuaUso','S')"><input type="radio" name="continuaUso" value="S">Sim</label>
-            <label class="ro" onclick="clickRadio(this,'continuaUso','N')"><input type="radio" name="continuaUso" value="N">Não</label>
+            <label class="ro" onclick="clickRadio(this,'continuaUso','S');refreshProtocoloDet(true)"><input type="radio" name="continuaUso" value="S">Sim</label>
+            <label class="ro" onclick="clickRadio(this,'continuaUso','N');refreshProtocoloDet(true)"><input type="radio" name="continuaUso" value="N">Não</label>
           </div>
         </div>
-        <div class="fg" style="margin-top:12px">
-          <label class="fl">Devo considerar ajuste, avaliação ou reformulação desses protocolos?</label>
+        <div class="fg" id="reavaliarBox" style="display:none;margin-top:12px">
+          <label class="fl">Devo incluir isso na consultoria? <span style="font-weight:400;color:var(--mu)">(administração, dose e fracionamento)</span></label>
           <div class="rg" id="rg_reavaliarProtocolo">
             <label class="ro" onclick="clickRadio(this,'reavaliarProtocolo','S')"><input type="radio" name="reavaliarProtocolo" value="S">Sim</label>
             <label class="ro" onclick="clickRadio(this,'reavaliarProtocolo','N')"><input type="radio" name="reavaliarProtocolo" value="N">Não</label>
@@ -914,7 +959,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
     </div>
     <div id="dwStep2" style="display:none">
       <h2 style="font-size:19px;margin-bottom:2px">💊 11/12 — Suplementação, EAA e Fármacos</h2>
-      <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Três perguntas independentes — cada "sim" abre a tabela correspondente na tela seguinte, para você preencher ou editar.</p>
+      <p style="font-size:12.5px;color:var(--mu);margin-bottom:10px">Quatro perguntas independentes — cada "sim" abre a tabela correspondente na tela seguinte, para você preencher ou editar.</p>
       <div class="fg" style="margin-bottom:14px">
         <label class="fl">Incluir suplementação, vitaminas e minerais?</label>
         <div class="cons-grid">
@@ -934,6 +979,13 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <div class="cons-grid">
           <label class="cons-ck"><input type="radio" name="dwFarm" value="S"><span>Sim — independente da resposta acima</span></label>
           <label class="cons-ck"><input type="radio" name="dwFarm" value="N"><span>Não</span></label>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <label class="fl">Incluir receita de manipulados (fórmula em cápsulas)?</label>
+        <div class="cons-grid">
+          <label class="cons-ck"><input type="radio" name="dwManip" value="S"><span>Sim — folha separada na última página do planner</span></label>
+          <label class="cons-ck"><input type="radio" name="dwManip" value="N"><span>Não</span></label>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:20px">
@@ -1020,6 +1072,30 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
         <button class="btn bs" style="padding:5px 12px;font-size:11.5px" onclick="addFarmRowDiet()">+ Adicionar item</button>
       </div>
       <div id="dietFarmRows"></div>
+    </div>
+
+    <div id="dietManipSection" style="display:none">
+      <div class="div" style="margin:18px 0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;flex-wrap:wrap">
+        <h3 style="font-size:13.5px;font-weight:700;color:var(--gd)">💊 Receita de manipulados (última folha do planner)</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn bs" style="padding:5px 12px;font-size:11.5px" onclick="importarManipDaSup()">⬇ Copiar da suplementação</button>
+          <button class="btn bs" style="padding:5px 12px;font-size:11.5px" onclick="addManipRow()">+ Adicionar ativo</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--mu);margin-bottom:8px">Só entra o que você escrever aqui. A dosagem vale <b>por cápsula ou por sachê</b> (o que a farmácia manipula).</div>
+      <div id="dietManipRows"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px">
+        <label style="font-size:12.5px">Forma<select class="di" id="dietManipForma" onchange="dietManipEdit.forma=this.value;renderDietManipRows()"><option value="capsula">Cápsula</option><option value="sache">Sachê saborizado</option></select></label>
+        <label style="font-size:12.5px">Vezes ao dia<input class="di" id="dietManipVezes" type="number" min="1" max="8" oninput="dietManipEdit.vezes=parseInt(this.value)||1;renderDietManipPrevia()"></label>
+        <label style="font-size:12.5px"><span id="dietManipPorTomLbl">Cápsulas por tomada</span><input class="di" id="dietManipPorTom" type="number" min="1" max="10" oninput="dietManipEdit.porTomada=parseInt(this.value)||1;renderDietManipPrevia()"></label>
+        <label style="font-size:12.5px">Dias de uso<input class="di" id="dietManipDias" type="number" min="1" oninput="dietManipEdit.dias=parseInt(this.value)||30;renderDietManipPrevia()"></label>
+        <label style="font-size:12.5px">Quando tomar (opcional)<input class="di" id="dietManipMomento" placeholder="ex.: manhã, tarde e noite" oninput="dietManipEdit.momento=this.value"></label>
+        <label id="dietManipSaborBox" style="font-size:12.5px;display:none">Sabor do sachê<input class="di" id="dietManipSabor" placeholder="ex.: limão" oninput="dietManipEdit.sabor=this.value"></label>
+        <label id="dietManipMlBox" style="font-size:12.5px;display:none">Diluir em (ml de água)<input class="di" id="dietManipMl" type="number" min="50" oninput="dietManipEdit.ml=parseInt(this.value)||200"></label>
+      </div>
+      <div id="dietManipPrevia" style="font-size:12.5px;color:var(--gd);font-weight:600;margin-top:8px"></div>
+      <textarea class="di" id="dietManipObs" placeholder="Observação extra para a farmácia (opcional)" style="margin-top:8px" oninput="dietManipEdit.obs=this.value"></textarea>
     </div>
 
     <div class="div" style="margin:18px 0"></div>
@@ -1299,6 +1375,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;background:#000 var(--
             <button class="btn bs" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('importFile').click()">📥 Importar Paciente/Cliente ou backup</button>
             <input type="file" id="importFile" accept="application/json,.json,text/plain,.txt" style="display:none" onchange="importarArquivo(this.files[0]);this.value=''">
           </div>
+        </div>
+        <div id="ptFiltroBar" style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px">
+          <button class="btn bs" id="ptFiltro_ativos" style="padding:5px 12px;font-size:12px" onclick="setFiltroPt('ativos')">Ativos</button>
+          <button class="btn bs" id="ptFiltro_susp" style="padding:5px 12px;font-size:12px" onclick="setFiltroPt('susp')">⏸ Suspensos</button>
+          <button class="btn bs" id="ptFiltro_todos" style="padding:5px 12px;font-size:12px" onclick="setFiltroPt('todos')">Todos</button>
         </div>
         <div id="ptList"><div class="est"><div class="ei">📭</div>Nenhum Paciente/Cliente finalizado ainda.</div></div>
       </div>
@@ -2141,7 +2222,10 @@ async function gravarPts(pts){
 }
 // ── pacientes: uma linha por paciente, várias avaliações ──
 function chavePaciente(p){return normNome(p.nome)+'|'+(p.dataNasc||'');}
-function assinaturaFicha(d){const c={...d};delete c.savedAt;return JSON.stringify(c);}
+function assinaturaFicha(d){const c={...d};delete c.savedAt;delete c.historico;delete c.id;delete c.suspenso;return JSON.stringify(c);}
+// histórico leve: cada vez que uma avaliação é salva com mudanças, o estado anterior vira uma linha (sem fotos, para não pesar)
+function snapAval(p){let g=null;try{g=gorduraPctFromData(p);}catch(e){}return{savedAt:p.savedAt||'',dataPreench:p.dataPreench||'',peso:p.peso||'',imc:p.imcVal||'',g:(g===undefined?null:g),cintura:p.cintura||''};}
+function fmtDataHora(ts){if(!ts)return'—';const t=new Date(ts);return isNaN(t)?'—':t.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace(', ',' ');}
 function fichaTemConteudo(d){return ['nome','peso','altura','telefone','email','objDescricao','cintura','abdomen'].some(k=>d&&d[k]&&String(d[k]).trim());}
 function fichaPendente(){const d=collectData();return fichaTemConteudo(d)&&assinaturaFicha(d)!==ultimoFinalizado;}
 function ordenarAval(a,b){return String(a.dataPreench||'').localeCompare(String(b.dataPreench||''))||String(a.savedAt||'').localeCompare(String(b.savedAt||''));}
@@ -2195,12 +2279,18 @@ function renderPaciente(){
   const ents=avaliacoesDe(pacAbertoKey),pg=document.getElementById('pacPage');
   if(!ents.length){fecharPaciente();return;}
   const u=ents[ents.length-1],K=kJs(pacAbertoKey);
-  const linhas=ents.slice().reverse().map(p=>{
+  const regs=[];
+  ents.forEach(p=>{regs.push({a:true,p,data:p.dataPreench||'',ts:p.savedAt||''});(p.historico||[]).forEach(h=>regs.push({a:false,h,data:h.dataPreench||p.dataPreench||'',ts:h.savedAt||''}));});
+  regs.sort((x,y)=>String(y.data).localeCompare(String(x.data))||String(y.ts).localeCompare(String(x.ts)));
+  const linhas=regs.map(r=>{
+    if(!r.a){const h=r.h,hi=h.imc?parseFloat(h.imc):null;
+      return `<tr style="opacity:.6"><td>${fmtData(h.dataPreench)}</td><td style="white-space:nowrap">${fmtDataHora(h.savedAt)} <span style="font-size:10.5px;color:var(--mu)">· versão anterior</span></td><td>${escH(h.peso||'—')}</td><td>${hi?hi.toFixed(1):'—'}</td><td>${h.g!==null&&h.g!==undefined?Number(h.g).toFixed(1)+'%':'—'}</td><td>${escH(h.cintura||'—')}</td><td></td></tr>`;}
+    const p=r.p;
     const imc=p.imcVal?parseFloat(p.imcVal):null,g=gorduraPctFromData(p);
-    return `<tr><td>${fmtData(p.dataPreench)}</td><td>${escH(p.peso||'—')}</td><td>${imc?imc.toFixed(1):'—'}</td><td>${g!==null&&g!==undefined?g.toFixed(1)+'%':'—'}</td><td>${escH(p.cintura||'—')}</td><td style="white-space:nowrap"><button class="bxs bxsg" onclick="relatorioAval('${p.id}')">📄 Relatório</button> <button class="bxs bxsb" onclick="revisarAvaliacao('${p.id}')">✏️ Revisar</button> <button class="bxs bxsr" onclick="excluirAvaliacao('${p.id}')">🗑</button></td></tr>`;
+    return `<tr><td>${fmtData(p.dataPreench)}</td><td style="white-space:nowrap">${fmtDataHora(p.savedAt)}</td><td>${escH(p.peso||'—')}</td><td>${imc?imc.toFixed(1):'—'}</td><td>${g!==null&&g!==undefined?g.toFixed(1)+'%':'—'}</td><td>${escH(p.cintura||'—')}</td><td style="white-space:nowrap"><button class="bxs bxsg" onclick="relatorioAval('${p.id}')">📄 Relatório</button> <button class="bxs bxsb" onclick="revisarAvaliacao('${p.id}')">✏️ Revisar</button> <button class="bxs bxsr" onclick="excluirAvaliacao('${p.id}')">🗑</button></td></tr>`;
   }).join('');
   const sub=[u.idade?u.idade+' anos':'',u.sexo==='F'?'Feminino':u.sexo==='M'?'Masculino':'',u.telefone||'',u.email||''].filter(Boolean).map(escH).join(' · ');
-  pg.innerHTML=`<div class="card" style="margin-bottom:0"><div class="ch"><div class="chi ig">👤</div><div style="flex:1"><h3>${escH(u.nome)}</h3><p>${sub}</p></div></div><div class="cb">
+  pg.innerHTML=`<div class="card" style="margin-bottom:0"><div class="ch"><div class="chi ig">👤</div><div style="flex:1"><h3>${escH(u.nome)}${u.suspenso?' <span style="font-size:12px;font-weight:600;color:var(--mu);border:1px solid var(--br);border-radius:6px;padding:2px 8px;margin-left:8px">⏸ Suspenso desde '+fmtData(u.suspenso)+'</span>':''}</h3><p>${sub}</p></div></div><div class="cb">
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
       <button class="btn bp" style="padding:9px 16px;font-size:13px" onclick="evoluirPaciente(${K})">➕ Evoluir Paciente/Cliente (novo protocolo)</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioAval('${u.id}')">📄 Último relatório</button>
@@ -2208,10 +2298,11 @@ function renderPaciente(){
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="abrirPedido(${K})">🩸 Pedido de exames</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioEvolucao(${K})">📈 Relatório de evolução</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="relatorioPrevistoReal(${K})">🎯 Previsto × Real</button>
+      <button class="btn bs" style="padding:9px 16px;font-size:13px" onclick="alternarSuspensao(${K})">${u.suspenso?'▶ Reativar Paciente/Cliente':'⏸ Suspender Paciente/Cliente'}</button>
       <button class="btn bs" style="padding:9px 16px;font-size:13px;color:var(--red)" onclick="excluirPaciente(${K})">🗑 Excluir Paciente/Cliente</button>
     </div>
-    <div class="rstit">📅 Avaliações (${ents.length})</div>
-    <div class="ex-scroll"><table class="ft"><thead><tr><th>Data</th><th>Peso (kg)</th><th>IMC</th><th>% Gordura</th><th>Cintura (cm)</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>
+    <div class="rstit">📅 Avaliações (${ents.length})${regs.length>ents.length?' · '+regs.length+' registros':''}</div>
+    <div class="ex-scroll"><table class="ft"><thead><tr><th>Data</th><th>Salvo em (data e hora)</th><th>Peso (kg)</th><th>IMC</th><th>% Gordura</th><th>Cintura (cm)</th><th></th></tr></thead><tbody>${linhas}</tbody></table></div>
     <div class="rstit" style="margin-top:20px">📈 Evolução</div>
     ${ents.length>1?'':'<div style="font-size:12px;color:var(--mu)">Com uma avaliação só aparecem os pontos iniciais. Use <b>Evoluir Paciente/Cliente</b> para registrar a próxima e ver a linha de evolução.</div>'}
     ${evolucaoHtml(ents)}
@@ -2227,6 +2318,18 @@ async function excluirAvaliacao(id){
   const chave=chavePaciente(p);
   await gravarPts(PTS.filter(x=>String(x.id)!==String(id)));
   pastaSalvarPaciente(chave);
+  if(pacAbertoKey)renderPaciente();else refreshPtList();
+}
+async function alternarSuspensao(key){
+  const ents=avaliacoesDe(key);if(!ents.length)return;
+  const ja=!!ents[ents.length-1].suspenso;
+  if(!ja&&!confirm('Suspender '+ents[0].nome+'? Ele sai da lista de Ativos e fica em "Suspensos". Nada é apagado e dá para reativar quando quiser.'))return;
+  const hoje=new Date().toLocaleDateString('sv-SE'); // data local (não UTC)
+  const novos=PTS.map(p=>chavePaciente(p)===key?Object.assign({},p,ja?{suspenso:undefined}:{suspenso:hoje}):p);
+  novos.forEach(p=>{if(p.suspenso===undefined)delete p.suspenso;});
+  const ok=await gravarPts(novos);if(!ok)return;
+  pastaSalvarPaciente(key);
+  showToast(ja?'▶ Paciente/Cliente reativado':'⏸ Paciente/Cliente suspenso (fica em Suspensos)');
   if(pacAbertoKey)renderPaciente();else refreshPtList();
 }
 async function excluirPaciente(key){
@@ -2258,7 +2361,7 @@ async function evoluirPaciente(key){
   const ents=avaliacoesDe(key);if(!ents.length)return;
   const base=ents[ents.length-1];
   const d=JSON.parse(JSON.stringify(base));
-  ['id','savedAt',...PHOTO_FIELDS,'exameIA'].forEach(k=>delete d[k]);
+  ['id','savedAt','historico','suspenso',...PHOTO_FIELDS,'exameIA'].forEach(k=>delete d[k]);
   MEDIDAS_NOVA_AVAL.forEach(k=>delete d[k]);
   d.dataPreench=hojeISO();
   if(d.dataNasc){d.idade=String(Math.floor((Date.now()-new Date(d.dataNasc).getTime())/(365.25*24*3600*1000)));}
@@ -2273,7 +2376,7 @@ async function evoluirPaciente(key){
 async function revisarAvaliacao(id){
   if(fichaPendente()&&!confirm('A ficha aberta agora ainda não foi finalizada e será substituída. Continuar?'))return;
   const p=PTS.find(x=>String(x.id)===String(id));if(!p)return;
-  const d=JSON.parse(JSON.stringify(p));delete d.id;delete d.savedAt;
+  const d=JSON.parse(JSON.stringify(p));delete d.id;delete d.savedAt;delete d.historico;delete d.suspenso;
   await abrirFichaNoForm(d,p.id,'✏️ Revisando a avaliação de '+fmtData(p.dataPreench)+' de '+p.nome+'. Ao clicar em Finalizar, ela é atualizada.');
 }
 function mostrarBanner(t){const b=document.getElementById('bannerNovaAval');if(b){b.textContent=t;b.style.display='block';}}
@@ -2344,7 +2447,7 @@ async function landingNovoPaciente(){
   goTab(0);
 }
 const CAMPOS_TEXTO_RESET=['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','horasSono','obsGerais','cigarrosN','turno','pa','consRespNome','consRespVinc','consNomeConf'];
-const RADIOS_RESET=['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo'];
+const RADIOS_RESET=['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','interesseEAA','incluirInteresseEAA','interesseSup','incluirInteresseSup','continuaSup','incluirSupConsult','usaAnticoncepcional','continuaUso','reavaliarProtocolo'];
 const CHECKGRUPOS_RESET=['doencas','alergias','histFam','queixasGI'];
 // zera a ficha inteira na hora, sem depender de recarregar a página (o visualizador de teste do Claude não recarrega de verdade)
 async function resetFormularioCompleto(){
@@ -2358,7 +2461,7 @@ async function resetFormularioCompleto(){
   document.querySelectorAll('#s3 input[name^="freq_"]').forEach(r=>{r.checked=false;});
   const aguaS=document.getElementById('aguaS');if(aguaS){aguaS.value=2;const v=document.getElementById('aguaV');if(v)v.textContent='2.0 L';}
   const estS=document.getElementById('estS');if(estS){estS.value=3;const v=document.getElementById('estV');if(v)v.textContent='3';}
-  ['supDet','eaaDet','anticonDet','protocoloDet','objOutroBox','cqtd','medPorDoencaWrap'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  ['supDet','eaaDet','anticonDet','protocoloDet','eaaInteresse','reavaliarBox','eaaIncInteresse','supInteresse','supIncInteresse','supProtocoloDet','supIncluirBox','objOutroBox','cqtd','medPorDoencaWrap'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
   document.querySelectorAll('[id^="medBox_"]').forEach(e=>e.style.display='none');
   const caf=document.getElementById('caf');if(caf)caf.value='1.2';
   dcaItems=Array.from({length:10},()=>({name:'',mode:'porcao',qty:1}));
@@ -4018,13 +4121,28 @@ function calcCP(){
   document.getElementById('cpCl').innerHTML=`<span class="sem s${risk?'r':'g'}"></span>${risk?'Risco aumentado':'Normal'}`;
 }
 function toggleAf(show){document.getElementById('afDet').style.display=show?'block':'none';}
-function refreshProtocoloDet(){
-  const s=document.querySelector('input[name="usaSuplemento"]:checked')?.value;
-  const e=document.querySelector('input[name="usaEAA"]:checked')?.value;
-  document.getElementById('protocoloDet').style.display=(s==='S'||e==='S')?'block':'none';
+function limparRadioNome(n){document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{r.checked=false;const lb=r.closest('.ro');if(lb)lb.classList.remove('selected');});}
+// Fluxo: usa EAA? Sim → continua? → (Sim) incluir na consultoria?  |  Não → tem interesse?
+const FLUXOS_USO=[
+  {usa:'usaEAA',int:'interesseEAA',incInt:'incluirInteresseEAA',cont:'continuaUso',inc:'reavaliarProtocolo',ids:{uso:'protocoloDet',int:'eaaInteresse',incInt:'eaaIncInteresse',inc:'reavaliarBox'}},
+  {usa:'usaSuplemento',int:'interesseSup',incInt:'incluirInteresseSup',cont:'continuaSup',inc:'incluirSupConsult',ids:{uso:'supProtocoloDet',int:'supInteresse',incInt:'supIncInteresse',inc:'supIncluirBox'}}
+];
+// usa? Sim → continua? → (Sim) incluir na consultoria?  |  usa? Não → tem interesse? → (Sim) incluir no plano?
+function refreshProtocoloDet(limpar){
+  const val=n=>document.querySelector(`input[name="${n}"]:checked`)?.value;
+  const _s=(id,v)=>{const el=document.getElementById(id);if(el)el.style.display=v?'block':'none';};
+  FLUXOS_USO.forEach(F=>{
+    const u=val(F.usa),i=val(F.int),c=val(F.cont);
+    _s(F.ids.uso,u==='S');_s(F.ids.int,u==='N');_s(F.ids.incInt,u==='N'&&i==='S');_s(F.ids.inc,u==='S'&&c==='S');
+    if(limpar){
+      if(u!=='S'){limparRadioNome(F.cont);limparRadioNome(F.inc);}else if(c!=='S')limparRadioNome(F.inc);
+      if(u!=='N'){limparRadioNome(F.int);limparRadioNome(F.incInt);}else if(i!=='S')limparRadioNome(F.incInt);
+    }
+  });
+  if(limpar)autoSave();
 }
-function toggleSup(show){document.getElementById('supDet').style.display=show?'block':'none';refreshProtocoloDet();}
-function toggleEAA(show){document.getElementById('eaaDet').style.display=show?'block':'none';refreshProtocoloDet();}
+function toggleSup(show){document.getElementById('supDet').style.display=show?'block':'none';refreshProtocoloDet(true);}
+function toggleEAA(show){document.getElementById('eaaDet').style.display=show?'block':'none';refreshProtocoloDet(true);}
 function toggleDescontrole(show){document.getElementById('descontroleDet').style.display=show?'block':'none';}
 
 // ── CAF (Coeficiente de Atividade Física) ──
@@ -4512,7 +4630,7 @@ try{localStorage.removeItem(DK);}catch(e){}
 function collectData(){
   const d={};
   ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','imcVal','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno','notasAtendimento'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
-  ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{const e=document.querySelector(`input[name="${n}"]:checked`);d[n]=e?e.value:'';});
+  ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','interesseEAA','incluirInteresseEAA','interesseSup','incluirInteresseSup','continuaSup','incluirSupConsult','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{const e=document.querySelector(`input[name="${n}"]:checked`);d[n]=e?e.value:'';});
   d.descontroleGatilhos=Array.from(document.querySelectorAll('#cg_descontroleGatilhos input:checked')).map(i=>i.value);
   ['doencas','alergias','histFam','queixasGI'].forEach(g=>{d[g]=Array.from(document.querySelectorAll(`#cg_${g} input:checked`)).map(i=>i.value);});
   d.tipoAf=Array.from(document.querySelectorAll('#afDet input[type="checkbox"]:checked')).map(i=>i.value);
@@ -4600,7 +4718,14 @@ async function finalizar(){
   }
   const chaveAntiga=idx>-1?chavePaciente(pts[idx]):null;
   const entry={...d,id:idx>-1?pts[idx].id:Date.now()};
-  if(idx>-1)pts[idx]=entry;else pts.push(entry);
+  if(idx>-1){
+    const old=pts[idx];
+    const hist=Array.isArray(old.historico)?old.historico.slice():[];
+    if(assinaturaFicha(old)!==assinaturaFicha(d))hist.push(snapAval(old));
+    if(hist.length)entry.historico=hist.slice(-80);
+    if(old.suspenso)entry.suspenso=old.suspenso;
+    pts[idx]=entry;
+  }else pts.push(entry);
   const ok=await gravarPts(pts);
   if(!ok)return false;
   ultimoFinalizado=assinaturaFicha(d);
@@ -4619,7 +4744,7 @@ function loadData(dov){
     const d=dov||JSON.parse(raw);
     rotCarregar(d);
     ['nome','dataNasc','idade','telefone','email','dataPreench','peso','altura','pescoco','ombro','cintura','abdomen','quadril','torax','biceps','bracoContraido','antebraco','coxaMed','panturrilha','gordura','db_tri','db_sub','db_axi','db_pei','db_sup','db_abd','db_cox','preD','preE','medicamentos','cirurgias','suplementoDetalhe','eaaDetalhe','alergiasObs','apetite','horaFome','objetivo','objOutroTxt','obsGeraisId','freqAf','duracaoAf','intensAf','caf','horasSono','obsGerais','cigarrosN','turno','notasAtendimento'].forEach(id=>{const e=document.getElementById(id);if(e&&d[id]!==undefined)e.value=d[id];});
-    ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{
+    ['sexo','praticaAf','alcool','sonoQual','taba','refFora','posicaoTrab','usaMedicamento','usaSuplemento','usaEAA','interesseEAA','incluirInteresseEAA','interesseSup','incluirInteresseSup','continuaSup','incluirSupConsult','usaAnticoncepcional','continuaUso','reavaliarProtocolo','descontrole','descontroleFreq','descontroleTipo'].forEach(n=>{
       if(d[n]){
         document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{
           r.checked=(r.value===d[n]);
@@ -4674,11 +4799,19 @@ async function clearForm(){
 }
 
 // ── REPORTS ──
+let ptFiltro='ativos';
+function setFiltroPt(f){ptFiltro=f;refreshPtList();}
+function suspensoEm(g){const u=g.entries[g.entries.length-1];return(u&&u.suspenso)||'';}
 function refreshPtList(){
   const cnt=document.getElementById('ptCount');
   const wrap=document.getElementById('ptList');
-  const gs=agruparPacientes(PTS);
-  if(cnt)cnt.textContent=gs.length+' Paciente/Cliente(s)';
+  const todos=agruparPacientes(PTS);
+  const nSusp=todos.filter(g=>suspensoEm(g)).length;
+  ['ativos','susp','todos'].forEach(k=>{const b=document.getElementById('ptFiltro_'+k);if(b){b.className='btn '+(k===ptFiltro?'bp':'bs');}});
+  const sb=document.getElementById('ptFiltro_susp');if(sb)sb.textContent='⏸ Suspensos ('+nSusp+')';
+  const gs=ptFiltro==='todos'?todos:todos.filter(g=>ptFiltro==='susp'?!!suspensoEm(g):!suspensoEm(g));
+  if(cnt)cnt.textContent=gs.length+' Paciente/Cliente(s)'+(ptFiltro==='ativos'&&nSusp?' · '+nSusp+' suspenso(s)':'');
+  if(!gs.length&&todos.length){wrap.innerHTML='<div class="est"><div class="ei">'+(ptFiltro==='susp'?'✅':'📭')+'</div>'+(ptFiltro==='susp'?'Nenhum Paciente/Cliente suspenso.':'Nenhum Paciente/Cliente nesta lista.')+'</div>';renderPastaStatus();return;}
   if(!gs.length){wrap.innerHTML='<div class="est"><div class="ei">📭</div>Nenhum Paciente/Cliente finalizado ainda.</div>';renderPastaStatus();return;}
   wrap.innerHTML=gs.map(g=>{
     const u=g.entries[g.entries.length-1];
@@ -4686,7 +4819,8 @@ function refreshPtList(){
     const lbl=imc?classIMC(imc).label:'—';
     const flagCor=getFlagPaciente(g.key);
     const flagInfo=flagCor?FLAG_INFO[flagCor]:{emoji:'⚪',titulo:'Sem status — clique para marcar'};
-    return `<div class="prow" style="cursor:pointer" onclick="abrirPaciente(${kJs(g.key)})"><div style="display:flex;align-items:center;gap:10px"><span title="${flagInfo.titulo} (clique para mudar)" onclick="cicloFlagPaciente(${kJs(g.key)},event)" style="font-size:16px;cursor:pointer;line-height:1">${flagInfo.emoji}</span><div><div class="pn">${escH(g.nome||'Sem nome')}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
+    const _sp=suspensoEm(g);
+    return `<div class="prow" style="cursor:pointer${_sp?';opacity:.62':''}" onclick="abrirPaciente(${kJs(g.key)})"><div style="display:flex;align-items:center;gap:10px"><span title="${flagInfo.titulo} (clique para mudar)" onclick="cicloFlagPaciente(${kJs(g.key)},event)" style="font-size:16px;cursor:pointer;line-height:1">${flagInfo.emoji}</span><div><div class="pn">${escH(g.nome||'Sem nome')}${_sp?' <span style="font-size:11px;font-weight:600;color:var(--mu);border:1px solid var(--br);border-radius:6px;padding:1px 6px;margin-left:6px">⏸ Suspenso desde '+fmtData(_sp)+'</span>':''}</div><div class="pm">${g.entries.length} avaliação(ões) · última em ${fmtData(u.dataPreench)} · IMC: ${imc?imc.toFixed(1):'—'} · ${lbl}</div></div></div><div class="pa"><span style="font-size:20px;color:var(--mu)">›</span></div></div>`;
   }).join('');
   renderPastaStatus();
 }
@@ -5242,6 +5376,20 @@ function dietWizProximo(){
   dietWizCtx.regras.distFat=distFat;
   document.getElementById('dwStep1').style.display='none';
   document.getElementById('dwStep2').style.display='block';
+  try{dietWizPreMarcar2();}catch(e){console.error(e);}
+}
+// o que o paciente já usa e vai manter vem marcado; nada é desmarcado se você já escolheu antes
+function dietWizPreMarcar2(){
+  const d=(dietWizCtx&&dietWizCtx.d)||{};
+  const mark=(name,v)=>{if(document.querySelector(`input[name="${name}"]:checked`))return false;const r=document.querySelector(`input[name="${name}"][value="${v}"]`);if(r){r.checked=true;return true;}return false;};
+  const manter=(u,c,i,ii)=>(d[u]==='S'&&d[c]==='S')||(d[u]==='N'&&d[i]==='S'&&d[ii]==='S');
+  let n=0;
+  if(manter('usaSuplemento','continuaSup','interesseSup','incluirInteresseSup')&&mark('dwSup','S'))n++;
+  if(manter('usaEAA','continuaUso','interesseEAA','incluirInteresseEAA')&&mark('dwEAA','S'))n++;
+  let nota=document.getElementById('dwPreNota');
+  if(!nota){nota=document.createElement('div');nota.id='dwPreNota';nota.style.cssText='font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:12px;display:none';const p=document.querySelector('#dwStep2 p');if(p)p.insertAdjacentElement('afterend',nota);}
+  nota.style.display=n?'block':'none';
+  nota.innerHTML=n?'✅ Marquei sozinho o que o Paciente/Cliente já usa e vai manter. Esses itens já aparecem na tabela da tela seguinte, e você ajusta a dose.':'';
 }
 function dietWizVoltar(){
   document.getElementById('dwStep1').style.display='block';
@@ -5251,8 +5399,9 @@ function dietWizProximo2(){
   const sup=document.querySelector('input[name="dwSup"]:checked');
   const eaa=document.querySelector('input[name="dwEAA"]:checked');
   const farm=document.querySelector('input[name="dwFarm"]:checked');
-  if(!sup||!eaa||!farm){const fl=[];if(!sup)fl.push('Suplementos');if(!eaa)fl.push('EAA (esteroides anabolizantes androgênicos)');if(!farm)fl.push('Fármacos');avisoFicha('Faltam respostas nesta tela',fl,{como:'Marque Sim ou Não em cada pergunta e toque em Próximo de novo.'});return;}
-  dietWizCtx.incluirSup=sup.value==='S';dietWizCtx.incluirEAA=eaa.value==='S';dietWizCtx.incluirFarm=farm.value==='S';
+  const manip=document.querySelector('input[name="dwManip"]:checked');
+  if(!sup||!eaa||!farm||!manip){const fl=[];if(!sup)fl.push('Suplementos');if(!eaa)fl.push('EAA (esteroides anabolizantes androgênicos)');if(!farm)fl.push('Fármacos');if(!manip)fl.push('Receita de manipulados');avisoFicha('Faltam respostas nesta tela',fl,{como:'Marque Sim ou Não em cada pergunta e toque em Próximo de novo.'});return;}
+  dietWizCtx.incluirSup=sup.value==='S';dietWizCtx.incluirEAA=eaa.value==='S';dietWizCtx.incluirFarm=farm.value==='S';dietWizCtx.incluirManip=manip.value==='S';
   dietWizRenderStep3();
   document.getElementById('dwStep2').style.display='none';
   document.getElementById('dwStep3').style.display='block';
@@ -5285,7 +5434,7 @@ async function dietWizGerar(){
     showToast('⏳ A IA está montando os lanches com as suas respostas…');
     try{prefsIA=await buscarLanchesIA(ctx);}catch(e){showToast('ℹ️ A IA não respondeu agora — usei os lanches padrão. Você pode ajustar na prévia.','#e67e22');}
   }
-  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino,treino:ctx.treino,obsNutri:ctx.obsNutri||'',formato:ctx.formato||'A'},'nova');
+  abrirEditorDieta(ctx.d,{kcal:ctx.kcal,pP:ctx.pP,gP:ctx.gP,fibG:ctx.fibG,modelo:ctx.modelo,regras:ctx.regras,incluirSup:ctx.incluirSup,incluirEAA:ctx.incluirEAA,incluirFarm:ctx.incluirFarm,incluirManip:ctx.incluirManip,fecho:f?f.value:'atual',obsImportante:obsEl?obsEl.value.trim():'',prefs:ctx.prefs,prefsIA,estrategiaKcal:ctx.kcalEstrategiaEscolhida,dcaRefeicoesLivres:ctx.dcaRefeicoesLivres,semHorario:ctx.semHorario,posTreino:ctx.posTreino,treino:ctx.treino,obsNutri:ctx.obsNutri||'',formato:ctx.formato||'A'},'nova');
 }
 
 // ── Botão Voltar do navegador: fecha a tela aberta, volta de aba e só então pergunta se quer sair ──
@@ -5653,6 +5802,8 @@ function evolucaoCorporal(d){
 function carregarDieta(i){if(PTS[i])iniciarGeracaoDieta(PTS[i]);}
 
 let dietDataCache=null,dietPlanEdit=[],dietSupEdit=[],dietEAAEdit=[],dietFarmEdit=[],dietOv=null,dietCas=false,dietEditado=false,dietIncluirSup=true,dietIncluirEAA=false,dietIncluirFarm=false;
+const MANIP_PADRAO=()=>({ativos:[],forma:'capsula',vezes:1,porTomada:1,dias:30,momento:'',sabor:'',ml:200,obs:''});
+let dietIncluirManip=false,dietManipEdit=MANIP_PADRAO();
 const KCAL_ESTRATEGIA_ROT={deficit:'🔻 Déficit',manutencao:'⚖️ Manutenção',superavit:'🔺 Superávit'};
 function dietResumoLinha(base){const el=document.getElementById('dietResumoLinha');if(el){const ci=cafInfo(dietDataCache||{});const est=dietOv&&dietOv.estrategiaKcal;const estTxt=est?' · '+(KCAL_ESTRATEGIA_ROT[est.estrategia]||'')+(est.pct?' ('+(est.pct>0?'+':'')+Math.round(est.pct*100)+'%)':''):'';el.textContent='Meta desta dieta: '+base.kcal+' kcal/dia'+estTxt+' · Proteínas '+base.protG+' g ('+Math.round(base.pP*100)+'%) · Carboidratos '+base.carbG+' g ('+Math.round(base.cP*100)+'%) · Gorduras '+base.fatG+' g ('+Math.round(base.gP*100)+'%) · Fibra mín. '+base.fibG+' g · CAF '+ci.v.toFixed(2).replace('.',',')+(ci.def?' (definido por você)':' (estimado pelo questionário — defina em Atividade)');}}
 function dietToggleCaseiras(){
@@ -5672,7 +5823,7 @@ function salvarRascunhoDieta(){
     localStorage.setItem(dietDKp(dietDataCache),JSON.stringify({
       chave:dietChavePaciente(dietDataCache),savedAt:new Date().toISOString(),
       dietPlanEdit,dietSupEdit,dietEAAEdit,dietFarmEdit,dietOv,dietCas,
-      dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietPesosLocked,dietPesosStale,dietExcecoes:[...dietExcecoes],dietDocesCientes:[...dietDocesCientes]
+      dietIncluirSup,dietIncluirEAA,dietIncluirFarm,dietIncluirManip,dietManipEdit,dietPesosLocked,dietPesosStale,dietExcecoes:[...dietExcecoes],dietDocesCientes:[...dietDocesCientes]
     }));
   }catch(e){}
 }
@@ -5691,7 +5842,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
     const rasc=(modo==='continuar'||modo==='prev')?_lerRascunhoDieta(d,sufixo):null;
     if(rasc){
       dietPlanEdit=rasc.dietPlanEdit;dietSupEdit=rasc.dietSupEdit;dietEAAEdit=rasc.dietEAAEdit;dietFarmEdit=rasc.dietFarmEdit;
-      dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;
+      dietOv=rasc.dietOv;dietCas=rasc.dietCas;dietIncluirSup=rasc.dietIncluirSup;dietIncluirEAA=rasc.dietIncluirEAA;dietIncluirFarm=rasc.dietIncluirFarm;dietIncluirManip=!!rasc.dietIncluirManip;dietManipEdit=Object.assign(MANIP_PADRAO(),rasc.dietManipEdit||{});
       dietPesosLocked=rasc.dietPesosLocked||{};dietExcecoes=new Set(rasc.dietExcecoes||[]);dietPesosStale=!!rasc.dietPesosStale;dietDocesCientes=new Set(rasc.dietDocesCientes||[]);
       if(cbc)cbc.checked=dietCas;
       restaurado=true;
@@ -5704,6 +5855,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
   const base=calcDietaBase(d,dietOv,dietCas);
   if(!restaurado){
     dietIncluirSup=base.incluirSup;dietIncluirEAA=base.incluirEAA;dietIncluirFarm=base.incluirFarm;
+    dietIncluirManip=!!(ovNovo&&ovNovo.incluirManip);dietManipEdit=MANIP_PADRAO();
   }
   dietResumoLinha(base);
   {const _el=document.getElementById('dietResumoLinha');if(_el&&dietOv&&dietOv.formato==='B')_el.innerHTML+=' · <b>Formato B (por grupos + Tabela de trocas)</b>';}
@@ -5721,7 +5873,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
   }
   // respostas novas do questionário (suplementos/EAA/fármacos) valem mesmo ao continuar uma dieta antiga
   if(restaurado&&ovNovo&&ovNovo.incluirSup!==undefined){
-    dietIncluirSup=ovNovo.incluirSup!==false;dietIncluirEAA=!!ovNovo.incluirEAA;dietIncluirFarm=!!ovNovo.incluirFarm;
+    dietIncluirSup=ovNovo.incluirSup!==false;dietIncluirEAA=!!ovNovo.incluirEAA;dietIncluirFarm=!!ovNovo.incluirFarm;if(ovNovo.incluirManip!==undefined)dietIncluirManip=!!ovNovo.incluirManip;
     try{
       if(dietIncluirSup&&!(dietSupEdit||[]).length)dietSupEdit=buildSupplementTable(d,base.hasDM,base.hasHAS,base.hasDis,base.hasObe,base.obj);
       if(dietIncluirEAA&&!(dietEAAEdit||[]).length)dietEAAEdit=buildEAATable(d);
@@ -5733,11 +5885,13 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
   if(dietIncluirSup&&!(dietSupEdit||[]).length){dietSupEdit=[{item:'',dose:'',horario:'',rec:''}];semSugestao=true;}
   if(dietIncluirEAA&&!(dietEAAEdit||[]).length)dietEAAEdit=[{item:'',dose:'',fracionamento:'',obs:''}];
   if(dietIncluirFarm&&!(dietFarmEdit||[]).length)dietFarmEdit=[{item:'',dose:'',frequencia:'',tempoUso:'',obs:''}];
+  if(dietIncluirManip&&!((dietManipEdit&&dietManipEdit.ativos)||[]).length)dietManipEdit.ativos=[{item:'',dose:''}];
   renderDietMealRows();
   try{const _oe=document.getElementById('dietObsNutri');if(_oe)_oe.value=(dietOv&&dietOv.obsNutri)||'';atualizarPainelEditor();}catch(e){console.error(e);}
   try{renderDietSupRows();}catch(e){console.error(e);}
   try{renderDietEAARows();}catch(e){console.error(e);}
   try{renderDietFarmRows();}catch(e){console.error(e);}
+  try{renderDietManipRows();}catch(e){console.error(e);}
   try{verificarInteracoesSup();}catch(e){console.error(e);}
   const alertaDesc=document.getElementById('dietDescontroleAlerta');
   if(alertaDesc){
@@ -5756,6 +5910,7 @@ function _abrirEditorDietaInterno(dataOverride,ov,modo){
   if(secOff)secOff.style.display=dietIncluirSup?'none':'block';
   const eaaSec=document.getElementById('dietEAASection');if(eaaSec)eaaSec.style.display=dietIncluirEAA?'block':'none';
   const farmSec=document.getElementById('dietFarmSection');if(farmSec)farmSec.style.display=dietIncluirFarm?'block':'none';
+  const manipSec=document.getElementById('dietManipSection');if(manipSec)manipSec.style.display=dietIncluirManip?'block':'none';
   document.getElementById('dietEditorOverlay').style.display='flex';
   try{verificarConflitosDieta();}catch(e){console.error(e);}
   if(semSugestao)showToast('ℹ️ Nenhum suplemento sugerido automaticamente para este paciente. Role até "Suplementação, Vitaminas e Minerais" e preencha a linha em branco.','#e67e22');
@@ -6414,6 +6569,44 @@ function renderDietEAARows(){
       <textarea class="di" placeholder="Observação" oninput="dietEAAEdit[${i}].obs=this.value">${s.obs}</textarea>
     </div>`).join('');
 }
+function renderDietManipRows(){
+  const wrap=document.getElementById('dietManipRows');if(!wrap)return;
+  const m=dietManipEdit=Object.assign(MANIP_PADRAO(),dietManipEdit||{});
+  if(!Array.isArray(m.ativos))m.ativos=[];
+  wrap.innerHTML=m.ativos.map((a,i)=>`
+    <div class="diet-row"><div class="diet-row-top">
+      <input class="di" style="flex:1" value="${escH(a.item||'')}" placeholder="Ativo (ex.: Tribulus terrestris)" oninput="dietManipEdit.ativos[${i}].item=this.value">
+      <input class="di" style="width:190px" value="${escH(a.dose||'')}" placeholder="Dosagem (ex.: 333 mg)" oninput="dietManipEdit.ativos[${i}].dose=this.value">
+      <button class="rf" onclick="removeManipRow(${i})">✕</button>
+    </div></div>`).join('');
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  set('dietManipForma',m.forma);set('dietManipVezes',m.vezes);set('dietManipPorTom',m.porTomada);set('dietManipDias',m.dias);
+  set('dietManipMomento',m.momento||'');set('dietManipSabor',m.sabor||'');set('dietManipMl',m.ml||200);set('dietManipObs',m.obs||'');
+  const sa=m.forma==='sache';
+  const b1=document.getElementById('dietManipSaborBox'),b2=document.getElementById('dietManipMlBox'),lb=document.getElementById('dietManipPorTomLbl');
+  if(b1)b1.style.display=sa?'block':'none';if(b2)b2.style.display=sa?'block':'none';if(lb)lb.textContent=sa?'Sachês por tomada':'Cápsulas por tomada';
+  renderDietManipPrevia();
+}
+function manipTotalUnidades(m){return Math.max(1,parseInt(m.vezes)||1)*Math.max(1,parseInt(m.porTomada)||1)*Math.max(1,parseInt(m.dias)||30);}
+function renderDietManipPrevia(){
+  const el=document.getElementById('dietManipPrevia');if(!el)return;
+  const m=dietManipEdit,u=m.forma==='sache'?'sachê(s)':'cápsula(s)';
+  el.textContent='Total a manipular: '+manipTotalUnidades(m)+' '+u;
+}
+function addManipRow(){dietManipEdit.ativos.push({item:'',dose:''});renderDietManipRows();}
+function removeManipRow(i){dietManipEdit.ativos.splice(i,1);renderDietManipRows();}
+function importarManipDaSup(){
+  let n=0;
+  (dietSupEdit||[]).forEach(s=>{
+    if(!s.item||!s.item.trim())return;
+    if(dietManipEdit.ativos.some(a=>normTxt(a.item)===normTxt(s.item)))return;
+    dietManipEdit.ativos=dietManipEdit.ativos.filter(a=>a.item||a.dose);
+    dietManipEdit.ativos.push({item:s.item.trim(),dose:(s.dose||'').trim()});n++;
+  });
+  if(!dietManipEdit.ativos.length)dietManipEdit.ativos.push({item:'',dose:''});
+  renderDietManipRows();
+  showToast(n?('✅ '+n+' item(ns) copiado(s) da suplementação — apague o que não for para a fórmula'):'ℹ️ Nada novo para copiar da suplementação','#e67e22');
+}
 function addEAARowDiet(){dietEAAEdit.push({item:'',dose:'',fracionamento:'',obs:''});renderDietEAARows();}
 function removeEAARowDiet(i){dietEAAEdit.splice(i,1);renderDietEAARows();}
 
@@ -6453,7 +6646,7 @@ async function confirmarGerarDieta(){
   else if(dietPesosStale){if(!confirm('Você alterou alimentos depois do último cálculo — os pesos podem não bater a meta de cada refeição. Gerar assim mesmo? (Ou cancele e clique em Refresh.)'))return;}
   document.getElementById('dietEditorOverlay').style.display='none';
   mostrarProgressoWord(5,'Preparando o PLANNER...');
-  await gerarDietaDoc(dietDataCache,dietPlanEdit,dietIncluirSup?dietSupEdit:[],dietIncluirEAA?dietEAAEdit:[],dietIncluirFarm?dietFarmEdit:[]);
+  await gerarDietaDoc(dietDataCache,dietPlanEdit,dietIncluirSup?dietSupEdit:[],dietIncluirEAA?dietEAAEdit:[],dietIncluirFarm?dietFarmEdit:[],dietIncluirManip?dietManipEdit:null);
   registrarDietaNaAval(dietDataCache);
 }
 
@@ -7219,15 +7412,20 @@ const DWQ_TELAS=[
      let h='';
      if(pvl)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Alergia à proteína do leite no cadastro: uso <b>leite vegetal</b> e nenhum laticínio, automático.</div>';
      else if(lac)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Intolerância à lactose no cadastro: uso <b>leite sem lactose</b>, automático.</div>';
-     else h+=`<div class="fg"><label class="fl">Vai usar leite?</label><div class="cons-grid">${_radio('dwqLeite','S',p.leite.usa,'Sim')}${_radio('dwqLeite','N',!p.leite.usa,'Não')}</div></div>
-       <div id="dwqLeiteTipo" style="display:${p.leite.usa?'block':'none'};margin-top:10px"><label class="fl">Qual?</label><div class="cons-grid">${[['desnatado','Desnatado'],['semi','Semidesnatado'],['integral','Integral'],['vegetal','Vegetal (soja)'],['aveia','Vegetal (aveia)']].map(([v,r])=>_radio('dwqLeiteT',v,p.leite.tipo===v,r)).join('')}</div></div>`;
+     else{
+       // laticínios excluídos (rotina, QFA ou chip da tela anterior) → leite vem como Não, a menos que você já tenha escolhido outra coisa
+       const _lat=p.aversoes.ativo?(p.aversoes.marcados||[]).includes('laticinios'):aversoesSugeridasQFA(dietWizCtx.d).includes('laticinios');
+       const _usa=p.leite.tocado?p.leite.usa:(p.leite.usa&&!_lat);
+       if(_lat&&!p.leite.tocado)h+='<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-bottom:10px">✅ Leite e derivados estão excluídos (rotina, QFA ou exclusões da tela anterior): deixei leite como <b>Não</b>. Mude abaixo se quiser.</div>';
+       h+=`<div class="fg"><label class="fl">Vai usar leite?</label><div class="cons-grid">${_radio('dwqLeite','S',_usa,'Sim')}${_radio('dwqLeite','N',!_usa,'Não')}</div></div>
+       <div id="dwqLeiteTipo" style="display:${_usa?'block':'none'};margin-top:10px"><label class="fl">Qual?</label><div class="cons-grid">${[['desnatado','Desnatado'],['semi','Semidesnatado'],['integral','Integral'],['vegetal','Vegetal (soja)'],['aveia','Vegetal (aveia)']].map(([v,r])=>_radio('dwqLeiteT',v,p.leite.tipo===v,r)).join('')}</div></div>`;}
      h+=glu?'<div style="font-size:12.5px;padding:8px 10px;background:var(--gp);border:1px solid var(--br);border-radius:8px;margin-top:14px">✅ Glúten no cadastro (alergia/doença celíaca): cardápio <b>sem glúten</b>, automático.</div>'
        :`<div class="fg" style="margin-top:14px"><label class="fl">Priorizar alimentos sem glúten?</label><div class="cons-grid">${_radio('dwqGlu','S',p.semGluten,'Sim')}${_radio('dwqGlu','N',!p.semGluten,'Não')}</div></div>`;
      return h;},
    bind:()=>{document.querySelectorAll('input[name=dwqLeite]').forEach(r=>r.addEventListener('change',()=>dwQToggle('dwqLeiteTipo',_valRadio('dwqLeite')==='S')));},
    coletar:p=>{
      const al=_arr(dietWizCtx.d.alergias);
-     if(!al.includes('LEITE')&&!al.includes('LACTOSE')){p.leite.usa=_valRadio('dwqLeite')!=='N';if(p.leite.usa)p.leite.tipo=_valRadio('dwqLeiteT')||p.leite.tipo||'desnatado';}
+     if(!al.includes('LEITE')&&!al.includes('LACTOSE')){p.leite.tocado=true;p.leite.usa=_valRadio('dwqLeite')!=='N';if(p.leite.usa)p.leite.tipo=_valRadio('dwqLeiteT')||p.leite.tipo||'desnatado';}
      if(!al.includes('GLUTEN'))p.semGluten=_valRadio('dwqGlu')==='S';},
    padrao:p=>{p.leite={usa:true,tipo:'desnatado'};p.semGluten=false;}},
   {titulo:'Frutas e oleaginosas específicas',sub:'Só se o Paciente/Cliente pediu algo. Se não, uso o padrão da casa.',
@@ -7487,7 +7685,7 @@ function frutasLiberadasFiltradas(ex){return buildFrutasLiberadas().filter(f=>!e
 
 function gerarDieta(){iniciarGeracaoDieta();}
 
-async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride){
+async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride,manipOverride){
   if(!window.docx){esconderProgressoWord();showToast('⚠️ Biblioteca Word não carregada. Verifique a internet.','#e67e22');return;}
   mostrarProgressoWord(15,'Calculando metas e cardápio...');
   try{
@@ -7910,6 +8108,66 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
         HR());
     }
 
+    // ── RECEITA DE MANIPULADOS: folha separada, última página, só com o que o nutricionista digitou ──
+    const _MANIP=((manipOverride&&manipOverride.ativos)||[]).filter(a=>a.item&&a.item.trim());
+    let RECEITA=null;
+    if(manipOverride&&_MANIP.length){
+      const sache=manipOverride.forma==='sache';
+      const vz=Math.max(1,parseInt(manipOverride.vezes)||1),pt=Math.max(1,parseInt(manipOverride.porTomada)||1),dias=Math.max(1,parseInt(manipOverride.dias)||30);
+      const total=vz*pt*dias;
+      const GOLD='B8962E',GOLDD='8B6914',CREME='FAF3E0',LN='E8DCB8';
+      const _nb={style:BorderStyle.NONE,size:0,color:'FFFFFF'};
+      const noB={top:_nb,bottom:_nb,left:_nb,right:_nb};
+      const _ln={style:BorderStyle.SINGLE,size:4,color:LN};
+      const cel=(ch,w,o)=>{o=o||{};return new TableCell({width:{size:w,type:WidthType.DXA},borders:o.borders||noB,shading:o.fill?{fill:o.fill,type:ShadingType.CLEAR}:undefined,margins:{top:o.mt===undefined?100:o.mt,bottom:o.mb===undefined?100:o.mb,left:150,right:150},children:ch});};
+      const tx=(t,o)=>new TextRun(Object.assign({text:t,size:22,font:'Calibri'},o||{}));
+      const pr=(runs,o)=>new Paragraph(Object.assign({children:runs},o||{}));
+      const un1=sache?'sachê':'cápsula',unN=sache?'sachês':'cápsulas';
+      const vezesTxt=vz===1?'1 vez ao dia':vz+' vezes ao dia';
+      const momento=(manipOverride.momento||'').trim();
+      const sabor=(manipOverride.sabor||'').trim();
+      const ml=parseInt(manipOverride.ml)||200;
+      const linhasDz=[];
+      linhasDz.push(['Manipular: ',total+' '+(total===1?un1:unN)+' ('+dias+' dias).']);
+      linhasDz.push(['Forma farmacêutica: ',sache?('sachê saborizado'+(sabor?' (sabor '+sabor+')':'')+'. Veículo, aroma e edulcorante q.s.p. 1 sachê.'):'cápsula. Excipiente q.s.p. 1 cápsula.']);
+      linhasDz.push(['Via de administração: ','oral.']);
+      linhasDz.push(['Posologia: ',(sache?('diluir '+pt+' '+(pt===1?un1:unN)+' em '+ml+' ml de água e tomar, ')+vezesTxt:('tomar '+pt+' '+(pt===1?un1:unN)+', '+vezesTxt))+(momento?' ('+momento+')':'')+'.']);
+      linhasDz.push(['Duração do tratamento: ',dias+' dias.']);
+      if(manipOverride.obs&&manipOverride.obs.trim())linhasDz.push(['Observação: ',manipOverride.obs.trim()]);
+      const linhasAt=_MANIP.map((a,i)=>{
+        const f=i%2===0?CREME:undefined;
+        const bd={top:_nb,left:_nb,right:_nb,bottom:_ln};
+        return new TableRow({children:[
+          cel([pr([tx(a.item.trim(),{size:24})])],6000,{fill:f,borders:bd,mt:130,mb:130}),
+          cel([pr([tx((a.dose||'').trim(),{size:24,bold:true})],{alignment:AlignmentType.RIGHT})],3360,{fill:f,borders:bd,mt:130,mb:130}),
+        ]});
+      });
+      const hc=(t,w,al)=>cel([pr([tx(t,{bold:true,color:'FFFFFF',size:23})],{alignment:al||AlignmentType.LEFT})],w,{fill:GOLDD,mt:120,mb:120});
+      const boxB={style:BorderStyle.SINGLE,size:8,color:'D9C98F'};
+      const boxBd={top:boxB,bottom:boxB,left:boxB,right:boxB};
+      const caixa=linhasDz.map((l,ix)=>pr([tx(l[0],{bold:true,color:GOLDD,size:24}),tx(l[1],{size:24})],{spacing:{after:ix===linhasDz.length-1?40:90}}));
+      RECEITA={
+        properties:{page:{size:{width:11906,height:16838},margin:{top:1080,right:1080,bottom:1080,left:1260},borders:{pageBorderTop:{style:BorderStyle.SINGLE,size:14,color:GOLD,space:18},pageBorderBottom:{style:BorderStyle.SINGLE,size:14,color:GOLD,space:18},pageBorderLeft:{style:BorderStyle.SINGLE,size:14,color:GOLD,space:18},pageBorderRight:{style:BorderStyle.SINGLE,size:14,color:GOLD,space:18}}}},
+        children:[
+          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[4000,5360],rows:[new TableRow({children:[
+            cel(RN_LOGO_B64?[pr([new (window.docx.ImageRun)({type:'png',data:b64ToUint8(RN_LOGO_B64),transformation:{width:150,height:72}})])]:[pr([tx('')])],4000,{mt:0,mb:0}),
+            cel([pr([tx('RECEITUÁRIO',{bold:true,size:48,color:GOLDD,characterSpacing:30})],{alignment:AlignmentType.RIGHT,spacing:{after:40}}),pr([tx('Fórmula manipulada — uso oral',{size:23,color:'666666'})],{alignment:AlignmentType.RIGHT})],5360,{mt:0,mb:0}),
+          ]})]}),
+          new Paragraph({children:[],border:{bottom:{style:BorderStyle.SINGLE,size:18,color:GOLD,space:1}},spacing:{before:160,after:200}}),
+          pr([tx('Paciente: ',{bold:true,color:GOLDD,size:24}),tx((d.nome||'').trim(),{size:24}),tx('\tData: ',{bold:true,color:GOLDD,size:24}),tx('____/____/______',{size:24})],{tabStops:[{type:TabStopType.RIGHT,position:9360}],spacing:{after:260}}),
+          pr([tx('Rp./',{bold:true,italics:true,size:84,color:GOLD,font:'Georgia'})],{spacing:{after:60}}),
+          pr([tx('Composição por '+un1+(sache&&sabor?' (sabor '+sabor+')':''),{size:22,color:'666666'})],{spacing:{after:140}}),
+          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[6000,3360],rows:[
+            new TableRow({children:[hc('Ativo',6000),hc('Dosagem',3360,AlignmentType.RIGHT)]}),
+            ...linhasAt,
+          ]}),
+          pr([tx('')],{spacing:{before:120,after:160}}),
+          new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[9360],rows:[new TableRow({children:[cel(caixa,9360,{fill:CREME,borders:boxBd,mt:200,mb:160})]})]}),
+          new Paragraph({children:[],border:{top:{style:BorderStyle.SINGLE,size:8,color:'7F7A6A',space:1}},spacing:{before:1100,after:40},indent:{left:2200,right:2200}}),
+          pr([tx('Roberto Pereira Neto',{size:24,color:'333333'})],{alignment:AlignmentType.CENTER}),
+        ]
+      };
+    }
     const now=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
     const logoRow=RN_LOGO_B64?[new Paragraph({children:[new (window.docx.ImageRun)({type:'png',data:b64ToUint8(RN_LOGO_B64),transformation:{width:170,height:81}})],alignment:AlignmentType.CENTER,spacing:{after:120}})]:[];
     const doc=new Document({
@@ -8003,6 +8261,27 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           ]}),
           ...(interacoesTxt?[new Paragraph({children:[new TextRun({text:'⚠️ Atenção às combinações: ',bold:true,size:18,color:'9A7B0A'}),new TextRun({text:interacoesTxt,size:18})],spacing:{before:100,after:200}})]:[new Paragraph({spacing:{after:200}})]),
           HR()]:[]),
+          ...(()=>{
+            // Psyllium: sugestão fixa em todos os planners, logo após a suplementação
+            const _semLat=!!(exW&&(exW.laticinioProibido||(exW.defs||[]).some(x=>x.k==='laticinios')));
+            const _semGl=!!(exW&&exW.semGluten);
+            const formas=[
+              '200 a 300 ml de água gelada: mexa e beba logo, antes que engrosse.',
+              ...(_semLat?[]:['Misturado no iogurte natural ou na coalhada, com fruta picada.']),
+              ...(_semLat?[]:['Na vitamina de mamão, manga ou morango com whey, batida na hora.']),
+              ...(_semGl?[]:['No mingau ou na aveia já cozidos, mexendo só no final.']),
+              'Na limonada sem açúcar, com água e gelo.',
+              'No chá gelado sem açúcar (mate, verde, branco ou hibisco).',
+              'Na sopa ou no caldo morno, no final do preparo, sem ferver.',
+              ...(_semGl?[]:['Na massa de panqueca ou de crepioca (1 colher de sobremesa ≈ 5 g).']),
+            ];
+            return[H1('PSYLLIUM (CASCA) — 5 A 10 G POR DIA'),
+              new Paragraph({children:[new TextRun({text:'Fibra solúvel que ajuda o intestino, a saciedade e o controle de glicose e colesterol. Comece com 5 g por dia e suba aos poucos até 10 g, conforme a tolerância.',size:18})],spacing:{after:100}}),
+              H2('Formas de tomar (varie à vontade)'),
+              ...formas.map((t,i)=>new Paragraph({children:[new TextRun({text:(i+1)+') ',bold:true,size:18,color:'8B6914'}),new TextRun({text:t,size:18})],spacing:{after:50}})),
+              new Paragraph({children:[new TextRun({text:'Atenção: ',bold:true,size:18,color:'9A7B0A'}),new TextRun({text:'sempre com pelo menos 1 copo cheio de água a mais; tome a pelo menos 2 horas de distância de medicamentos; se tiver dificuldade para engolir ou dor abdominal forte, suspenda e avise.',size:18})],spacing:{before:80,after:200}}),
+              HR()];
+          })(),
           ...(eaaRows.length?[H1('USO DE ERGOGÊNICO / EAA'),
           new Table({width:{size:9360,type:WidthType.DXA},columnWidths:[2200,1700,2300,3160],rows:[
             new TableRow({children:[hCell('Ergogênico/EAA'),hCell('Dosagem'),hCell('Fracionamento'),hCell('Observação')]}),
@@ -8081,9 +8360,10 @@ async function gerarDietaDoc(d,planOverride,supOverride,eaaOverride,farmOverride
           new Paragraph({children:[new (window.docx.ImageRun)({type:'png',data:b64ToUint8(macroDonutPngB64(pP,cP,gP,kcal)),transformation:{width:220,height:220}})],alignment:AlignmentType.CENTER,spacing:{after:60}}),
           new Paragraph({children:[new TextRun({text:'■ ',color:'B8962E',size:22}),new TextRun({text:`Proteínas ${Math.round(pP*100)}%     `,size:20}),new TextRun({text:'■ ',color:'161616',size:22}),new TextRun({text:`Carboidratos ${Math.round(cP*100)}%     `,size:20}),new TextRun({text:'■ ',color:'E3D18A',size:22}),new TextRun({text:`Gorduras ${Math.round(gP*100)}%`,size:20})],alignment:AlignmentType.CENTER,spacing:{after:200}}),
           HR(),
+          ...(RECEITA?[new Paragraph({children:[new TextRun({text:'💊 Receita de manipulados: ',bold:true,size:20,color:'8B6914'}),new TextRun({text:'veja a última folha deste documento (para levar à farmácia de manipulação).',size:20})],spacing:{before:80,after:160}})]:[]),
           ...fechoBlocks
         ]
-      }]
+      }].concat(RECEITA?[RECEITA]:[])
     });
 
     mostrarProgressoWord(85,'Montando o documento Word...');
@@ -8510,12 +8790,20 @@ function buildFrutasLiberadas(){
 // Estrutura simples e livre, pensada para o paciente ler como quem não entende de nutrição.
 function buildSupplementTable(d,hasDM,hasHAS,hasDis,hasObe,obj){
   const rows=[];
+  // o que o paciente já toma e vai manter entra sempre no planner (a dose você ajusta)
+  if(d&&d.usaSuplemento==='S'&&d.continuaSup==='S'){
+    (Array.isArray(d.medLista)?d.medLista:[]).filter(m=>m&&m.cat==='SUP'&&m.item).forEach(m=>rows.push({item:m.item,dose:(m.dose||'').trim(),horario:'',rec:''}));
+    if(d.suplementoDetalhe&&String(d.suplementoDetalhe).trim())rows.push({item:String(d.suplementoDetalhe).trim(),dose:'',horario:'',rec:''});
+  }
   return rows;
 }
 function buildEAATable(d){
   const rows=[];
-  if(d.eaaDetalhe)rows.push({item:d.eaaDetalhe,dose:'',fracionamento:'',obs:(d.continuaUso?'Continuará usando: '+(d.continuaUso==='S'?'Sim':'Não')+'. ':'')+(d.reavaliarProtocolo==='S'?'Paciente/Cliente sinalizou abertura para reavaliação do protocolo.':'')});
-  else rows.push({item:'',dose:'',fracionamento:'',obs:''});
+  if(d&&d.usaEAA==='S'&&d.continuaUso==='S'){
+    (Array.isArray(d.medLista)?d.medLista:[]).filter(m=>m&&m.cat==='EAA'&&m.item).forEach(m=>rows.push({item:m.item,dose:(m.dose||'').trim(),fracionamento:'',obs:''}));
+  }
+  if(d.eaaDetalhe)rows.push({item:d.eaaDetalhe,dose:'',fracionamento:'',obs:(d.continuaUso?'Continuará usando: '+(d.continuaUso==='S'?'Sim':'Não')+'. ':'')+(d.reavaliarProtocolo==='S'?'Paciente/Cliente quer incluir o protocolo na consultoria (administração, dose e fracionamento).':'')});
+  else if(!rows.length)rows.push({item:'',dose:'',fracionamento:'',obs:''});
   return rows;
 }
 function buildFarmTable(d){
